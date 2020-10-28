@@ -12,17 +12,17 @@ This template takes a minimum amount of parameters and deploys a VM that is cust
 	</tr>
 	<tr>
 		<th>Small</th>
-		<td>M32ls</td>
+		<td>M32ls (256GB)</td>
 		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>Medium</th>
-		<td>M64ls</td>
+		<td>M64ls (512GB)</td>
 		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>Large</th>
-		<td>M64s</td>
+		<td>M64s (1TB)</td>
 		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB)</td>
 	</tr>
 </table>
