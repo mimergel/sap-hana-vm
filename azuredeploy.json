@@ -198,41 +198,59 @@
               "lun": 0,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 64
             },
             {
               "lun": 1,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 128
             },
             {
               "lun": 2,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 128
             },
             {
               "lun": 3,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 128
             },
             {
               "lun": 4,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 64
+              "diskSizeGB": 128
             },
             {
               "lun": 5,
-              "caching": "None",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 1024
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 6,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 7,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
             }
           ],
           "scriptArguments": {
-            "Linux": "-luns '0,1,2#3#4#5' -names 'datalog#shared#usrsap#backup' -paths '/hana/data,/hana/log#/hana/shared#/usr/sap#/hana/backup' -sizes '70,100#100#100#100'"
+            "Linux": "-luns '0#1,2,3,4#5,6,7#8' -names 'usrsap#data#log#shared' -paths '/usr/sap#/hana/data#/hana/log#/hana/shared' -sizes '100#100#100#100'"
           },
           "useFastNetwork": true
         }
@@ -245,60 +263,52 @@
               "lun": 0,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 64
             },
             {
               "lun": 1,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 256
             },
             {
               "lun": 2,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 256
             },
             {
               "lun": 3,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 256
             },
             {
               "lun": 4,
-              "caching": "None",
-              "writeAcceleratorEnabled": "true",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 256
             },
             {
               "lun": 5,
-              "caching": "None",
-              "writeAcceleratorEnabled": "true",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 512
+              "diskSizeGB": 256
             },
             {
               "lun": 6,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 1024
+              "diskSizeGB": 256
             },
             {
               "lun": 7,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 64
+              "diskSizeGB": 256
             },
             {
               "lun": 8,
-              "caching": "ReadOnly",
-              "createOption": "Empty",
-              "diskSizeGB": 1024
-            },
-            {
-              "lun": 9,
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 1024
