@@ -15,7 +15,7 @@
       "type": "string",
       "allowedValues": [
         "RHEL 7",
-        "Oracle Linux 7"
+        "SLES 12"
       ],
       "defaultValue": "RHEL 7",
       "metadata": {
@@ -100,10 +100,10 @@
         "publisher": "RedHat",
         "OSType": "Linux"
       },
-      "Oracle Linux 7": {
-        "sku": "ol78-gen2",
-        "offer": "Oracle-Linux",
-        "publisher": "Oracle",
+      "SLES 12": {
+        "sku": "gen2",
+        "offer": "sles-sap-12-sp5",
+        "publisher": "SUSE",
         "OSType": "Linux"
       }
     },
