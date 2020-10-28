@@ -161,19 +161,19 @@
             },
             {
               "lun": 5,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 6,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 7,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
@@ -226,19 +226,19 @@
             },
             {
               "lun": 5,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 6,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 7,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
@@ -291,19 +291,19 @@
             },
             {
               "lun": 5,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 256
             },
             {
               "lun": 6,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 256
             },
             {
               "lun": 7,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 256
             },
