@@ -185,7 +185,7 @@
             }
           ],
           "scriptArguments": {
-            "Linux": "-luns '0#1,2,3,4#5,6,7#8' -names 'usrsap#data#log#shared' -paths '/usr/sap#/hana/data#/hana/log#/hana/shared' -sizes '100#100#100#100'"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data', parameters('sapSystemId'), '#/hana/log', parameters('sapSystemId'),'#/hana/shared'' -sizes ''100#100#100#100')]"
           },
           "useFastNetwork": true
         }
@@ -315,7 +315,7 @@
             }
           ],
           "scriptArguments": {
-            "Linux": "-luns '0,1,2,3#4,5#6#7#8,9' -names 'data#log#shared#usrsap#backup' -paths '/hana/data#/hana/log#/hana/shared#/usr/sap#/hana/backup' -sizes '100#100#100#100#100'"
+            "Linux": "-luns '0#1,2,3,4#5,6,7#8' -names 'usrsap#data#log#shared' -paths '/usr/sap#/hana/data#/hana/log#/hana/shared' -sizes '100#100#100#100'"
           },
           "useFastNetwork": true
         }
