@@ -8,21 +8,21 @@ This template takes a minimum amount of parameters and deploys a VM that is cust
 	<tr>
 		<th>Size</th>
 		<th>HANA VM</th>
-		<th>HANA VM Storage (DATA+LOG+SHARE+SAP)</th>
+		<th>HANA VM Storage (EXE + DATA + LOG + SHARE)</th>
 	</tr>
 	<tr>
 		<th>Small</th>
 		<td>M32ls</td>
-		<td>2xP10+3xP10+1xP20+1xP10</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>Medium</th>
 		<td>M64ls</td>
-		<td> tbd. </td>
+		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>Large</th>
 		<td>M64s</td>
-		<td> tbd. </td>
+		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB)</td>
 	</tr>
 </table>
