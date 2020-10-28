@@ -322,11 +322,12 @@
       }
     },
     "sidlower": "[toLower(parameters('sapSystemId'))]",
-    "vmName": "[concat(variables('sidlower'), '-server')]",
-    "vnetName": "[concat(variables('sidlower'), '-vnet')]",
-    "publicIpName": "[concat(variables('sidlower'), '-pib')]",
-    "nicName": "[concat(variables('sidlower'), '-nic')]",
-    "nsgName": "[concat(variables('sidlower'), '-nsg-cs')]",
+    "dbtypelower": "[toLower(parameters('dbtype'))]",
+    "vmName": "[concat(variables('dbtypelower'),'-',variables('sidlower'), '-vm')]",
+    "vnetName": "[concat(variables('vmName'), '-vnet')]",
+    "publicIpName": "[concat(variables('vmName'), '-pib')]",
+    "nicName": "[concat(variables('vmName'), '-nic')]",
+    "nsgName": "[concat(variables('vmName'), '-nsg-cs')]",
     "subnetName": "Subnet",
     "linuxConfiguration": {
       "disablePasswordAuthentication": true,
