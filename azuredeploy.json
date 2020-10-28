@@ -113,14 +113,14 @@
         "Publisher": "Microsoft.Compute",
         "Name": "CustomScriptExtension",
         "Version": "1.7",
-        "script": "https://raw.githubusercontent.com/mimergel/sap-oracle-vm/main/scripts/diskConfig.ps1",
+        "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.ps1",
         "scriptCall": "powershell.exe -ExecutionPolicy bypass -File diskConfig.ps1"
       },
       "Linux": {
         "Publisher": "Microsoft.Azure.Extensions",
         "Name": "CustomScript",
         "Version": "2.0",
-        "script": "https://raw.githubusercontent.com/mimergel/sap-oracle-vm/main/scripts/diskConfig.sh",
+        "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.sh",
         "scriptCall": "sh diskConfig.sh"
       }
     },
