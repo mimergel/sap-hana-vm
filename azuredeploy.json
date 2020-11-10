@@ -62,10 +62,12 @@
       }
     },
     "adminPasswordOrKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password or ssh key for the Virtual Machine."
-      }
+    "reference": {
+        "keyVault": {
+        "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAP-Encryption/providers/Microsoft.KeyVault/vaults/installationkeys"
+        },
+        "secretName": "privateKey"
+    }
     },
     "subnetId": {
       "type": "string",
