@@ -28,3 +28,4 @@ steps:
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
     csmParametersFileLink: 'https://sapdemoauto.blob.core.windows.net/sapinstkeys/azuredeployparamfile.json?sp=r&st=2020-11-10T22:27:15Z&se=2021-11-11T06:27:15Z&spr=https&sv=2019-12-12&sr=b&sig=VU3u7s9YjlLauEu0AWg5Tyez2MIbA734jr6CSZBrKfc%3D'
     deploymentMode: 'Complete'
+
