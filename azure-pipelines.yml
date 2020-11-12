@@ -1,0 +1,31 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)'
+    artifact: hana
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
+    subscriptionId: '35b67b4c-4fd4-4f0b-997c-bbb82032d45d'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'HANATest'
+    location: 'West Europe'
+    templateLocation: 'URL of the file'
+    csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
+    csmParametersFileLink: 'https://sapdemoauto.blob.core.windows.net/sapinstkeys/azuredeployparamfile.json?sp=r&st=2020-11-10T22:27:15Z&se=2021-11-11T06:27:15Z&spr=https&sv=2019-12-12&sr=b&sig=VU3u7s9YjlLauEu0AWg5Tyez2MIbA734jr6CSZBrKfc%3D'
+    deploymentMode: 'Complete'
+
