@@ -6,7 +6,7 @@
       "type": "string",
       "maxLength": 3,
       "minLength": 3,
-      "defaultValue": "SID",
+      "defaultValue": "OKL",
       "metadata": {
         "description": "SAP System ID."
       }
