@@ -47,7 +47,7 @@
     },
     "adminUsername": {
       "type": "string",
-      "defaultValue": "mimergel",
+      "defaultValue": "olklause",
       "metadata": {
         "description": "Username for the Virtual Machine."
       }
@@ -63,16 +63,16 @@
         "description": "Type of authentication to use on the Virtual Machine."
       }
     },
- "adminPasswordOrKey": {
+    "adminPasswordOrKey": {
       "type": "securestring",
-      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
+      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAiK1K/Fz45ykzaA9Uv65jDSLAhgR2a0BFI20RyFL5hkUNpnj7fYYXJqOnRAURaKbNIoMjdhukopDZ9KAd4qoIwaLXHeI/LOQ+FKGExxSQ/EQVwGaSp+QvkFqA1PgYM6aRX4sgJ+WHJOqDclwdL7dvjqyRN3831oaKoHrlMypIXbU+pHmil0aifMeb+bO8AyDg2yXG+Hbhw5eSUYvHMfZPQEOobzdOgTGvfkN2OD+WAKZiWQvpHBpHHm/FKzhPaAWnP6BLJ4t+9TAkSUds7ZnTprRUzcewB95jrRNWqMmsJTbE6GfIqrAKATl1o5tPYSpokm8sMSJbIYPRO6O3166bkw== rsa-key-20201118",
       "metadata": {
         "description": "Password or ssh key for the Virtual Machine."
       }
     },
     "subnetId": {
       "type": "string",
-      "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/sapdevsubnet",
+      "defaultValue": "/subscriptions/7731e98e-6e6d-42e8-9ba9-647c11b6fce1/resourceGroups/MySAPAutomation_RG/providers/Microsoft.Network/virtualNetworks/SAP-Automation-VNet/subnets/SAP-Deployment-SubNet-01",
       "metadata": {
         "description": "The id of the subnet you want to use."
       }
@@ -122,14 +122,14 @@
         "Publisher": "Microsoft.Compute",
         "Name": "CustomScriptExtension",
         "Version": "1.7",
-        "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.ps1",
+        "script": "https://raw.githubusercontent.com/oklausen/sap-hana-vm/main/scripts/diskConfig.sh",
         "scriptCall": "powershell.exe -ExecutionPolicy bypass -File diskConfig.ps1"
       },
       "Linux": {
         "Publisher": "Microsoft.Azure.Extensions",
         "Name": "CustomScript",
         "Version": "2.0",
-        "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.sh",
+        "script": "https://raw.githubusercontent.com/oklausen/sap-hana-vm/main/scripts/diskConfig.sh",
         "scriptCall": "sh diskConfig.sh"
       }
     },
