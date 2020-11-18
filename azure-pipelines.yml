@@ -22,9 +22,10 @@ steps:
     azureResourceManagerConnection: 'olklause internal Azure Subscription(7731e98e-6e6d-42e8-9ba9-647c11b6fce1)'
     subscriptionId: '7731e98e-6e6d-42e8-9ba9-647c11b6fce1'
     action: 'Create Or Update Resource Group'
-    resourceGroupName: 'HANATest'
+    resourceGroupName: 'MySAPAutomation_RG'
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/oklausen/sap-hana-vm/main/azuredeploy.json'
+    csmParametersFileLink: 'https://filestorageokl.blob.core.windows.net/deploymentparameter/parametersFile.json'
     deploymentMode: 'Complete'
 
