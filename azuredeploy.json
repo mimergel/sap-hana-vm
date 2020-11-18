@@ -142,7 +142,7 @@
               "lun": 0,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 33
+              "diskSizeGB": 32
             },
             {
               "lun": 1,
