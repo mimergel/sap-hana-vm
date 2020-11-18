@@ -136,7 +136,7 @@
     "sizes": {
       "Small": {
         "HANA": {
-          "vmSize": "Standard_M32ts",
+          "vmSize": "Standard_E20ds_v4",
           "disks": [
             {
               "lun": 0,
@@ -194,7 +194,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data/',parameters('sapSystemId'),'#/hana/log/',parameters('sapSystemId'),'#/hana/shared'' -sizes ''100#100#100#100''')]"
+            "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data/',parameters('sapSystemId'),'#/hana/log/',parameters('sapSystemId'),'#/hana/shared'' -sizes ''100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
