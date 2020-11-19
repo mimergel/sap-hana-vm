@@ -44,7 +44,7 @@ For me the following solution works fine.
 2. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
 3. Create a container with read access in this storage account 
 4. Upload the diskConfig.sh and the azuredeployparamfile.json files here
-5. Get the URL and update the URL of diskConfig.sh in the file: azuredeploy.json of your forked repositore
+5. Get the URL and update the URL of diskConfig.sh in the file: azuredeploy.json of your forked repository
 6. Update the parameters in azuredeployparamfile.json according to your needs and upload it to the storage container
 7. Get the URL and use it in the parameter csmParametersFileLink of the Azure DevOps Pipeline
 
