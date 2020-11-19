@@ -26,6 +26,6 @@ steps:
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    csmParametersFileLink: 'https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json'
+    csmParametersFileLink: '/home/mimergel/myagent/_work/template.json'
     deploymentMode: 'Complete'
 
