@@ -127,7 +127,7 @@
         "Publisher": "Microsoft.Azure.Extensions",
         "Name": "CustomScript",
         "Version": "2.0",
-        "script": "https://terraformstagefiles.blob.core.windows.net/diskconfig/diskConfig.sh",
+        "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.sh",
         "scriptCall": "sh diskConfig.sh"
       }
     },
