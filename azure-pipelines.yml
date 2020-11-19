@@ -7,6 +7,8 @@ trigger:
 - master
 
 pool:
+  # need access to private link for parameter file. Therefore using my own deployment agents instead of devops agents 
+  # vmImage: 'ubuntu-latest'
   name: Default
 
 steps:
