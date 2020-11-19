@@ -20,9 +20,15 @@ steps:
 
 - task: Bash@3
   inputs:
-    filePath: /usr/bin/wget 
-    arguments: https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json
-    displayName: Get the deployment parameters from the private storage endpoint
+    targetType: 'inline'
+    script: |
+      #!/bin/bash
+      echo 'bash script run to download parameter file'
+      /usr/bin/wget https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json
+      echo 'bash script run to download parameter file'
+    failOnStderr: true
+    noProfile: false
+    noRc: false
 
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
