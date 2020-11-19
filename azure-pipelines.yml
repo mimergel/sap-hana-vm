@@ -33,4 +33,3 @@ steps:
     # parameter file in storage account accessible via private link:
     csmParametersFileLink: 'https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json'
     deploymentMode: 'Complete'
-
