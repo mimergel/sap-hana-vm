@@ -43,5 +43,5 @@ steps:
     # parameter file example in the repository, internet access required 
     # csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
     # parameter file in storage account accessible via private link:
-    csmParametersFileLink: 'azuredeployparamfile.json'
+    csmParametersFileLink: 'https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json'
     deploymentMode: 'Complete'
