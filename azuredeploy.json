@@ -47,7 +47,7 @@
     },
     "adminUsername": {
       "type": "string",
-      "defaultValue": "mimergel",
+      "defaultValue": "azureuser",
       "metadata": {
         "description": "Username for the Virtual Machine."
       }
