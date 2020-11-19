@@ -26,7 +26,7 @@ steps:
       echo 'bash script run to download parameter file'
       /usr/bin/wget https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json
       echo 'bash script run to download parameter file'
-    failOnStderr: true
+    failOnStderr: false
     noProfile: false
     noRc: false
 
