@@ -18,6 +18,14 @@ steps:
     targetPath: '$(System.DefaultWorkingDirectory)'
     artifact: hana
 
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Write your commands here
+      
+      wget https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json'
+
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: 'Resource Group'
@@ -29,7 +37,7 @@ steps:
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
     # parameter file example in the repository, internet access required 
-    csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
+    # csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
     # parameter file in storage account accessible via private link:
-    # csmParametersFileLink: 'https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json'
+    csmParametersFileLink: 'azuredeployparamfile.json'
     deploymentMode: 'Complete'
