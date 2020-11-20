@@ -33,16 +33,16 @@ Steps:
 1. Fork this repository 
 2. Connect Azure DevOps with your forked repository (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
 3. Create a pipeline similar to the example in this repository (azure-pipelines.yml) by adapting to your Azure envrionment
+4. Enter required variables to the pipeline configuration
 
 # Deployments in an Azure environment without internet access 
 There might be multiple solutions to handle this situation which is most common for SAP environments. 
 The challenge here is that the deployed HANA VM has no access to Github to download the diskConfig.sh script. 
 Furthermore you might want to keep the provided details like subscription and subnetId from the azuredeployparamfile.json file private. 
-For me the following solution works fine.
+For me the following solution works fine:
 
 1. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
 2. Create a container with read access in this storage account 
-3. Upload the diskConfig.sh file here
+3. Upload the diskConfig.sh file into the container
 4. Get the URL and update the link to diskConfig.sh in azuredeploy.json of your forked repository
-5. Enter required variables to the pipeline configuration
-6. Preferable let the pipeline run manually only to avoid automatic deployments during every repo change
+5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
