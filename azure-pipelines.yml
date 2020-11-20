@@ -47,5 +47,5 @@ steps:
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
     csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
-    overrideParameters: '-sapSystemId: $(sid)'
+    overrideParameters: '-sapSystemId:$(sid)'
     deploymentMode: 'Complete'
