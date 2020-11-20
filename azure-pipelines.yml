@@ -21,13 +21,12 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
+    azureResourceManagerConnection: '$(subscriptionname)'
     subscriptionId: '$(subscription)'
     action: 'Create Or Update Resource Group'
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    # csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
     overrideParameters: '-adminUsername "$(adminuser)" -sapSystemId "$(sid)" -osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
     deploymentMode: 'Complete'
