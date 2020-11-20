@@ -90,6 +90,13 @@
       "metadata": {
         "description": "Location for all resources."
       }
+    },
+    "CostCenter": {
+      "type": "string",
+      "defaultValue": "CS123456",
+      "metadata": {
+        "description": "Provide mandatory Cost Center ID"
+      }
     }
   },
   "variables": {
@@ -394,6 +401,7 @@
       "name": "[concat(variables('nsgName'))]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
+      "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "condition": "[equals(length(parameters('subnetId')), 0)]",
       "properties": {
         "securityRules": "[variables('selectedSecurityRules')]"
@@ -404,6 +412,7 @@
       "name": "[variables('vnetName')]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
+      "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
@@ -436,6 +445,7 @@
         "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
       ],
       "location": "[parameters('location')]",
+      "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
       }
@@ -449,6 +459,7 @@
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
       ],
       "location": "[parameters('location')]",
+      "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "properties": {
         "ipConfigurations": [
           {
@@ -474,6 +485,7 @@
       "zones": "[variables('selectedZones')]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
+      "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('sizes')[parameters('sapSystemSize')][parameters('dbType')].vmSize]"
@@ -515,6 +527,7 @@
       "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
+      "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
       ],
