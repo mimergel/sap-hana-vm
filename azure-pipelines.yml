@@ -4,13 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-  branches:
-    include:
-    - master
-  paths:
-    exclude:
-    - README.md
-    - azure-pipelines.yml
+  none
 
 pool:
   # Using my own deployment agents instead of devops agents 
