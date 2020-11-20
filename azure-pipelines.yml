@@ -4,13 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-  branches:
-    include:
-    - master
-  paths:
-    exclude:
-    - README.md
-    - azure-pipelines.yml
+  none
 
 pool:
   # Using my own deployment agents instead of devops agents 
@@ -24,28 +18,15 @@ steps:
     targetPath: '$(System.DefaultWorkingDirectory)'
     artifact: hana
 
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: |
-      #!/bin/bash
-      echo 'bash script run to download parameter file'
-      /usr/bin/wget https://terraform2021.blob.core.windows.net/sapdeployments/azuredeployparamfile.json
-      echo 'bash script run to download parameter file'
-    failOnStderr: false
-    noProfile: false
-    noRc: false
-
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
-    subscriptionId: '35b67b4c-4fd4-4f0b-997c-bbb82032d45d'
+    azureResourceManagerConnection: '$(subscriptionname)'
+    subscriptionId: '$(subscription)'
     action: 'Create Or Update Resource Group'
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
     overrideParameters: '-adminUsername "$(adminuser)" -sapSystemId "$(sid)" -osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
     deploymentMode: 'Complete'

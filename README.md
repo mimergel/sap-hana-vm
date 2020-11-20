@@ -33,22 +33,16 @@ Steps:
 1. Fork this repository 
 2. Connect Azure DevOps with your forked repository (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
 3. Create a pipeline similar to the example in this repository (azure-pipelines.yml) by adapting to your Azure envrionment
+4. Enter required variables to the pipeline configuration
 
 # Deployments in an Azure environment without internet access 
 There might be multiple solutions to handle this situation which is most common for SAP environments. 
 The challenge here is that the deployed HANA VM has no access to Github to download the diskConfig.sh script. 
 Furthermore you might want to keep the provided details like subscription and subnetId from the azuredeployparamfile.json file private. 
-For me the following solution works fine.
+For me the following solution works fine:
 
-1. Create your own deployment agent in Azure (https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents)
-2. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
-3. Create a container with read access in this storage account 
-4. Upload the diskConfig.sh and the azuredeployparamfile.json files here
-5. Get the URL and update the URL of diskConfig.sh in the file: azuredeploy.json of your forked repository
-6. Update the parameters in azuredeployparamfile.json according to your needs and upload it to the storage container
-7. Get the URL and use it in the parameter csmParametersFileLink of the Azure DevOps Pipeline
-
-# Note
-When this works as planned pay attention to changes of the GitHub repository and deployments! 
-Whenever you change the Github repository an automatic deployment will create a SAP HANA VM on Azure which creates costs in your subscription.
-
+1. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
+2. Create a container with read access in this storage account 
+3. Upload the diskConfig.sh file into the container
+4. Get the URL and update the link to diskConfig.sh in azuredeploy.json of your forked repository
+5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
