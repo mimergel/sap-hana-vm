@@ -23,7 +23,7 @@
         "description": "The type of the operating system you want to deploy."
       }
     },
-    "dbtype": {
+    "dbType": {
       "type": "string",
       "allowedValues": [
         "HANA"
@@ -336,7 +336,7 @@
       }
     },
     "sidlower": "[toLower(parameters('sapSystemId'))]",
-    "dbtypelower": "[toLower(parameters('dbtype'))]",
+    "dbtypelower": "[toLower(parameters('dbType'))]",
     "vmName": "[concat(variables('dbtypelower'),'-',variables('sidlower'), '-vm')]",
     "vnetName": "[concat(variables('vmName'), '-vnet')]",
     "publicIpName": "[concat(variables('vmName'), '-pib')]",
