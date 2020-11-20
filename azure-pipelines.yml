@@ -4,7 +4,13 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
+    - azure-pipelines.yml
 
 pool:
   # Using my own deployment agents instead of devops agents 
@@ -40,5 +46,5 @@ steps:
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    csmParametersFile: 'azuredeployparamfile.json'
+    csmParametersFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeployparamfile.json'
     deploymentMode: 'Complete'
