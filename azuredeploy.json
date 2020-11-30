@@ -337,7 +337,7 @@
     },
     "sidlower": "[toLower(parameters('sapSystemId'))]",
     "dbtypelower": "[toLower(parameters('dbType'))]",
-    "vmName": "[concat(variables('dbtypelower'),'-',variables('sidlower'), '-vm')]",
+    "vmName": "[concat('ulsap',variables('sidlower'))]",
     "vnetName": "[concat(variables('vmName'), '-vnet')]",
     "publicIpName": "[concat(variables('vmName'), '-pib')]",
     "nicName": "[concat(variables('vmName'), '-nic')]",
