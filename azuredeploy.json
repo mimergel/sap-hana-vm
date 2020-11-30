@@ -109,8 +109,8 @@
         "OSType": "Linux"
       },
       "RHEL 8": {
-        "sku": "82gen2",
-        "offer": "RHEL",
+        "sku": "82sapapps-gen2",
+        "offer": "RHEL-SAP-APPS",
         "publisher": "RedHat",
         "OSType": "Linux"
       },
