@@ -176,18 +176,21 @@
             {
               "lun": 5,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 6,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 7,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
