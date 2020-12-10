@@ -110,13 +110,14 @@ function createlvm()
       local mountPathLoc=${mountPathA[$j]}
       local sizeLoc=${sizeA[$j]}
       local lvNameLoc="$lvName-$j"
-      log "lvcreate --extents $sizeLoc%VG --stripes $numRaidDevices --stripesize [64k or 256k (data)] --name $lvNameLoc $vgName"
       if [$mountPathLoc="/hana/data"]
       then
         # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/hana-vm-operations-storage
+        log "lvcreate --extents $sizeLoc%VG --stripes $numRaidDevices --stripesize 256k --name $lvNameLoc $vgName"
         $(lvcreate --extents $sizeLoc%VG --stripes $numRaidDevices --stripesize 256k --name $lvNameLoc $vgName)
       else
         $(lvcreate --extents $sizeLoc%VG --stripes $numRaidDevices --stripesize 64k --name $lvNameLoc $vgName)
+        log "lvcreate --extents $sizeLoc%VG --stripes $numRaidDevices --stripesize 64k --name $lvNameLoc $vgName"
       fi
       $(mkfs -t xfs /dev/$vgName/$lvNameLoc)
       $(mkdir -p $mountPathLoc)
