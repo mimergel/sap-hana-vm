@@ -25,7 +25,7 @@ steps:
     subscriptionId: '$(subscription)'
     action: 'Create Or Update Resource Group'
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
-    location: 'West Europe'
+    location: 'Germany West Central'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
     overrideParameters: '-adminUsername "$(adminuser)" -sapSystemId "$(sid)" -osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
