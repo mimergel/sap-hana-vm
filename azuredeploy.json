@@ -11,6 +11,12 @@
         "description": "SAP System ID."
       }
     },
+    "vmNameInput": {
+      "type": "string",
+      "metadata": {
+        "description": "The VM Name in Azure and OS level that you want to deploy"
+      }
+    },
     "osType": {
       "type": "string",
       "allowedValues": [
@@ -47,7 +53,7 @@
     },
     "adminUsername": {
       "type": "string",
-      "defaultValue": "azureuser",
+      "defaultValue": "mimergel",
       "metadata": {
         "description": "Username for the Virtual Machine."
       }
@@ -65,12 +71,14 @@
     },
  "adminPasswordOrKey": {
       "type": "securestring",
+      "value": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
       "metadata": {
         "description": "Password or ssh key for the Virtual Machine."
       }
     },
     "subnetId": {
       "type": "string",
+      "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/hands-on-lab",
       "metadata": {
         "description": "The id of the subnet you want to use."
       }
@@ -340,7 +348,7 @@
     },
     "sidlower": "[toLower(parameters('sapSystemId'))]",
     "dbtypelower": "[toLower(parameters('dbType'))]",
-    "vmName": "[concat('saponazure',variables('sidlower'))]",
+    "vmName": "[toLower(parameters('vmNameInput'))]",
     "vnetName": "[concat(variables('vmName'), '-vnet')]",
     "publicIpName": "[concat(variables('vmName'), '-pib')]",
     "nicName": "[concat(variables('vmName'), '-nic')]",
