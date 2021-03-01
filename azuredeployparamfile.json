@@ -8,8 +8,11 @@
     "sapSystemId": {
       "value": "MIM"
     },
+    "vmNameInput": {
+      "value": "MIM"
+    },
     "sapSystemSize": {
-      "value": "Small"
+      "value": "256_GB"
     },
     "location": {
       "value": "westeurope"
