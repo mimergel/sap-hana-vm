@@ -218,7 +218,7 @@ fi
 
 log "Enabling SWAP"
 sed -i.bak "s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g" /etc/waagent.conf
-sed -i "s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g" /etc/waagent.conf
+sed -i "s/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g" /etc/waagent.conf
 systemctl restart waagent
 swapon -s
 
