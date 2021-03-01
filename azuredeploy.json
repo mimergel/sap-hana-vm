@@ -42,11 +42,11 @@
     "sapSystemSize": {
       "type": "string",
       "allowedValues": [
-        "Small",
-        "Medium",
-        "Large"
+        "256GB",
+        "512GB",
+        "1.024GB"
       ],
-      "defaultValue": "Small",
+      "defaultValue": "256GB",
       "metadata": {
         "description": "The size of the SAP System you want to deploy."
       }
@@ -146,9 +146,9 @@
       }
     },
     "sizes": {
-      "Small": {
+      "256_GB": {
         "HANA": {
-          "vmSize": "Standard_M32ts",
+          "vmSize": "Standard_M32ls",
           "disks": [
             {
               "lun": 0,
@@ -214,7 +214,7 @@
           "useFastNetwork": true
         }
       },
-      "Medium": {
+      "512_GB": {
         "HANA": {
           "vmSize": "Standard_M64ls",
           "disks": [
@@ -251,18 +251,21 @@
             {
               "lun": 5,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 6,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 7,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
@@ -279,7 +282,7 @@
           "useFastNetwork": true
         }
       },
-      "Large": {
+      "1.024_GB": {
         "HANA": {
           "vmSize": "Standard_M64s",
           "disks": [
@@ -316,18 +319,21 @@
             {
               "lun": 5,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 256
             },
             {
               "lun": 6,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 256
             },
             {
               "lun": 7,
               "caching": "None",
+              "writeAcceleratorEnabled": "true",
               "createOption": "Empty",
               "diskSizeGB": 256
             },
