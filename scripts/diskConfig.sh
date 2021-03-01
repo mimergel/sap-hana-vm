@@ -208,4 +208,12 @@ else
   log "count not equal"
 fi
 
+if [[ $(grep SUSE /proc/version | wc -l) = 1 ]]
+then
+  log "Found SUSE SLES, setting up saptune now"
+  zypper install -y saptune
+  zypper update -y saptune
+  saptune daemon start
+fi
+
 exit
