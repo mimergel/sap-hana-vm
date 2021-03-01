@@ -210,16 +210,18 @@ fi
 
 if [[ $(grep SUSE /proc/version | wc -l) = 1 ]]
 then
-  log "Found SUSE SLES, setting up saptune now"
-  zypper install -y saptune
-  zypper update -y saptune
-  saptune daemon start
+  log "Found SUSE SLES, setting up sapconf"
+  # https://launchpad.support.sap.com/#/notes/1275776
+  # https://github.com/scmschmidt/sapconf_saptune_check/blob/master/sapconf_saptune_check
+  zypper install -y sapconf
+  sapconf hana
+  systemctl enable sapconf.service
 fi
 
 log "Enabling SWAP"
-sed -i.bak "s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g" /etc/waagent.conf
-sed -i "s/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g" /etc/waagent.conf
-systemctl restart waagent
-swapon -s
+sed -i.bak "s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g"    /etc/waagent.conf
+sed -i     "s/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g" /etc/waagent.conf
+atd
+echo "systemctl restart waagent" | at now + 1 minute
 
 exit
