@@ -46,7 +46,10 @@
         "512_GB",
         "1.000_GB",
         "2.000_GB",
-        "2.850_GB"
+        "2.850_GB",
+        "3.892_GB",
+        "5.700_GB",
+        "11.400_GB"
       ],
       "defaultValue": "256_GB",
       "metadata": {
@@ -355,7 +358,7 @@
       },
       "2.000_GB": {
         "HANA": {
-          "vmSize": "Standard_M64s",
+          "vmSize": "Standard_M128s",
           "disks": [
             {
               "lun": 0,
@@ -423,7 +426,7 @@
       },
       "2.850_GB": {
         "HANA": {
-          "vmSize": "Standard_M64s",
+          "vmSize": "Standard_M208sv2",
           "disks": [
             {
               "lun": 0,
@@ -488,10 +491,218 @@
           },
           "useFastNetwork": true
         }
+      },
+      "3.892_GB": {
+        "HANA": {
+          "vmSize": "Standard_M128ms",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 4,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 5,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 7,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 8,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 9,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3,4,5#6,7,8#9'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
+      },
+      "5.700_GB": {
+        "HANA": {
+          "vmSize": "Standard_M208msv2",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 2048
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 2048
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 2048
+            },
+            {
+              "lun": 4,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 2048
+            },
+            {
+              "lun": 5,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 7,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
+      },
+      "11.400_GB": {
+        "HANA": {
+          "vmSize": "Standard_M416msv2",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 4096
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 4096
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 4096
+            },
+            {
+              "lun": 4,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 4096
+            },
+            {
+              "lun": 5,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 7,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
       }
     },
-    "sidlower": "[toLower(parameters('sapSystemId'))]",
-    "dbtypelower": "[toLower(parameters('dbType'))]",
     "vmName": "[toLower(parameters('vmNameInput'))]",
     "vnetName": "[concat(variables('vmName'), '-vnet')]",
     "publicIpName": "[concat(variables('vmName'), '-pib')]",
