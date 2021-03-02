@@ -5,11 +5,8 @@
     "adminUsername": {
       "value": "mimergel"
     },
-    "sapSystemId": {
-      "value": "MIM"
-    },
     "vmNameInput": {
-      "value": "MIM"
+      "value": "hanatest"
     },
     "hanaSystemSize": {
       "value": "256_GB"

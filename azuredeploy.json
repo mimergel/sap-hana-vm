@@ -2,15 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sapSystemId": {
-      "type": "string",
-      "maxLength": 3,
-      "minLength": 3,
-      "defaultValue": "SID",
-      "metadata": {
-        "description": "SAP System ID."
-      }
-    },
     "vmNameInput": {
       "type": "string",
       "metadata": {
@@ -56,7 +47,7 @@
       ],
       "defaultValue": "256_GB",
       "metadata": {
-        "description": "The size of the SAP System you want to deploy."
+        "description": "The size of the HANA System you want to deploy."
       }
     },
     "adminUsername": {
