@@ -218,9 +218,12 @@ then
   systemctl enable sapconf.service
 fi
 
-log "Enabling SWAP"
+log "Configure SWAP in /etc/waagent.conf"
 sed -i.bak "s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g"    /etc/waagent.conf
 sed -i     "s/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g" /etc/waagent.conf
+
+log "Enabling SWAP via waagent restart in 1 minute"
+
 atd
 echo "systemctl restart waagent" | at now + 1 minute
 
