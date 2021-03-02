@@ -22,8 +22,9 @@
       "allowedValues": [
         "RHEL 7",
         "RHEL 8",
-        "SLES 12",
-        "SLES 15"
+        "SLES 12 SP4",
+        "SLES 12 SP5",
+        "SLES 15 SP2"
       ],
       "defaultValue": "SLES 12",
       "metadata": {
@@ -129,13 +130,19 @@
         "publisher": "RedHat",
         "OSType": "Linux"
       },
-      "SLES 12": {
+      "SLES 12 SP4": {
+        "sku": "12-sp4-gen2",
+        "offer": "SLES-SAP",
+        "publisher": "SUSE",
+        "OSType": "Linux"
+      },
+      "SLES 12 SP5": {
         "sku": "gen2",
         "offer": "sles-sap-12-sp5",
         "publisher": "SUSE",
         "OSType": "Linux"
       },
-      "SLES 15": {
+      "SLES 15 SP2": {
         "sku": "gen2",
         "offer": "sles-sap-15-sp2",
         "publisher": "SUSE",
