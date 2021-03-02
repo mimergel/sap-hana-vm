@@ -22,9 +22,10 @@
       "allowedValues": [
         "RHEL 7",
         "RHEL 8",
-        "SLES 12"
+        "SLES 12",
+        "SLES 15"
       ],
-      "defaultValue": "RHEL 7",
+      "defaultValue": "SLES 12",
       "metadata": {
         "description": "The type of the operating system you want to deploy."
       }
@@ -45,6 +46,7 @@
         "256_GB",
         "512_GB",
         "1.000_GB",
+        "1.792_GB",
         "2.000_GB",
         "2.850_GB",
         "3.892_GB",
@@ -321,6 +323,74 @@
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 256
+            },
+            {
+              "lun": 5,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 7,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 256
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 1024
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
+      },
+      "1.792_GB": {
+        "HANA": {
+          "vmSize": "Standard_M64ms",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
+            },
+            {
+              "lun": 4,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
             },
             {
               "lun": 5,
