@@ -26,6 +26,11 @@ This template takes a minimum amount of parameters and deploys a VM that is cust
 		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
+		<th>1.792_GB</th>
+		<td>M64ms</td>
+		<td>1xP6(64GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+	</tr>
+	<tr>
 		<th>2.000_GB</th>
 		<td>M128s</td>
 		<td>1xP10(128GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
@@ -34,6 +39,21 @@ This template takes a minimum amount of parameters and deploys a VM that is cust
 		<th>2.850_GB</th>
 		<td>M208sv2</td>
 		<td>1xP10(128GB) + 4xP30(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+	</tr>
+	<tr>
+		<th>3.892_GB</th>
+		<td>M128ms</td>
+		<td>1xP10(128GB) + 5xP30(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+	</tr>
+	<tr>
+		<th>5.700_GB</th>
+		<td>M416sv2</td>
+		<td>1xP10(128GB) + 4xP40(2048GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+	</tr>
+	<tr>
+		<th>11.400_GB</th>
+		<td>M416msv2</td>
+		<td>1xP10(128GB) + 4xP50(4096GB) + 3xP15(256GB) + 1xP30(1TB)</td>
 	</tr>
 </table>
 
