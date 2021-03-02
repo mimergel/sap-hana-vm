@@ -134,6 +134,12 @@
         "offer": "sles-sap-12-sp5",
         "publisher": "SUSE",
         "OSType": "Linux"
+      },
+      "SLES 15": {
+        "sku": "gen2",
+        "offer": "sles-sap-15-sp2",
+        "publisher": "SUSE",
+        "OSType": "Linux"
       }
     },
     "internalOSType": "[variables('images')[parameters('osType')].OSType]",
