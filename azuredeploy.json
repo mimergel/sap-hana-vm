@@ -41,7 +41,7 @@
         "description": "The type of the database"
       }
     },
-    "sapSystemSize": {
+    "hanaSystemSize": {
       "type": "string",
       "allowedValues": [
         "256_GB",
@@ -922,7 +922,7 @@
             }
           }
         ],
-        "enableAcceleratedNetworking": "[variables('sizes')[parameters('sapSystemSize')][parameters('dbType')].useFastNetwork]"
+        "enableAcceleratedNetworking": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].useFastNetwork]"
       }
     },
     {
@@ -937,7 +937,7 @@
       "tags": {"CostCenter": "[parameters('CostCenter')]"},
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('sizes')[parameters('sapSystemSize')][parameters('dbType')].vmSize]"
+          "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
         },
         "osProfile": {
           "computerName": "[variables('vmName')]",
@@ -960,7 +960,7 @@
               "storageAccountType": "Premium_LRS"
             }
           },
-          "dataDisks": "[variables('sizes')[parameters('sapSystemSize')][parameters('dbType')].disks]"
+          "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -989,7 +989,7 @@
           "fileUris": [
             "[variables('csExtension')[variables('internalOSType')].script]"
           ],
-          "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes')[parameters('sapSystemSize')][parameters('dbType')].scriptArguments[variables('internalOSType')])]"
+          "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].scriptArguments[variables('internalOSType')])]"
         }
       }
     }

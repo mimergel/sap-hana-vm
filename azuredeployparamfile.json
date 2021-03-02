@@ -11,7 +11,7 @@
     "vmNameInput": {
       "value": "MIM"
     },
-    "sapSystemSize": {
+    "hanaSystemSize": {
       "value": "256_GB"
     },
     "location": {
