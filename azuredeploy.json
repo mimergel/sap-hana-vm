@@ -720,25 +720,25 @@
             },
             {
               "lun": 1,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 4096
             },
             {
               "lun": 2,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 4096
             },
             {
               "lun": 3,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 4096
             },
             {
               "lun": 4,
-              "caching": "ReadOnly",
+              "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 4096
             },
