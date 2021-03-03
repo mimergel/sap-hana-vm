@@ -38,12 +38,12 @@ This template takes a minimum amount of parameters and deploys a VM that is cust
 	<tr>
 		<th>2.850_GB</th>
 		<td>M208sv2</td>
-		<td>1xP10(128GB) + 4xP30(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>3.892_GB</th>
 		<td>M128ms</td>
-		<td>1xP10(128GB) + 5xP30(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 5xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>5.700_GB</th>
