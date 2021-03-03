@@ -720,27 +720,27 @@
             },
             {
               "lun": 1,
-              "caching": "None",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 4096
+              "diskSizeGB": 4095
             },
             {
               "lun": 2,
-              "caching": "None",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 4096
+              "diskSizeGB": 4095
             },
             {
               "lun": 3,
-              "caching": "None",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 4096
+              "diskSizeGB": 4095
             },
             {
               "lun": 4,
-              "caching": "None",
+              "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 4096
+              "diskSizeGB": 4095
             },
             {
               "lun": 5,
