@@ -642,7 +642,7 @@
       },
       "5.700_GB": {
         "HANA": {
-          "vmSize": "Standard_M208msv2",
+          "vmSize": "Standard_M208ms_v2",
           "disks": [
             {
               "lun": 0,
@@ -710,7 +710,7 @@
       },
       "11.400_GB": {
         "HANA": {
-          "vmSize": "Standard_M416msv2",
+          "vmSize": "Standard_M416ms_v2",
           "disks": [
             {
               "lun": 0,
