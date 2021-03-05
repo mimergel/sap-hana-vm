@@ -73,7 +73,7 @@ function createlvm()
   local mountPathCount=${#mountPathA[@]}
   local sizeCount=${#sizeA[@]}
   log "count luns: $lunsCount paths: $mountPathCount sizes: $sizeCount"
-  if [[ $lunsCount -ge 1 ]]
+  if [[ $lunsCount -gt 1 ]]
   then
     log "createlvm - creating lvm"
 
