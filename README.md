@@ -2,13 +2,28 @@
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2Fazuredeploy.json) 
 
-This template takes a minimum amount of parameters and deploys a VM that is customized for use with SAP NetWeaver and HANA DB, using the latest patched version of the selected operating system. This is a template for a 2-tier configuration and it deploys 1 server on Premium Storage with Managed Disks. Filesystems are created via custom script. Where multiple disks are used for the filesystem the logical volume is setup with striping for optimal performance.
+This template takes a minimum amount of parameters and deploys a VM that is customized for use with SAP NetWeaver and HANA DB, using the latest patched version of the selected operating system. This is a template for a 2-tier configuration and it deploys 1 server on Premium Storage with Managed Disks. Filesystems are created via custom script. Where multiple disks are used for the filesystem the logical volume is setup with striping for optimal performance. Eds_v4 Series use premium dissk without write accellerations, therefore this is not recommended for PRD usage but might be suitable for Non-PRD envrionments.
 
 <table>
 	<tr>
 		<th>Size</th>
 		<th>HANA VM</th>
 		<th>HANA VM Storage (EXE + DATA + LOG + SHARE)</th>
+	</tr>
+	<tr>
+		<th>128_GB</th>
+		<td>E16ds_v4</td>
+		<td>1xP6(64GB) + 3xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+	</tr>
+	<tr>
+		<th>160_GB</th>
+		<td>E20ds_v4</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+	</tr>
+	<tr>
+		<th>192_GB</th>
+		<td>M32ts</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>256_GB</th>
