@@ -35,6 +35,9 @@
     "hanaSystemSize": {
       "type": "string",
       "allowedValues": [
+        "128_GB",
+        "160_GB",
+        "192_GB",
         "256_GB",
         "512_GB",
         "1.000_GB",
@@ -158,6 +161,198 @@
       }
     },
     "sizes": {
+      "128_GB-Non-PRD": {
+        "HANA": {
+          "vmSize": "Standard_E16ds_v4",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 4,
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 5,
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 7,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
+      },
+      "160_GB-Non-PRD": {
+        "HANA": {
+          "vmSize": "Standard_E20ds_v4",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 4,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 5,
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 7,
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
+      },
+      "192_GB": {
+        "HANA": {
+          "vmSize": "Standard_M32ts",
+          "disks": [
+            {
+              "lun": 0,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 1,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 2,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 3,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 4,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 64
+            },
+            {
+              "lun": 5,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 6,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 7,
+              "caching": "None",
+              "writeAcceleratorEnabled": "true",
+              "createOption": "Empty",
+              "diskSizeGB": 128
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
+            }
+          ],
+          "scriptArguments": {
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+          },
+          "useFastNetwork": true
+        }
+      },
       "256_GB": {
         "HANA": {
           "vmSize": "Standard_M32ls",
@@ -166,7 +361,7 @@
               "lun": 0,
               "caching": "ReadOnly",
               "createOption": "Empty",
-              "diskSizeGB": 32
+              "diskSizeGB": 64
             },
             {
               "lun": 1,
