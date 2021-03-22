@@ -1100,7 +1100,7 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
               "publicIPAddress": "[if(equals(length(parameters('subnetId')), 0), json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName')) ,'\"}')), json('null'))]",
               "subnet": {
                 "id": "[variables('selectedSubnetId')]"
