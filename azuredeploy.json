@@ -106,7 +106,8 @@
       "defaultValue": "SAP Team Contact",
       "metadata": {
         "description": "Provide mandatory Owner Name"
-      },
+      }
+    },
     "CostCenter": {
       "type": "string",
       "defaultValue": "28007510",
