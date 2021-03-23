@@ -55,6 +55,7 @@
     },
     "adminUsername": {
       "type": "string",
+      "defaultValue": "mimergel",
       "metadata": {
         "description": "Username for the Virtual Machine."
       }
@@ -78,6 +79,7 @@
     },
     "subnetId": {
       "type": "string",
+      "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/sapdevsubnet",
       "allowedValues": [
         "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPSpokeGWC/subnets/sapdevsubnet",
         "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPSpokeGWC/subnets/sapquasubnet",
