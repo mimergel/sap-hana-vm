@@ -101,9 +101,15 @@
         "description": "Location for all resources."
       }
     },
+    "Owner": {
+      "type": "string",
+      "defaultValue": "SAP Team Contact",
+      "metadata": {
+        "description": "Provide mandatory Owner Name"
+      },
     "CostCenter": {
       "type": "string",
-      "defaultValue": "CS123456",
+      "defaultValue": "28007510",
       "metadata": {
         "description": "Provide mandatory Cost Center ID"
       }
@@ -1036,7 +1042,7 @@
       "name": "[concat(variables('nsgName'))]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
-      "tags": {"CostCenter": "[parameters('CostCenter')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
       "condition": "[equals(length(parameters('subnetId')), 0)]",
       "properties": {
         "securityRules": "[variables('selectedSecurityRules')]"
@@ -1047,7 +1053,7 @@
       "name": "[variables('vnetName')]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
-      "tags": {"CostCenter": "[parameters('CostCenter')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
@@ -1080,7 +1086,7 @@
         "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
       ],
       "location": "[parameters('location')]",
-      "tags": {"CostCenter": "[parameters('CostCenter')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
       }
@@ -1094,7 +1100,7 @@
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
       ],
       "location": "[parameters('location')]",
-      "tags": {"CostCenter": "[parameters('CostCenter')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
       "properties": {
         "ipConfigurations": [
           {
@@ -1120,7 +1126,7 @@
       "zones": "[variables('selectedZones')]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
-      "tags": {"CostCenter": "[parameters('CostCenter')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
@@ -1162,7 +1168,7 @@
       "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
-      "tags": {"CostCenter": "[parameters('CostCenter')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
       ],
