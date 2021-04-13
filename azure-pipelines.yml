@@ -28,5 +28,5 @@ steps:
     location: 'Germany West Central'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)"-osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
     deploymentMode: 'Complete'
