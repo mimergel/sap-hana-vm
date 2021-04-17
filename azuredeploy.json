@@ -8,6 +8,15 @@
         "description": "The VM Name in Azure and OS level that you want to deploy"
       }
     },
+    "hanaSystemId": {
+      "type": "string",
+      "maxLength": 3,
+      "minLength": 3,
+      "defaultValue": "HDB",
+      "metadata": {
+        "description": "HANA DB ID."
+      }
+    },
     "osType": {
       "type": "string",
       "allowedValues": [
@@ -226,10 +235,16 @@
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 512
+            },
+            {
+              "lun": 8,
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "diskSizeGB": 512
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7'' -names ''usrsap#data#log#shared'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared'' -sizes ''100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
