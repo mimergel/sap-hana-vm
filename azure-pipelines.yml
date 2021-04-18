@@ -9,8 +9,8 @@ parameters:
   type: string
   default: 256_GB
   values:
-  - 128_GB
-  - 160_GB
+  - 128_GB-Non-PRD
+  - 160_GB-Non-PRD
   - 192_GB
   - 256_GB
   - 512_GB
