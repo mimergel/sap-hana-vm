@@ -79,5 +79,5 @@ steps:
     location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
     deploymentMode: 'Complete'
