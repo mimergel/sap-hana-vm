@@ -38,6 +38,13 @@ parameters:
   type: string
   default: "HDB"
 
+- name: location
+  displayName: Target Region
+  type: string
+  default: "West Europe"
+  values:
+  - "Germany West Central"
+  - "West Europe"
 
 trigger:
   none
@@ -48,11 +55,6 @@ pool:
   name: Default
 
 steps:
-- checkout: none
-- ${{ if ne(length(parameters.sid), 3) }}:
-  - script: echo wrong sid length, must be 3 charachters 
-    displayName: sid lenght check
-
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Pipeline Artifact'
   inputs:
@@ -66,8 +68,8 @@ steps:
     subscriptionId: '$(subscription)'
     action: 'Create Or Update Resource Group'
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
-    location: 'Germany West Central'
+    location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -hanaSystemId "$(sid)" -hanaSystemSize ${{ parameters.size }} -osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
     deploymentMode: 'Complete'
