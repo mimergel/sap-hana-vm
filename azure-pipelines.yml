@@ -22,6 +22,17 @@ parameters:
   - 5.700_GB
   - 11.400_GB
 
+- name: os
+  displayName: Operating System
+  type: string
+  default: "SLES 12 SP4"
+  values:
+  - "RHEL 7"
+  - "RHEL 8"
+  - "SLES 12 SP4"
+  - "SLES 12 SP5"
+  - "SLES 15 SP2"
+
 trigger:
   none
 
