@@ -48,6 +48,11 @@ pool:
   name: Default
 
 steps:
+- checkout: none
+- ${{ if eq(length(parameters.sid), 3) }}:
+  - script: echo wrong sid length, must be 3 charachters 
+    displayName: sid lenght check
+
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Pipeline Artifact'
   inputs:
