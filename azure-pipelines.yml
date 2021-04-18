@@ -33,6 +33,15 @@ parameters:
   - "SLES 12 SP5"
   - "SLES 15 SP2"
 
+- name: sid
+  displayName: HANA System ID
+  type: string
+  default: "HDB"
+  values:
+  - "DEV"
+  - "QUA"
+  - "PRD"
+
 trigger:
   none
 
