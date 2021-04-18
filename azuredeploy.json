@@ -1214,5 +1214,15 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "hostname": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))).privateIPAddress]"
+    },
+    "HANADBID": {
+      "type": "string",
+      "value": "[parameters('hanaSystemId')]"
+    }
+  }
 }
