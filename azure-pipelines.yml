@@ -49,7 +49,7 @@ pool:
 
 steps:
 - checkout: none
-- ${{ if eq(length(parameters.sid), 3) }}:
+- ${{ if ne(length(parameters.sid), 3) }}:
   - script: echo wrong sid length, must be 3 charachters 
     displayName: sid lenght check
 
