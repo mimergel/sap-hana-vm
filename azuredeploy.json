@@ -1222,7 +1222,7 @@
     },
     "HANAVMNAME": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Network/virtualMachines', variables('vmName'))).osProfile.computerName]"
+      "value": "[variables('vmName')]"
     },
     "HANADBID": {
       "type": "string",
