@@ -1216,7 +1216,7 @@
     }
   ],
   "outputs": {
-    "hostname": {
+    "HANAVMIP": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))).privateIPAddress]"
     },
