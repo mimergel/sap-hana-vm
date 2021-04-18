@@ -3,6 +3,24 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+- name: size
+  displayName: HANA VM Size
+  type: string
+  default: 256_GB
+  values:
+  - 128_GB
+  - 160_GB
+  - 192_GB
+  - 256_GB
+  - 512_GB
+  - 1.000_GB
+  - 1.792_GB
+  - 2.000_GB
+  - 2.850_GB
+  - 3.892_GB
+  - 5.700_GB
+  - 11.400_GB
+
 trigger:
   none
 
