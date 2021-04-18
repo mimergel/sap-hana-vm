@@ -1220,6 +1220,10 @@
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))).privateIPAddress]"
     },
+    "HANAVMNAME": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/virtualMachines', variables('vmName'))).osProfile.computerName]"
+    },
     "HANADBID": {
       "type": "string",
       "value": "[parameters('hanaSystemId')]"
