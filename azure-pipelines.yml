@@ -3,6 +3,57 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+parameters:
+- name: size
+  displayName: HANA VM Size
+  type: string
+  default: 256_GB
+  values:
+  - 128_GB-Non-PRD
+  - 160_GB-Non-PRD
+  - 192_GB
+  - 256_GB
+  - 512_GB
+  - 1.000_GB
+  - 1.792_GB
+  - 2.000_GB
+  - 2.850_GB
+  - 3.892_GB
+  - 5.700_GB
+  - 11.400_GB
+
+- name: os
+  displayName: Operating System
+  type: string
+  default: "SLES 12 SP4"
+  values:
+  - "RHEL 7"
+  - "RHEL 8"
+  - "SLES 12 SP4"
+  - "SLES 12 SP5"
+  - "SLES 15 SP2"
+
+- name: sid
+  displayName: HANA System ID
+  type: string
+  default: "HDB"
+
+- name: location
+  displayName: Target Region
+  type: string
+  default: "West Europe"
+  values:
+  - "West Europe"
+  - "Germany West Central"
+
+- name: subnet
+  displayName: Target Subnet
+  type: string
+  default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  values:
+  - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  - "SAPSpokeGWC/subnets/sapdevsubnet"
+
 trigger:
   none
 
@@ -25,8 +76,8 @@ steps:
     subscriptionId: '$(subscription)'
     action: 'Create Or Update Resource Group'
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
-    location: 'Germany West Central'
+    location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -osType "$(os)" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnet)"'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "$(vmname)" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
     deploymentMode: 'Complete'
