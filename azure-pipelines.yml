@@ -43,8 +43,16 @@ parameters:
   type: string
   default: "West Europe"
   values:
-  - "Germany West Central"
   - "West Europe"
+  - "Germany West Central"
+
+- name: subnet
+  displayName: Target Subnet
+  type: string
+  default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  values:
+  - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  - "SAPSpokeGWC/subnets/sapdevsubnet"
 
 trigger:
   none
