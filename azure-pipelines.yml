@@ -37,7 +37,7 @@ parameters:
   displayName: HANA System ID
   type: string
   default: "HDB"
-  values: []
+
 
 trigger:
   none
