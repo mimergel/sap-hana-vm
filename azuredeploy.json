@@ -1216,11 +1216,7 @@
     }
   ],
   "outputs": {
-    "HANAVMIP": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))).ipConfigurations.privateIPAddress]"
-    },
-    "HANAVMNAME": {
+     "HANAVMNAME": {
       "type": "string",
       "value": "[variables('vmName')]"
     },
