@@ -94,4 +94,4 @@ steps:
     playbookPathOnAgentMachine: 'single_node_playbook.yml'
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: '"${{ parameters.vmname }}".jameslast.com'
-    args: -e sap_sid="${{ parameters.sid }}"
+    args: -v -e sap_sid="${{ parameters.sid }}"
