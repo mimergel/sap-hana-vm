@@ -87,7 +87,7 @@ steps:
     overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
     deploymentMode: 'Complete'
 
-- task: ms-vscs-rm.vss-services-ansible.ansible-task.Ansible@0
+- task: Ansible@0
   displayName: 'Run Ansible Playbook for HANA Installation'
   inputs:
     ansibleInterface: 'agentMachine'
