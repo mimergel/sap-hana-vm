@@ -2,6 +2,6 @@
 - hosts: hana
   become: true
   vars_files:
-    - variables.yml
+    - single-node-variables.yml
   roles:
     - saphana-install

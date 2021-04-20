@@ -1,0 +1,15 @@
+---
+# replace with download URL for SAPCAR
+url_sapcar: https://terraform2021.blob.core.windows.net/sapbits/archives/SAPCAR_1010-70006178.EXE
+
+# replace with download URL for HDB server
+url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_054_0-80002031.SAR
+
+sap_sid: 
+sap_instancenum: 
+sap_hostname: 
+pwd_os_sapadm: 
+pwd_os_sidadm: 
+pwd_db_system: 
+use_hana2: YES
+hana1_db_mode: 
