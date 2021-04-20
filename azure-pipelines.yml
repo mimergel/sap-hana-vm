@@ -86,3 +86,11 @@ steps:
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
     overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
     deploymentMode: 'Complete'
+
+- task: ms-vscs-rm.vss-services-ansible.ansible-task.Ansible@0
+  displayName: 'Run Ansible Playbook for HANA installation'
+  inputs:
+    playbookPathOnAgentMachine: 'single_node_playbook.yml'
+    inventoriesAgentMachine: inlineContent
+    inventoryInlineContentAgentMachine: "${{ parameters.vmname }}.jameslast.com"
+    args: "${{ parameters.sid }}"
