@@ -88,9 +88,9 @@ steps:
     deploymentMode: 'Complete'
 
 - task: ms-vscs-rm.vss-services-ansible.ansible-task.Ansible@0
-  displayName: 'Run playbook'
+  displayName: 'Run Ansible Playbook for HANA installation'
   inputs:
-    playbookPathOnAgentMachine: '$HOME/ansible-single-node/single_node_playbook.yml'
+    playbookPathOnAgentMachine: 'single_node_playbook.yml'
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: "${{ parameters.vmname }}.jameslast.com"
     args: "${{ parameters.sid }}"
