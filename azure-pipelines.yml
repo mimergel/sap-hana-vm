@@ -88,11 +88,10 @@ steps:
     deploymentMode: 'Complete'
 
 - task: Ansible@0
-  displayName: 'Run Ansible Playbook for HANA Installation'
+  displayName: 'Ansible Playbook for HANA Installation'
   inputs:
     ansibleInterface: 'agentMachine'
     playbookPathOnAgentMachine: 'single_node_playbook.yml'
-    inventoriesAgentMachine: 'hostList'
-    inventoryInlineContentAgentMachine: "${{ parameters.vmname }}.jameslast.com"
-    args: '-extra-vars "sap_sid=\"${{ parameters.sid }}""'
-
+    inventoriesAgentMachine: inlineContent
+    inventoryInlineContentAgentMachine: '"${{ parameters.vmname }}".jameslast.com'
+    args: -e sap_sid="${{ parameters.sid }}"
