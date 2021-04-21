@@ -88,11 +88,11 @@ steps:
     overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
     deploymentMode: 'Complete'
 
-- script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R "${{ parameters.vmname }}".jameslast.com
+- script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R "${{ parameters.vmname }}".'$(privatednszone)'
   displayName: Remove known_hosts entries from former runs
   failOnStderr: false
 
-- script: nslookup "${{ parameters.vmname }}".jameslast.com ; while [ $? -ne 0 ]; do nslookup "${{ parameters.vmname }}".jameslast.com ; sleep 3 ; done
+- script: nslookup "${{ parameters.vmname }}".'$(privatednszone)' ; while [ $? -ne 0 ]; do nslookup "${{ parameters.vmname }}".'$(privatednszone)' ; sleep 3 ; done
   displayName: Wait until DNS resolves "${{ parameters.vmname }}"
   failOnStderr: false
 
@@ -104,6 +104,6 @@ steps:
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
-     "${{ parameters.vmname }}".jameslast.com
+     "${{ parameters.vmname }}".'$(privatednszone)'
     args: -v -e sap_sid="${{ parameters.sid }}"
     failOnStdErr: false
