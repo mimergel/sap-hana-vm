@@ -90,6 +90,7 @@ steps:
 
 - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R "${{ parameters.vmname }}".jameslast.com
   displayName: Remove known_hosts entries from former runs
+  failOnStderr: false
 
 - task: Ansible@0
   displayName: 'Ansible Playbook for HANA Installation'
