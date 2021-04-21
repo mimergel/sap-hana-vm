@@ -92,6 +92,10 @@ steps:
   displayName: Remove known_hosts entries from former runs
   failOnStderr: false
 
+- script: nslookup "${{ parameters.vmname }}".jameslast.com ; while [ $? -ne 0 ]; do nslookup "${{ parameters.vmname }}".jameslast.com ; sleep 3 ; done
+  displayName: Wait until DNS resolves "${{ parameters.vmname }}"
+  failOnStderr: false
+
 - task: Ansible@0
   displayName: 'Ansible Playbook for HANA Installation'
   inputs:
