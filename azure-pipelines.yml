@@ -75,6 +75,7 @@ steps:
     artifact: hana
 
 - task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'SAP HANA VM Deployment via ARM'
   inputs:
     deploymentScope: 'Resource Group'
     azureResourceManagerConnection: '$(subscriptionname)'
@@ -97,3 +98,4 @@ steps:
      [hana]
      "${{ parameters.vmname }}".jameslast.com
     args: -v -e sap_sid="${{ parameters.sid }}"
+    failOnStdErr: false
