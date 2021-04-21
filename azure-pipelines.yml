@@ -64,7 +64,7 @@ trigger:
 
 pool:
   # Using my own deployment agents instead of devops agents 
-  # vmImage: 'ubuntu-latest'
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
   name: Default
 
 steps:
