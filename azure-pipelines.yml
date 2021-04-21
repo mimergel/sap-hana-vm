@@ -75,6 +75,7 @@ steps:
     artifact: hana
 
 - task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'SAP HANA VM Deployment via ARM'
   inputs:
     deploymentScope: 'Resource Group'
     azureResourceManagerConnection: '$(subscriptionname)'
@@ -93,5 +94,8 @@ steps:
     ansibleInterface: 'agentMachine'
     playbookPathOnAgentMachine: 'single_node_playbook.yml'
     inventoriesAgentMachine: inlineContent
-    inventoryInlineContentAgentMachine: '"${{ parameters.vmname }}".jameslast.com'
-    args: -e sap_sid="${{ parameters.sid }}"
+    inventoryInlineContentAgentMachine: |
+     [hana]
+     "${{ parameters.vmname }}".jameslast.com
+    args: -v -e sap_sid="${{ parameters.sid }}"
+    failOnStdErr: false
