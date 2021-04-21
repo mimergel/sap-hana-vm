@@ -93,5 +93,7 @@ steps:
     ansibleInterface: 'agentMachine'
     playbookPathOnAgentMachine: 'single_node_playbook.yml'
     inventoriesAgentMachine: inlineContent
-    inventoryInlineContentAgentMachine: '"${{ parameters.vmname }}".jameslast.com'
+    inventoryInlineContentAgentMachine: |
+     [hana]
+     "${{ parameters.vmname }}".jameslast.com
     args: -v -e sap_sid="${{ parameters.sid }}"
