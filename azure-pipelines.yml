@@ -60,7 +60,7 @@ parameters:
   - "SAPSpokeGWC/subnets/sapdevsubnet"
 
 - name: hanavmdeployment
-  displayName: HANA DB Installation
+  displayName: HANA VM Deployment
   type: boolean
   default: true
 
