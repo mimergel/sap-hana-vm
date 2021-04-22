@@ -8,6 +8,7 @@
 #  execute the HANA Backup
 #  OS settings from OSS notes
 #  selective disk backup (exclude HANA DATA and LOG from OS Backups)
+#  Testing (quality checks and HCMT)
 #  Documentation
 
 parameters:
