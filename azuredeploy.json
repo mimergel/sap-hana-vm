@@ -57,7 +57,7 @@
         "5.700_GB",
         "11.400_GB"
       ],
-      "defaultValue": "256_GB",
+      "defaultValue": "192_GB",
       "metadata": {
         "description": "The size of the HANA System you want to deploy."
       }
@@ -129,6 +129,13 @@
       "defaultValue": "28007510",
       "metadata": {
         "description": "Provide mandatory Cost Center ID"
+      }
+    },
+    "Backup": {
+      "type": "string",
+      "defaultValue": "HANA",
+      "metadata": {
+        "description": "DeployIfNotExist Policy: Configure backup on virtual machines with a given tag to an existing recovery services vault in the same location, expected Tag is Backup with value HANA"
       }
     }
   },
@@ -1215,7 +1222,7 @@
       "zones": "[variables('selectedZones')]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
-      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "Backup": "HANA"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "Backup": "[parameters('Backup')]"},
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"

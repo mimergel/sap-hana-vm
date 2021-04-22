@@ -1,0 +1,7 @@
+---
+- hosts: hana
+  become: true
+  vars_files:
+    - single-node-variables.yml
+  roles:
+    - hana-backup-registration

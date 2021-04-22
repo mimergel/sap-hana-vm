@@ -1,0 +1,24 @@
+---
+- name: download msawb-plugin-config-com-sap-hana.sh
+  get_url:
+    url: "{{ url_sapcar }}"
+    dest: /tmp/msawb-plugin-config-com-sap-hana.sh
+    mode: 0750
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+- name: Setup SYSTEM user for Backup integration
+  shell: hdbuserstore Set SYSTEM "{{ sap_hostname }}":32013@SYSTEMDB SYSTEM "{{ PW }}"
+  args:
+    user: {{ sap_sid }}adm
+  
+- name: Run integration script
+  shell: /tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM
+  
+- name: Delete SYSTEM user after Backup integration
+  shell: hdbuserstore Delete SYSTEM 
+  args:
+    user: {{ sap_sid }}adm
