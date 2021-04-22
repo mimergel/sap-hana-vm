@@ -11,14 +11,11 @@
   delay: "{{ url_retries_delay }}"
 
 - name: Setup SYSTEM user for Backup integration
-  shell: hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM KblkE201Dp
-  args:
-    user: "{{ sap_sid }}adm"
-  
+  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM KblkE201Dp'
+
 - name: Run integration script
-  shell: /tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM
-  
+  command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+
 - name: Delete SYSTEM user after Backup integration
-  shell: hdbuserstore Delete SYSTEM 
-  args:
-    user: "{{ sap_sid }}adm"
+  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Delete SYSTEM'
+
