@@ -133,7 +133,7 @@
     },
     "Backup": {
       "type": "string",
-      "defaultValue": "HANA",
+      "defaultValue": "No",
       "metadata": {
         "description": "DeployIfNotExist Policy: Configure backup on virtual machines with a given tag to an existing recovery services vault in the same location, expected Tag is Backup with value HANA"
       }
