@@ -114,7 +114,7 @@ steps:
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
-     "${{ parameters.vmname }}".'$(privatednszone)'
+     ${{ parameters.vmname }}.$(privatednszone)
     args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)) 
