@@ -7,7 +7,7 @@ parameters:
 - name: size
   displayName: HANA VM Size
   type: string
-  default: 192_GB
+  default: 256_GB
   values:
   - 128_GB-Non-PRD
   - 160_GB-Non-PRD
@@ -98,11 +98,11 @@ steps:
     overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
     deploymentMode: 'Complete'
 
-- script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R "${{ parameters.vmname }}".'$(privatednszone)'
+- script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
   displayName: Remove known_hosts entries from former runs
   failOnStderr: false
 
-- script: nslookup "${{ parameters.vmname }}".'$(privatednszone)' ; while [ $? -ne 0 ]; do nslookup "${{ parameters.vmname }}".'$(privatednszone)' ; sleep 3 ; done
+- script: nslookup ${{ parameters.vmname }}.$(privatednszone) ; while [ $? -ne 0 ]; do nslookup ${{ parameters.vmname }}.$(privatednszone) ; sleep 3 ; done
   displayName: Wait until DNS resolves "${{ parameters.vmname }}"
   failOnStderr: false
 
@@ -117,7 +117,7 @@ steps:
      "${{ parameters.vmname }}".'$(privatednszone)'
     args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
-  condition: eq(${{ parameters.hanadbinstallation }}, true)
+  condition: eq(${{ parameters.hanadbinstallation }}, true)) 
 
 - task: Ansible@0
   displayName: 'Ansible Playbook for HANA Backup'
@@ -127,7 +127,7 @@ steps:
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
-     "${{ parameters.vmname }}".'$(privatednszone)'
+     ${{ parameters.vmname }}.$(privatednszone)
     args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
-  condition: eq(${{ parameters.hanabackupsetup }}, true)
+  condition: eq(${{ parameters.hanadbinstallation }}, true)), eq(${{ parameters.hanabackupsetup }}, true)) 
