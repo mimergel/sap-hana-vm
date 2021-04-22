@@ -66,8 +66,11 @@ parameters:
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
-  type: boolean
-  default: true
+  type: string
+  default: HANA
+  values:
+  - "HANA"
+  - "None"
 
 trigger:
   none
@@ -95,7 +98,7 @@ steps:
     location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}"'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
     deploymentMode: 'Complete'
 
 - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
@@ -130,4 +133,4 @@ steps:
      ${{ parameters.vmname }}.$(privatednszone)
     args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
-  condition: eq(${{ parameters.hanadbinstallation }}, true)), eq(${{ parameters.hanabackupsetup }}, true)) 
+  condition: eq(${{ parameters.hanadbinstallation }}, true)), eq(${{ parameters.hanabackupsetup }}, "HANA")) 
