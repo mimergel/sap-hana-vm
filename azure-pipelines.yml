@@ -59,6 +59,16 @@ parameters:
   - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
 
+- name: hanadbinstallation
+  displayName: HANA DB Installation
+  type: boolean
+  default: true
+
+- name: hanabackupsetup
+  displayName: HANA Backup Setup
+  type: boolean
+  default: true
+
 trigger:
   none
 
@@ -67,8 +77,6 @@ pool:
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
   name: Default
 
-stages:
-- stage: Deploy
 steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Pipeline Artifact'
@@ -98,8 +106,6 @@ steps:
   displayName: Wait until DNS resolves "${{ parameters.vmname }}"
   failOnStderr: false
 
-- stage: Install
-steps:
 - task: Ansible@0
   displayName: 'Ansible Playbook for HANA Installation'
   inputs:
@@ -111,3 +117,4 @@ steps:
      "${{ parameters.vmname }}".'$(privatednszone)'
     args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
+  condition: $[eq(${{ parameters.hanadbinstallation }}, true)]  
