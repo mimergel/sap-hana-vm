@@ -66,11 +66,8 @@ parameters:
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
-  type: string
-  default: HANA
-  values:
-  - "HANA"
-  - "None"
+  type: boolean
+  default: true
 
 trigger:
   none
@@ -118,7 +115,7 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
+    args: -v -e sap_sid="${{ parameters.sid }}" -e sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)) 
 
@@ -131,6 +128,6 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
+    args: -v -e sap_sid="${{ parameters.sid }}" -e sap_hostname="${{ parameters.vmname }}"
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)), eq(${{ parameters.hanabackupsetup }}, "HANA")) 
