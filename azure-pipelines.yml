@@ -7,7 +7,7 @@ parameters:
 - name: size
   displayName: HANA VM Size
   type: string
-  default: 128_GB-Non-PRD
+  default: 192_GB
   values:
   - 128_GB-Non-PRD
   - 160_GB-Non-PRD
