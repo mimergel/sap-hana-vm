@@ -2,6 +2,13 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
+# 
+# Todo:
+#  use SSH key and passwords from KeyVault
+#  execute the HANA Backup
+#  OS settings from OSS notes
+#  selective disk backup (exclude HANA DATA and LOG from OS Backups)
+#  Documentation
 
 parameters:
 - name: size
@@ -71,11 +78,8 @@ parameters:
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
-  type: string
-  default: HANA
-  values:
-  - "HANA"
-  - "false"
+  type: boolean
+  default: true
 
 trigger:
   none
