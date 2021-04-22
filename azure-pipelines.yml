@@ -7,7 +7,7 @@ parameters:
 - name: size
   displayName: HANA VM Size
   type: string
-  default: 256_GB
+  default: 192_GB
   values:
   - 128_GB-Non-PRD
   - 160_GB-Non-PRD
@@ -59,6 +59,11 @@ parameters:
   - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
 
+- name: hanavmdeployment
+  displayName: HANA VM Deployment
+  type: boolean
+  default: true
+
 - name: hanadbinstallation
   displayName: HANA DB Installation
   type: boolean
@@ -100,6 +105,7 @@ steps:
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
     overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
     deploymentMode: 'Complete'
+  condition: eq(${{ parameters.hanavmdeployment }}, true)
 
 - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
   displayName: Remove known_hosts entries from former runs
@@ -118,9 +124,9 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
     failOnStdErr: false
-  condition: eq(${{ parameters.hanadbinstallation }}, true)) 
+  condition: eq(${{ parameters.hanadbinstallation }}, true)
 
 - task: Ansible@0
   displayName: 'Ansible Playbook for HANA Backup'
@@ -131,6 +137,6 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid="${{ parameters.sid }}" sap_hostname="${{ parameters.vmname }}"
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
     failOnStdErr: false
-  condition: eq(${{ parameters.hanadbinstallation }}, true)), eq(${{ parameters.hanabackupsetup }}, "HANA")) 
+  condition: eq(${{ parameters.hanabackupsetup }}, true)
