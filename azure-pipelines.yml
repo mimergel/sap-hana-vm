@@ -121,9 +121,9 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid="${{ parameters.sid }}" -e sap_hostname="${{ parameters.vmname }}"
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
     failOnStdErr: false
-  condition: eq(${{ parameters.hanadbinstallation }}, true)) 
+  condition: eq(${{ parameters.hanadbinstallation }}, true)
 
 - task: Ansible@0
   displayName: 'Ansible Playbook for HANA Backup'
@@ -134,6 +134,6 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid="${{ parameters.sid }}" -e sap_hostname="${{ parameters.vmname }}"
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
     failOnStdErr: false
-  condition: eq(${{ parameters.hanadbinstallation }}, true)), eq(${{ parameters.hanabackupsetup }}, "HANA")) 
+  condition: eq(${{ parameters.hanabackupsetup }}, true)
