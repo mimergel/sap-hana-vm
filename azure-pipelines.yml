@@ -4,12 +4,13 @@
 # https://aka.ms/yaml
 # 
 # Todo:
-#  use SSH key and passwords from KeyVault
-#  execute the HANA Backup
-#  OS settings from OSS notes
+#  documentation
 #  selective disk backup (exclude HANA DATA and LOG from OS Backups)
+#  use SSH key and passwords from KeyVault
+#  OS settings from OSS notes
+#  execute the HANA Backup
 #  Testing (quality checks and HCMT)
-#  Documentation
+
 
 parameters:
 - name: size
