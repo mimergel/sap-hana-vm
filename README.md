@@ -74,8 +74,6 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 	</tr>
 </table>
 
-
-
 # Prerequesites
 1. Azure Subscription 
 2. Azure DevOps and Github account
@@ -99,8 +97,8 @@ The challenge here is that the deployed HANA VM has no access to Github to downl
 Furthermore you might want to keep the provided details like subscription and subnetId from the azuredeployparamfile.json file private. 
 For me the following solution works fine:
 
-1. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
+1. Create a storage account with a private endpoint on relevant subnets in your Azure subscription
 2. Create a container with read access in this storage account 
-3. Upload the diskConfig.sh file and the HANA Backup Integration Script into the container
-4. Get the URLs and update the link in azuredeploy.json of your forked repository
+3. Upload the diskConfig.sh file and the HANA Backup Integration Script msawb-plugin-config-com-sap-hana.sh into the container
+4. Get the URLs diskConfig.sh and update the link in azuredeploy.json of your forked repository
 5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
