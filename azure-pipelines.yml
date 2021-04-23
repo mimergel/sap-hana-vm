@@ -87,6 +87,16 @@ parameters:
   type: boolean
   default: True
 
+- name: qualitychecks
+  displayName: HANA quality checks
+  type: boolean
+  default: False
+
+- name: hcmt
+  displayName: HANA performance checks
+  type: boolean
+  default: False
+
 trigger:
   none
 
