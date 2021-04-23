@@ -108,7 +108,8 @@ pool:
   name: Default
 
 variables:
-  backup: $[ne("${{ parameters.hanabackupsetup }}", 'None')}
+  backup: $[ne(${{ parameters.hanabackupsetup }}, None)}
+#eq($[ne("Non-PRD", 'None')}, true) 
 
 steps:
 - task: PublishPipelineArtifact@1
