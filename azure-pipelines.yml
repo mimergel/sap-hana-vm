@@ -84,8 +84,21 @@ parameters:
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
+  type: string
+  default: "Non-PRD"
+  values:
+  - "Non-PRD"
+  - "PRD"
+
+- name: qualitychecks
+  displayName: HANA quality checks
   type: boolean
-  default: True
+  default: False
+
+- name: hcmt
+  displayName: HANA performance checks
+  type: boolean
+  default: False
 
 trigger:
   none
@@ -132,7 +145,7 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)
 
@@ -145,6 +158,6 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
   condition: eq(${{ parameters.hanabackupsetup }}, true)
