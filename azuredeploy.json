@@ -144,7 +144,7 @@
       "type": "string",
       "defaultValue": "True",
       "metadata": {
-        "description": "DeployIfNotExist Policy: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value True"
+        "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value True"
       }
     }
   },
