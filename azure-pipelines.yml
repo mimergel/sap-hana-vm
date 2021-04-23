@@ -108,7 +108,8 @@ pool:
   name: Default
 
 variables:
-  backup: ne(${{ parameters.hanabackupsetup }}, None)
+  backup: $[  eq(variables['parameter.hanabackupsetup'], 'None' ]
+  # $[ stageDependencies.A.A1.outputs['printvar.myStageOutputVar'] ]
 #eq($[ne("Non-PRD", 'None')}, true) 
 
 steps:
