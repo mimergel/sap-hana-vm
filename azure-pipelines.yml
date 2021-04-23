@@ -110,7 +110,7 @@ pool:
 variables:
   # backup: $[  eq( ${{ parameters.hanabackupsetup }}, 'None' ]
   #backup: $[ ${{ if contains(parameters.hanabackupsetup, 'PRD') }} ]
-  ${{ if eq( ${{ parameters.hanabackupsetup }}, None ) }}: 
+  ${{ if eq( $[parameters.hanabackupsetup], None ) }}: 
     backup: true
 
 steps:
