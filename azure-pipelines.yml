@@ -140,7 +140,7 @@ steps:
   displayName: 'Ansible Playbook for HANA Backup'
   inputs:
     ansibleInterface: 'agentMachine'
-    playbookPathOnAgentMachine: 'hana_backup_playbook.yml'
+    playbookPathOnAgentMachine: 'backup_playbook.yml'
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
