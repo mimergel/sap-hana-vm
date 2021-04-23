@@ -75,6 +75,17 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 </table>
 
 
+
+# Prerequesites
+1. Azure Subscription 
+2. Azure DevOps and Github account
+3. VNET + Subnet
+4. Linux VM as deployment server within the same or peered VNET 
+5. KeyVault
+6. Storage account with a blob container for the SAP binaries
+7. Private DNS Zone
+8. Azure 
+
 # Deployment via Azure DevOps
 Steps:
 1. Fork this repository 
