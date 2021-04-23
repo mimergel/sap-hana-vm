@@ -6,13 +6,13 @@ email_shine: "shinedemo@microsoft.com"
 install_cockpit: false
 install_shine: false
 install_xsa: false
-pw_db_system: ""
-pw_os_sapadm: ""
-pw_os_sidadm: ""
-pwd_db_shine: ""
-pwd_db_tenant: ""
-pwd_db_xsaadmin: ""
-sap_instancenum: 20
+pw_db_system: 
+pw_os_sapadm: 
+pw_os_sidadm: 
+pwd_db_shine: 
+pwd_db_tenant: 
+pwd_db_xsaadmin: 
+sap_instancenum: 
 sshkey_path_private:
 url_cockpit:
 url_di_core:
@@ -26,7 +26,7 @@ url_xsa_runtime:
 url_xsa_hrtt:
 url_xsa_webide:
 url_xsa_mta:
-package_retries_cnt: 10
-package_retries_delay: 10
+package_retries_cnt: 3
+package_retries_delay: 3
 useHana2: true
-vm_user: mimergel
+vm_user: 
