@@ -85,7 +85,7 @@ parameters:
 - name: hanabackupsetup
   displayName: HANA Backup Setup
   type: boolean
-  default: true
+  default: True
 
 trigger:
   none
@@ -110,7 +110,7 @@ steps:
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
     location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
-    csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
+    csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/azuredeploy.json'
     overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
     deploymentMode: 'Complete'
   condition: eq(${{ parameters.hanavmdeployment }}, true)
@@ -140,7 +140,7 @@ steps:
   displayName: 'Ansible Playbook for HANA Backup'
   inputs:
     ansibleInterface: 'agentMachine'
-    playbookPathOnAgentMachine: 'hana_backup_playbook.yml'
+    playbookPathOnAgentMachine: 'backup_playbook.yml'
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
