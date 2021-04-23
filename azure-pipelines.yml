@@ -142,7 +142,7 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}$(Build.BuildId) -e -instancenumber="${{ parameters.nr }}"
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}$(Build.BuildId) -e -instancenumber=${{ parameters.nr }}
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)
 
@@ -155,6 +155,6 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}$(Build.BuildId) -e -instancenumber="${{ parameters.nr }}"
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}$(Build.BuildId) -e -instancenumber=${{ parameters.nr }}
     failOnStdErr: false
   condition: eq(${{ parameters.hanabackupsetup }}, true)
