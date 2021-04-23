@@ -142,7 +142,7 @@
     },
     "Backup": {
       "type": "string",
-      "defaultValue": "No",
+      "defaultValue": "True",
       "metadata": {
         "description": "DeployIfNotExist Policy: Configure backup on virtual machines with a given tag to an existing recovery services vault in the same location, expected Tag is Backup with value HANA"
       }
@@ -1231,7 +1231,7 @@
       "zones": "[variables('selectedZones')]",
       "apiVersion": "2018-10-01",
       "location": "[parameters('location')]",
-      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "Backup": "[parameters('Backup')]"},
+      "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('Backup')]"},
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
