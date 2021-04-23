@@ -4,4 +4,4 @@
   vars_files:
     - single-node-variables.yml
   roles:
-    - hana-backup-registration
+    - backup-registration

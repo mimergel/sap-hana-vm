@@ -10,70 +10,79 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 	<tr>
 		<th>Size</th>
 		<th>HANA VM</th>
-		<th>HANA VM Storage (EXE + DATA + LOG + SHARE)</th>
+		<th>HANA VM Storage (EXE + DATA + LOG + SHARE + BACKUP)</th>
 	</tr>
 	<tr>
 		<th>128_GB</th>
 		<td>E16ds_v4</td>
-		<td>1xP6(64GB) + 3xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 3xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>160_GB</th>
 		<td>E20ds_v4</td>
-		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>192_GB</th>
 		<td>M32ts</td>
-		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>256_GB</th>
 		<td>M32ls</td>
-		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>512_GB</th>
 		<td>M64ls</td>
-		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>1.000_GB</th>
 		<td>M64s</td>
-		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>1.792_GB</th>
 		<td>M64ms</td>
-		<td>1xP6(64GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP6(64GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>2.000_GB</th>
 		<td>M128s</td>
-		<td>1xP10(128GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>2.850_GB</th>
 		<td>M208sv2</td>
-		<td>1xP10(128GB) + 4xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>3.892_GB</th>
 		<td>M128ms</td>
-		<td>1xP10(128GB) + 5xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 5xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>5.700_GB</th>
 		<td>M416sv2</td>
-		<td>1xP10(128GB) + 4xP40(2048GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP40(2048GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>11.400_GB</th>
 		<td>M416msv2</td>
-		<td>1xP10(128GB) + 4xP50(4096GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP50(4096GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 </table>
 
+# Prerequesites
+1. Azure Subscription 
+2. Azure DevOps and Github account
+3. VNET + Subnet
+4. Linux VM as deployment agent within the same or peered VNET 
+   See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
+5. KeyVault
+6. Storage account with a blob container for the SAP binaries
+7. Private DNS Zone
 
 # Deployment via Azure DevOps
 Steps:
@@ -88,8 +97,8 @@ The challenge here is that the deployed HANA VM has no access to Github to downl
 Furthermore you might want to keep the provided details like subscription and subnetId from the azuredeployparamfile.json file private. 
 For me the following solution works fine:
 
-1. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
+1. Create a storage account with a private endpoint on relevant subnets in your Azure subscription
 2. Create a container with read access in this storage account 
-3. Upload the diskConfig.sh file into the container
-4. Get the URL and update the link to diskConfig.sh in azuredeploy.json of your forked repository
+3. Upload the diskConfig.sh file and the HANA Backup Integration Script msawb-plugin-config-com-sap-hana.sh into the container
+4. Get the URLs diskConfig.sh and update the link in azuredeploy.json of your forked repository
 5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change

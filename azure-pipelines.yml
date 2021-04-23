@@ -4,12 +4,13 @@
 # https://aka.ms/yaml
 # 
 # Todo:
+#  documentation
+#  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
-#  execute the HANA Backup
 #  OS settings from OSS notes
-#  selective disk backup (exclude HANA DATA and LOG from OS Backups)
+#  execute the HANA Backup
 #  Testing (quality checks and HCMT)
-#  Documentation
+
 
 parameters:
 - name: size
@@ -46,6 +47,11 @@ parameters:
   type: string
   default: "HDB"
 
+- name: nr
+  displayName: HANA Instance Number (00-99)
+  type: string
+  default: "20"
+
 - name: vmname
   displayName: HANA Server Name
   type: string
@@ -79,16 +85,32 @@ parameters:
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
+  type: string
+  default: "Non-PRD"
+  values:
+  - "Non-PRD"
+  - "PRD"
+  - "None"
+
+- name: qualitychecks
+  displayName: HANA quality checks
   type: boolean
-  default: True
+  default: False
+
+- name: hcmt
+  displayName: HANA performance checks
+  type: boolean
+  default: False
 
 trigger:
   none
 
 pool:
-  # Using my own deployment agents instead of devops agents 
-  # https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
   name: Default
+
+variables:
+  backuptype: ${{ parameters.hanabackupsetup }}
+  backuptodo: $[ne(variables['backuptype'], 'None')]
 
 steps:
 - task: PublishPipelineArtifact@1
@@ -107,8 +129,8 @@ steps:
     resourceGroupName: 'HANA-Test-$(Build.BuildId)'
     location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
-    csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
+    csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/azuredeploy.json'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
     deploymentMode: 'Complete'
   condition: eq(${{ parameters.hanavmdeployment }}, true)
 
@@ -129,7 +151,7 @@ steps:
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)
 
@@ -137,11 +159,11 @@ steps:
   displayName: 'Ansible Playbook for HANA Backup'
   inputs:
     ansibleInterface: 'agentMachine'
-    playbookPathOnAgentMachine: 'hana_backup_playbook.yml'
+    playbookPathOnAgentMachine: 'backup_playbook.yml'
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
      ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
-  condition: eq(${{ parameters.hanabackupsetup }}, true)
+  condition: eq(variables.backuptodo, true)
