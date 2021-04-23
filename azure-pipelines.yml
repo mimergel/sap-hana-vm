@@ -109,9 +109,7 @@ pool:
 
 variables:
   # backup: $[  eq( ${{ parameters.hanabackupsetup }}, 'None' ]
-  backup: ${{ if contains(parameters.hanabackupsetup, 'PRD') }}
-  # $[ stageDependencies.A.A1.outputs['printvar.myStageOutputVar'] ]
-#eq($[ne("Non-PRD", 'None')}, true) 
+  backup: $[ ${{ if contains(parameters.hanabackupsetup, 'PRD') }} ]
 
 steps:
 - task: PublishPipelineArtifact@1
