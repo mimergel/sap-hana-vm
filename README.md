@@ -80,11 +80,11 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 1. Azure Subscription 
 2. Azure DevOps and Github account
 3. VNET + Subnet
-4. Linux VM as deployment server within the same or peered VNET 
+4. Linux VM as deployment agent within the same or peered VNET 
+   See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
 5. KeyVault
 6. Storage account with a blob container for the SAP binaries
 7. Private DNS Zone
-8. Azure 
 
 # Deployment via Azure DevOps
 Steps:
@@ -101,6 +101,6 @@ For me the following solution works fine:
 
 1. Create a storage account with a private endpoint on selected networks (SAP subnets) in your Azure subscription
 2. Create a container with read access in this storage account 
-3. Upload the diskConfig.sh file into the container
-4. Get the URL and update the link to diskConfig.sh in azuredeploy.json of your forked repository
+3. Upload the diskConfig.sh file and the HANA Backup Integration Script into the container
+4. Get the URLs and update the link in azuredeploy.json of your forked repository
 5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
