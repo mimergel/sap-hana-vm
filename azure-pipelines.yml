@@ -46,6 +46,11 @@ parameters:
   type: string
   default: "HDB"
 
+- name: nr
+  displayName: HANA Instance Number
+  type: number
+  default: 20
+
 - name: vmname
   displayName: HANA Server Name
   type: string
