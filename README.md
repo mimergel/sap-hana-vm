@@ -10,67 +10,67 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 	<tr>
 		<th>Size</th>
 		<th>HANA VM</th>
-		<th>HANA VM Storage (EXE + DATA + LOG + SHARE)</th>
+		<th>HANA VM Storage (EXE + DATA + LOG + SHARE + BACKUP)</th>
 	</tr>
 	<tr>
 		<th>128_GB</th>
 		<td>E16ds_v4</td>
-		<td>1xP6(64GB) + 3xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 3xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>160_GB</th>
 		<td>E20ds_v4</td>
-		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>192_GB</th>
 		<td>M32ts</td>
-		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>256_GB</th>
 		<td>M32ls</td>
-		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>512_GB</th>
 		<td>M64ls</td>
-		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB)</td>
+		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
 		<th>1.000_GB</th>
 		<td>M64s</td>
-		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>1.792_GB</th>
 		<td>M64ms</td>
-		<td>1xP6(64GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP6(64GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>2.000_GB</th>
 		<td>M128s</td>
-		<td>1xP10(128GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>2.850_GB</th>
 		<td>M208sv2</td>
-		<td>1xP10(128GB) + 4xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>3.892_GB</th>
 		<td>M128ms</td>
-		<td>1xP10(128GB) + 5xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 5xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>5.700_GB</th>
 		<td>M416sv2</td>
-		<td>1xP10(128GB) + 4xP40(2048GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP40(2048GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 	<tr>
 		<th>11.400_GB</th>
 		<td>M416msv2</td>
-		<td>1xP10(128GB) + 4xP50(4096GB) + 3xP15(256GB) + 1xP30(1TB)</td>
+		<td>1xP10(128GB) + 4xP50(4096GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1024GB)</td>
 	</tr>
 </table>
 
