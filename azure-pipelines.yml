@@ -85,7 +85,7 @@ parameters:
 - name: hanabackupsetup
   displayName: HANA Backup Setup
   type: boolean
-  default: true
+  default: True
 
 trigger:
   none
