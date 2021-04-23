@@ -121,16 +121,16 @@ steps:
     location: ${{ parameters.location }}
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/azuredeploy.json'
-    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
+    overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}$(Build.BuildId)" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
     deploymentMode: 'Complete'
   condition: eq(${{ parameters.hanavmdeployment }}, true)
 
-- script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
+- script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone)
   displayName: Remove known_hosts entries from former runs
   failOnStderr: false
 
-- script: nslookup ${{ parameters.vmname }}.$(privatednszone) ; while [ $? -ne 0 ]; do nslookup ${{ parameters.vmname }}.$(privatednszone) ; sleep 3 ; done
-  displayName: Wait until DNS resolves "${{ parameters.vmname }}"
+- script: nslookup ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone) ; while [ $? -ne 0 ]; do nslookup ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone) ; sleep 3 ; done
+  displayName: Wait until DNS resolves "${{ parameters.vmname }}$(Build.BuildId)"
   failOnStderr: false
 
 - task: Ansible@0
@@ -141,8 +141,8 @@ steps:
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
-     ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e -instancenumber="${{ parameters.nr }}"
+     ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone)
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}$(Build.BuildId) -e -instancenumber="${{ parameters.nr }}"
     failOnStdErr: false
   condition: eq(${{ parameters.hanadbinstallation }}, true)
 
@@ -154,7 +154,7 @@ steps:
     inventoriesAgentMachine: inlineContent
     inventoryInlineContentAgentMachine: |
      [hana]
-     ${{ parameters.vmname }}.$(privatednszone)
-    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e -instancenumber="${{ parameters.nr }}"
+     ${{ parameters.vmname }}$(Build.BuildId).$(privatednszone)
+    args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }}$(Build.BuildId) -e -instancenumber="${{ parameters.nr }}"
     failOnStdErr: false
   condition: eq(${{ parameters.hanabackupsetup }}, true)
