@@ -84,8 +84,11 @@ parameters:
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
-  type: boolean
-  default: True
+  type: string
+  default: "Non-PRD"
+  values:
+  - "Non-PRD"
+  - "PRD"
 
 - name: qualitychecks
   displayName: HANA quality checks
