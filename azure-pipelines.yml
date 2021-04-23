@@ -108,7 +108,7 @@ pool:
   name: Default
 
 variables:
-  backup: $[ne(${{ parameters.hanabackupsetup }}, 'None')]
+  backup: ne(${{ parameters.hanabackupsetup }}, None)
 
 steps:
 - task: PublishPipelineArtifact@1
@@ -164,4 +164,4 @@ steps:
      ${{ parameters.vmname }}.$(privatednszone)
     args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
-  condition: eq(variables.backup, true)
+  condition: eq(${{ variables.backup }}, true)
