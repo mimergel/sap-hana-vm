@@ -109,7 +109,7 @@ pool:
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
-  backuptodo: $[eq(variables['backuptype'], 'None')]
+  backuptodo: $[ne(variables['backuptype'], 'None')]
 
 steps:
 - task: PublishPipelineArtifact@1
@@ -165,4 +165,4 @@ steps:
      ${{ parameters.vmname }}.$(privatednszone)
     args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
-  condition: eq(${{ variables.backup }}, true)
+  condition: eq(${{ variables.backuptodo }}, true)
