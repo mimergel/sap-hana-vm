@@ -5,7 +5,7 @@
 # 
 # Todo:
 #  documentation
-#  selective disk backup (exclude HANA DATA and LOG from OS Backups)
+#  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
 #  OS settings from OSS notes
 #  execute the HANA Backup
