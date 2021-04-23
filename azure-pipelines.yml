@@ -108,10 +108,8 @@ pool:
   name: Default
 
 variables:
-  # backup: $[  eq( ${{ parameters.hanabackupsetup }}, 'None' ]
-  #backup: $[ ${{ if contains(parameters.hanabackupsetup, 'PRD') }} ]
-  ${{ if eq( $[parameters.hanabackupsetup], None ) }}: 
-    backup: true
+  backuptype: ${{ parameters.hanabackupsetup }}
+  backuptodo: $[eq(variables['backuptype'], 'None')]
 
 steps:
 - task: PublishPipelineArtifact@1
