@@ -206,63 +206,63 @@
           "disks": [
             {
               "lun": 0,
-              "name": "usrsap",
+              "name": "[concat(variables('vmName'), '-usrsap')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 1,
-              "name": "data1",
+              "name": "[concat(variables('vmName'), '-data1')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 2,
-              "name": "data2",
+              "name": "[concat(variables('vmName'), '-data2')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 3,
-              "name": "data3",
+              "name": "[concat(variables('vmName'), '-data3')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 4,
-              "name": "log1",
+              "name": "[concat(variables('vmName'), '-log1')]",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 5,
-              "name": "log2",
+              "name": "[concat(variables('vmName'), '-log2')]",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 6,
-              "name": "log3",
+              "name": "[concat(variables('vmName'), '-log3')]",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 7,
-              "name": "shared",
+              "name": "[concat(variables('vmName'), '-shared')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 512
             },
             {
               "lun": 8,
-              "name": "backup",
+              "name": "[concat(variables('vmName'), '-backup')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 512
