@@ -7,9 +7,11 @@
 #  documentation
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
+#  friendly names for disks
 #  OS settings from OSS notes
 #  execute the HANA Backup
 #  Testing (quality checks and HCMT)
+#  cleanup everything (unregister HANA and RSV + delete RG)
 
 
 parameters:
@@ -110,7 +112,9 @@ pool:
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
-  backuptodo: $[ne(variables['backuptype'], 'None')]
+  hanadbinst: ${{ parameters.hanadbinstallation }}
+  # perform the backup setup only when the DB will be installed
+  backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
 
 steps:
 - task: PublishPipelineArtifact@1
