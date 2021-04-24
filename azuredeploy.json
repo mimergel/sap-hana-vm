@@ -206,54 +206,63 @@
           "disks": [
             {
               "lun": 0,
+              "name": "usrsap",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 1,
+              "name": "data1",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 2,
+              "name": "data2",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 3,
+              "name": "data3",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
             },
             {
               "lun": 4,
+              "name": "log1",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 5,
+              "name": "log2",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 6,
+              "name": "log3",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128
             },
             {
               "lun": 7,
+              "name": "shared",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 512
             },
             {
               "lun": 8,
+              "name": "backup",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 512
