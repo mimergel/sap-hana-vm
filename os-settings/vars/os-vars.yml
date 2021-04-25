@@ -1,0 +1,52 @@
+---
+sap_swap:
+  - { tier: 'SCS',  swap_size_mb: '20480' }
+  - { tier: 'PAS',  swap_size_mb: '20480' }
+  - { tier: 'APP',  swap_size_mb: '20480' }
+  - { tier: 'WEB',  swap_size_mb: '20480' }
+  - { tier: 'HANA', swap_size_mb: '2048' }
+
+packages:
+    redhat:
+      - "@base"
+      - gtk2
+      - libicu
+      - xulrunner
+      - sudo
+      - tcsh
+      - libssh2
+      - expect
+      - cairo
+      - graphviz
+      - iptraf-ng
+      - krb5-workstation
+      - krb5-libs
+      - libpng12
+      - nfs-utils
+      - lm_sensors
+      - rsyslog
+      - openssl
+      - PackageKit-gtk3-module
+      - libcanberra-gtk2
+      - libtool-ltdl
+      - xorg-x11-xauth 
+      - numactl
+      - xfsprogs
+      - net-tools
+      - bind-utils
+      - chrony
+      - ntp
+      - gdisk
+      - sg3_utils
+      - lvm2
+      - ntpdate
+      - numad
+      - cifs-utils
+
+    suse: 
+      - libyui-qt-pkg7
+      - glibc
+      - systemd
+      - tuned
+      - ntp
+      - numad

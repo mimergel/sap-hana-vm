@@ -1,0 +1,21 @@
+---
+
+# |            Role for ensuring the swap space is configured correctly         |
+
+- name: Ensure variables are available
+  include_vars:
+    file: "../../../vars/sap-disks.yaml"
+
+- include_tasks: configure.yaml
+  loop: "{{ sap_swap }}"
+  when: item.tier == "all" or item.tier == tier
+
+# |                            Package Installation                             |
+- name:             1.4 - Import package list
+  include_vars:     os-packages.yaml
+
+- name:             "1.4 - Install OS packages: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+  package:
+    name:           "{{ item }}" 
+    state:          present
+  loop:             "{{ packages[ansible_os_family|lower] }}"
