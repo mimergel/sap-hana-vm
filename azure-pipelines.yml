@@ -1,7 +1,6 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Pipeline which deploys SAP HANA VM including filesystem layout and DB installation on RHEL or SUSE
+# VM can be added to RSV including hana backup integration script run
+# Testing consists of quality checks and HCMT
 # 
 # Todo:
 #  documentation
@@ -187,8 +186,8 @@ stages:
   jobs:
   - job: Cleanup
     - task: ManualValidation@0
-    inputs:
-      notifyUsers: 'mimergel@microsoft.com'
-      instructions: 'Please approve or reject the cleanup of the HANA-Test-$(Build.BuildId) build'
+      inputs:
+        notifyUsers: 'mimergel@microsoft.com'
+        instructions: 'Please approve or reject the cleanup of the HANA-Test-$(Build.BuildId) build'
 
 
