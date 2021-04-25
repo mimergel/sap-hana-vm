@@ -26,7 +26,7 @@
   package:
     name:           "{{ item }}" 
     state:          present
-loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
+  loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
 
 # Enable prometheus on HANA servers
 
