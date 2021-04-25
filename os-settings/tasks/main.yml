@@ -18,7 +18,7 @@
     line:       DHCLIENT_SET_HOSTNAME="no"
   when:         ansible_os_family|upper == 'SUSE'
 
-# |                            Package Installation                             |
+# Package Installation
 - name:             Import package list
   include_vars:     os-vars.yml
 
@@ -71,14 +71,22 @@
 
 # Package Installation for SAP
 #
-- name:             Import package list
-  include_vars:     os-vars.yml
+#- name:             Import package list
+#  include_vars:     os-vars.yml
 
-- name:             "Install OS packages for SAP: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
-  package:
-    name:           "{{ item }}" 
-    state:          present
-  loop:             "{{ sappackages[ansible_os_family|lower] }}"
+#- name:             "Install OS packages for SAP: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+#  package:
+#    name:           "{{ item }}" 
+#    state:          present
+#  loop:             "{{ sappackages[ansible_os_family|lower] }}"
+
+- name: Update all SAP packages
+  community.general.zypper:
+    name: libgcc_s1 libstdc++6 libatomic1
+    state: latest
+  environment:
+    ZYPP_LOCK_TIMEOUT: 30
+
 
 # SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
 #
