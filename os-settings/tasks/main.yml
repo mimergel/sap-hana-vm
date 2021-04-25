@@ -82,7 +82,7 @@
 
 - name: Update all SAP packages
   community.general.zypper:
-    name: libgcc_s1 libstdc++6 libatomic1
+    name: 'libgcc_s1 libstdc++6 libatomic1'
     state: latest
   environment:
     ZYPP_LOCK_TIMEOUT: 30
