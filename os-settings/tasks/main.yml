@@ -4,9 +4,9 @@
 
 - name: Ensure variables are available
   include_vars:
-    file: "../vars/os-vars.yaml"
+    file: "../vars/os-vars.yml"
 
-- include_tasks: swap.yaml
+- include_tasks: swap.yml
   loop: "{{ sap_swap }}"
   when: item.tier == "all" or item.tier == tier
 
@@ -20,7 +20,7 @@
 
 # |                            Package Installation                             |
 - name:             Import package list
-  include_vars:     os-packages.yaml
+  include_vars:     os-vars.yml
 
 - name:             "Install OS packages: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
   package:
@@ -72,7 +72,7 @@
 # Package Installation for SAP
 #
 - name:             Import package list
-  include_vars:     sap-packages.yaml
+  include_vars:     os-vars.yaml
 
 - name:             "Install OS packages fro SAP: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
   package:
