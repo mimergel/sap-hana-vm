@@ -4,18 +4,97 @@
 
 - name: Ensure variables are available
   include_vars:
-    file: "../../../vars/sap-disks.yaml"
+    file: "../vars/os-vars.yaml"
 
-- include_tasks: configure.yaml
+- include_tasks: swap.yaml
   loop: "{{ sap_swap }}"
   when: item.tier == "all" or item.tier == tier
 
+# SUSE bug 1167134
+- name:         "Ensure DHCLIENT_SET_HOSTNAME is set to no for SLES"
+  lineinfile:
+    path:       /etc/sysconfig/network/dhcp
+    regexp:     '^DHCLIENT_SET_HOSTNAME='
+    line:       DHCLIENT_SET_HOSTNAME="no"
+  when:         ansible_os_family|upper == 'SUSE'
+
 # |                            Package Installation                             |
-- name:             1.4 - Import package list
+- name:             Import package list
   include_vars:     os-packages.yaml
 
-- name:             "1.4 - Install OS packages: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+- name:             "Install OS packages: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
   package:
     name:           "{{ item }}" 
     state:          present
   loop:             "{{ packages[ansible_os_family|lower] }}"
+
+# Enable prometheus on HANA servers
+
+- name: Set OS version
+  set_fact:
+    distro: "SLE_{{ ansible_facts['distribution_major_version'] }}_SP{{ ansible_facts['distribution_release'] }}"
+
+- name: Check if server_monitoring.repo is present
+  stat:
+    path: /etc/zypp/repos.d/server_monitoring.repo
+  register: monitor_repo
+
+- name: Add monitoring repository if it does not exist 
+  zypper_repository:
+    repo: "https://download.opensuse.org/repositories/server:/monitoring/{{ distro }}/server:monitoring.repo"
+    state: present
+  when: monitor_repo.stat.exists == false
+  register: add_repo_status
+  ignore_errors: yes
+
+- name: Ensure Prometheus is installed and configured
+  when: not (add_repo_status.failed is defined and add_repo_status.failed == true)
+  block:
+  - name: Install Prometheus with Node and HA Cluster exporters
+    zypper:
+      name: "{{ item }}"
+      disable_gpg_check: yes
+    loop:
+      - golang-github-prometheus-node_exporter
+      - prometheus-ha_cluster_exporter
+
+  - name: Set arguments for Node exporter
+    lineinfile:
+      path: /etc/sysconfig/prometheus-node_exporter
+      regexp: 'ARGS=.*'
+      line: 'ARGS="--collector.systemd"'
+
+  - name: Start the Node exporter
+    service:
+      name: prometheus-node_exporter
+      state: started
+
+# Package Installation for SAP
+#
+- name:             Import package list
+  include_vars:     sap-packages.yaml
+
+- name:             "Install OS packages fro SAP: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+  package:
+    name:           "{{ item }}" 
+    state:          present
+  loop:             "{{ packages[ansible_os_family|lower] }}"
+
+# SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+#
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 1
+  command:    "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 2
+  lineinfile: 
+     dest:    /etc/default/grub 
+     regexp:  "GRUB_CMDLINE_LINUX=" 
+     line:    "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
+
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 3
+  command:    grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name:     "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
+  include_tasks:    "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
+  when:     ansible_os_family|upper == "REDHAT" or
+            ansible_os_family|upper == "SUSE"
