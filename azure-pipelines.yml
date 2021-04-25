@@ -183,4 +183,9 @@ stages:
 - stage: Cleanup
   jobs:
   - job: Cleanup
+    - task: ManualValidation@0
+    inputs:
+      notifyUsers: 'mimergel@microsoft.com'
+      instructions: 'Please approve or reject the cleanup of the HANA-Test-$(Build.BuildId) build'
+
 
