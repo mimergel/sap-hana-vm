@@ -116,6 +116,9 @@ variables:
   # perform the backup setup only when the DB will be installed
   backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
 
+stages:
+stage: Deploy
+
 steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Pipeline Artifact'
@@ -171,3 +174,7 @@ steps:
     args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
     failOnStdErr: false
   condition: eq(variables.backuptodo, true)
+
+stage: Test
+
+stage: Remove
