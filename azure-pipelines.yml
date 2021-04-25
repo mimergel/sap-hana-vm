@@ -179,6 +179,7 @@ stages:
 - stage: Test
   jobs:
   - job: Test
+    condition: eq(${{ parameters.hcmt }}, true)
 
 - stage: Cleanup
   jobs:
