@@ -122,7 +122,7 @@ stages:
   - job: Deploy
     steps:
     - task: PublishPipelineArtifact@1
-        displayName: 'Publish Pipeline Artifact'
+      displayName: 'Publish Pipeline Artifact'
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)'
         artifact: hana
