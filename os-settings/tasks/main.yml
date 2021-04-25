@@ -74,11 +74,11 @@
 - name:             Import package list
   include_vars:     os-vars.yml
 
-- name:             "Install OS packages fro SAP: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+- name:             "Install OS packages for SAP: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
   package:
     name:           "{{ item }}" 
     state:          present
-  loop:             "{{ packages[ansible_os_family|lower] }}"
+  loop:             "{{ sappackages[ansible_os_family|lower] }}"
 
 # SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
 #

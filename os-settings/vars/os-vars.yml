@@ -42,18 +42,21 @@ packages:
       - ntpdate
       - numad
       - cifs-utils
-      - tuned-profiles-sap-hana         # SAP related
-      - compat-sap-c++-5                # SAP related
-      - compat-sap-c++-9                # SAP related
-      - libatomic                       # SAP related
-
-    suse: 
+    suse:
       - libyui-qt-pkg7
       - glibc
       - systemd
       - tuned
       - ntp
       - numad
+
+sappackages:
+    redhat:
+      - tuned-profiles-sap-hana         # SAP related
+      - compat-sap-c++-5                # SAP related
+      - compat-sap-c++-9                # SAP related
+      - libatomic                       # SAP related
+    suse: 
       - sapconf                         # SAP related
       - saptune                         # SAP related
       - libgcc_s1                       # SAP related
