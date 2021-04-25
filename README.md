@@ -83,6 +83,7 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 5. KeyVault
 6. Storage account with a blob container for the SAP binaries
 7. Private DNS Zone
+8. Run 'ansible-galaxy collection install community.general' on deployment server
 
 # Deployment via Azure DevOps
 Steps:
