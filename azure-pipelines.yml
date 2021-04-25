@@ -120,7 +120,6 @@ stages:
 - stage: Deploy
   jobs:
   - job: Deploy
-
     steps:
     - task: PublishPipelineArtifact@1
         displayName: 'Publish Pipeline Artifact'
@@ -178,7 +177,10 @@ stages:
       condition: eq(variables.backuptodo, true)
 
 - stage: Test
-
+  jobs:
+  - job: Test
 
 - stage: Cleanup
+  jobs:
+  - job: Cleanup
 
