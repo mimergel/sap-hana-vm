@@ -94,7 +94,7 @@
 - name:     Task Disable Transparent Hugepages & Configure Processor C-States 3
   command:    grub2-mkconfig -o /boot/grub2/grub.cfg
 
-- name:     "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
-  include_tasks:    "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
-  when:     ansible_os_family|upper == "REDHAT" or
-            ansible_os_family|upper == "SUSE"
+# - name:     "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
+#   include_tasks:    "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
+#   when:     ansible_os_family|upper == "REDHAT" or
+#             ansible_os_family|upper == "SUSE"

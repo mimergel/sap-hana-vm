@@ -7,7 +7,7 @@ sap_swap:
   - { tier: 'HANA', swap_size_mb: '2048' }
 
 packages:
-    redhat:
+    redhat7:
       - "@base"
       - gtk2
       - libicu
@@ -35,30 +35,71 @@ packages:
       - net-tools
       - bind-utils
       - chrony
-      - ntp
       - gdisk
       - sg3_utils
       - lvm2
-      - ntpdate
       - numad
       - cifs-utils
-    suse:
+
+    redhat8:
+      - "@base"
+      - gtk2
+      - libicu
+      - sudo
+      - tcsh
+      - libssh2
+      - expect
+      - cairo
+      - graphviz
+      - iptraf-ng
+      - krb5-workstation
+      - krb5-libs
+      - libpng12
+      - nfs-utils
+      - lm_sensors
+      - rsyslog
+      - openssl
+      - PackageKit-gtk3-module
+      - libcanberra-gtk2
+      - libtool-ltdl
+      - xorg-x11-xauth 
+      - numactl
+      - xfsprogs
+      - net-tools
+      - bind-utils
+      - chrony
+      - gdisk
+      - sg3_utils
+      - lvm2
+      - numad
+      - cifs-utils      
+
+    suse12: 
       - libyui-qt-pkg7
       - glibc
       - systemd
       - tuned
-      - ntp
+      - numad
+
+    suse15: 
+      - libyui-qt-pkg11
+      - glibc
+      - systemd
+      - tuned
       - numad
 
 sappackages:
     redhat:
-      - tuned-profiles-sap-hana         # SAP related
-      - compat-sap-c++-5                # SAP related
-      - compat-sap-c++-9                # SAP related
-      - libatomic                       # SAP related
+      - tuned-profiles-sap*
+      - compat-sap-c++-*                
+      - libatomic                     
+      - uuidd
+      - csh
+
     suse: 
-      - sapconf                         # SAP related
-      - saptune                         # SAP related
-      - libgcc_s1                       # SAP related
-      - libstdc++6                      # SAP related
-      - libatomic1                      # SAP related
+      - sapconf
+      - saptune
+      - libgcc_s1  
+      - libstdc++6 
+      - libatomic1 
+      - uuidd
