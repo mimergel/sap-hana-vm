@@ -185,7 +185,7 @@ stages:
 - stage: Cleanup
   jobs:
   - job: waitForValidation
-    displayName: Wait for external validation
+    displayName: Wait for cleanup validation
     timeoutInMinutes: 4320 # job times out in 3 days
     steps:
     - task: ManualValidation@0
@@ -193,7 +193,7 @@ stages:
       inputs:
         notifyUsers: |
           mimergel@microsoft.com
-        instructions: 'Please validate the build configuration and resume'
+        instructions: 'Please validate the build configuration and resume or reject'
         onTimeout: 'reject'
   - job: Cleanup
 
