@@ -150,7 +150,20 @@ stages:
       failOnStderr: false
 
     - task: Ansible@0
-      displayName: 'Ansible Playbook for HANA Installation'
+      displayName: 'OS Preparations (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'os-settings-playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          ${{ parameters.vmname }}.$(privatednszone)
+        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
+        failOnStdErr: false
+      condition: eq(${{ parameters.hanadbinstallation }}, true)
+
+    - task: Ansible@0
+      displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'single_node_playbook.yml'
@@ -163,7 +176,7 @@ stages:
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
     - task: Ansible@0
-      displayName: 'Ansible Playbook for HANA Backup'
+      displayName: 'HANA Backup Preparations (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'backup_playbook.yml'
