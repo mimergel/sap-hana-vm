@@ -177,9 +177,11 @@ stages:
       condition: eq(variables.backuptodo, true)
 
 - stage: Test
+  dependsOn: Deploy
+  condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
-    condition: eq(${{ parameters.hcmt }}, true)
+    
 
 - stage: Cleanup
   jobs:
