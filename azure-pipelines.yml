@@ -118,10 +118,10 @@ variables:
 
 stages:
 - stage: Deploy
+  jobs:
+  - job: Deploy
 
-
-
-steps:
+    steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Pipeline Artifact'
   inputs:
