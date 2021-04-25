@@ -1,7 +1,6 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Pipeline which deploys SAP HANA VM including filesystem layout and DB installation on RHEL or SUSE
+# VM can be added to RSV including hana backup integration script run
+# Testing consists of quality checks and HCMT
 # 
 # Todo:
 #  documentation
@@ -122,7 +121,7 @@ stages:
   - job: Deploy
     steps:
     - task: PublishPipelineArtifact@1
-        displayName: 'Publish Pipeline Artifact'
+      displayName: 'Publish Pipeline Artifact'
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)'
         artifact: hana
@@ -151,7 +150,20 @@ stages:
       failOnStderr: false
 
     - task: Ansible@0
-      displayName: 'Ansible Playbook for HANA Installation'
+      displayName: 'OS Preparations (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'os-settings-playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          ${{ parameters.vmname }}.$(privatednszone)
+        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
+        failOnStdErr: false
+      condition: eq(${{ parameters.hanadbinstallation }}, true)
+
+    - task: Ansible@0
+      displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'single_node_playbook.yml'
@@ -164,7 +176,7 @@ stages:
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
     - task: Ansible@0
-      displayName: 'Ansible Playbook for HANA Backup'
+      displayName: 'HANA Backup Preparations (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'backup_playbook.yml'
@@ -177,10 +189,25 @@ stages:
       condition: eq(variables.backuptodo, true)
 
 - stage: Test
+  dependsOn: Deploy
+  condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
+    
 
 - stage: Cleanup
   jobs:
+  - job: waitForValidation
+    displayName: Wait for cleanup approval
+    timeoutInMinutes: 4320 # job times out in 3 days
+    steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 2880 # task times out in 2 days
+      inputs:
+        notifyUsers: |
+          mimergel@microsoft.com
+        instructions: 'Please confirm cleanup with resume or reject'
+        onTimeout: 'reject'
   - job: Cleanup
+
 
