@@ -117,7 +117,7 @@ variables:
   backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
 
 stages:
-stage: Deploy
+- stage: Deploy
 
 steps:
 - task: PublishPipelineArtifact@1
@@ -175,6 +175,6 @@ steps:
     failOnStdErr: false
   condition: eq(variables.backuptodo, true)
 
-stage: Test
+- stage: Test
 
-stage: Remove
+- stage: Remove
