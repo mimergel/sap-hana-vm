@@ -3,7 +3,7 @@
 # Testing consists of quality checks and HCMT
 # 
 # Todo:
-#  documentation
+#  Documentation
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
 #  friendly names for disks
@@ -11,6 +11,8 @@
 #  execute the HANA Backup
 #  Testing (quality checks and HCMT)
 #  cleanup everything (unregister HANA and RSV + delete RG)
+#  do the same with github actions
+#  opotinally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
 
 
 parameters:
@@ -200,6 +202,7 @@ stages:
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
             --resource-id VMResourceId
+          # wie bekomme ich die VMResourceId? Adham fragen :-)
           # Enable Protection
           az backup protection enable-for-azurewl --resource-group saphanaResourceGroup \
             --policy-name saphanaPolicy \
