@@ -94,6 +94,7 @@ Steps:
 2. Connect Azure DevOps with your forked repository (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
 3. Create a pipeline similar to the example in this repository (azure-pipelines.yml) by adapting to your Azure envrionment
 4. Enter required variables to the pipeline configuration
+5. Download sapbits and store in storage account, update urls in vars/default.yml
 
 # Deployments in an Azure environment without internet access 
 There might be multiple solutions to handle this situation which is most common for SAP environments. 
