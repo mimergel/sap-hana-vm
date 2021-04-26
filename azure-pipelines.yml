@@ -188,6 +188,28 @@ stages:
         failOnStdErr: false
       condition: eq(variables.backuptodo, true)
 
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Register the SAP HANA Instance
+          az backup container register --resource-group saphanaResourceGroup \
+            --vault-name saphanaVault \
+            --location westus2 \
+            --workload-type SAPHANA \
+            --backup-management-type AzureWorkload \
+            --resource-id VMResourceId
+          # Enable Protection
+          az backup protection enable-for-azurewl --resource-group saphanaResourceGroup \
+            --policy-name saphanaPolicy \
+            --protectable-item-name "saphanadatabase;hxe;hxe"  \
+            --protectable-item-type SAPHANADatabase \
+            --server-name hxehost \
+            --workload-type SAPHANA \
+            --output table
+        errorActionPreference: 'continue'
+        showWarnings: true
+
 - stage: Test
   dependsOn: Deploy
   condition: eq(${{ parameters.hcmt }}, true)
