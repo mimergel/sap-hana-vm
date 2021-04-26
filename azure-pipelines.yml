@@ -9,10 +9,9 @@
 #  friendly names for disks
 #  execute the HANA Backup
 #  Testing (quality checks and HCMT)
-#  cleanup everything (unregister HANA and RSV + delete RG)
 #  do the same with github actions
 #  opotinally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-
+#  cleanup everything (unregister HANA and RSV + delete RG)
 
 parameters:
 - name: size
@@ -256,5 +255,3 @@ stages:
         subscriptionId: '35b67b4c-4fd4-4f0b-997c-bbb82032d45d'
         action: 'DeleteRG'
         resourceGroupName: 'rg-hana-${{ parameters.sid }}'
-
-
