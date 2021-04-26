@@ -37,7 +37,12 @@ packages:
       - lvm2
       - numad
       - cifs-utils
-
+      - tuned-profiles-sap*
+      - compat-sap-c++-*                
+      - libatomic                     
+      - uuidd
+      - csh
+    
     redhat8:
       - "@base"
       - gtk2
@@ -70,6 +75,11 @@ packages:
       - lvm2
       - numad
       - cifs-utils      
+      - tuned-profiles-sap*
+      - compat-sap-c++-*                
+      - libatomic                     
+      - uuidd
+      - csh
 
     suse12: 
       - libyui-qt-pkg7
@@ -90,13 +100,3 @@ packages:
       - systemd
       - tuned
       - numad
-
-sappackages:
-    redhat:
-      - tuned-profiles-sap*
-      - compat-sap-c++-*                
-      - libatomic                     
-      - uuidd
-      - csh
-
-    suse: 
