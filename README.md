@@ -85,7 +85,7 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 	- Private DNS Zone (Makes everything easier)
 4. Linux VM as deployment agent within the same or peered VNET 
    See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
-   pwsh installed
+   ansible & pwsh installed
    ansible-galaxy collection install community.general
 
 # Deployment via Azure DevOps
