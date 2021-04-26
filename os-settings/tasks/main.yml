@@ -8,7 +8,7 @@
 
 - include_tasks: swap.yml
   loop: "{{ sap_swap }}"
-  when: item.tier == "all" or item.tier == tier
+  when: item.tier == "HANA" or item.tier == "all"
 
 # SUSE bug 1167134
 - name:         "Ensure DHCLIENT_SET_HOSTNAME is set to no for SLES"
