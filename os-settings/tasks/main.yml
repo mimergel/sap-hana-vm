@@ -30,9 +30,6 @@
   yum:
     name: '*'
     state: latest
-      update_cache: yes
-      update_only: yes
-    register: yum_update_status
   when: ansible_os_family|upper == "REDHAT"
 
 # Package Installation
