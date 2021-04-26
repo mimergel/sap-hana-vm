@@ -232,26 +232,3 @@ stages:
         args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
         failOnStdErr: false
       condition: eq(variables.hcmttest, true)
-
-- stage: Cleanup
-  jobs:
-  - job: waitForValidation
-    displayName: Wait for cleanup approval
-    timeoutInMinutes: 4320 # job times out in 3 days
-    steps:
-    - task: ManualValidation@0
-      timeoutInMinutes: 2880 # task times out in 2 days
-      inputs:
-        notifyUsers: |
-          mimergel@microsoft.com
-        instructions: 'Please confirm cleanup with resume or reject'
-        onTimeout: 'reject'
-  - job: Cleanup
-    steps:
-    - task: AzureResourceManagerTemplateDeployment@3
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
-        subscriptionId: '35b67b4c-4fd4-4f0b-997c-bbb82032d45d'
-        action: 'DeleteRG'
-        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
