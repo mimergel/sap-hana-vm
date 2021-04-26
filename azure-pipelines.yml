@@ -203,10 +203,9 @@ stages:
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
             --resource-id $(az vm show -g 'rg-hana-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
-          # wie bekomme ich die VMResourceId? Adham fragen :-)
           # Enable Protection
-          az backup protection enable-for-azurewl --resource-group saphanaResourceGroup \
-            --policy-name saphanaPolicy \
+          az backup protection enable-for-azurewl --resource-group ${env:RSV_RG} \
+            --policy-name HANA \
             --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
             --protectable-item-type SAPHANADatabase \
             --server-name ${{ parameters.vmname }} \
