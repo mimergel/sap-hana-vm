@@ -28,8 +28,13 @@
     state:          present
   loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
 
-# Enable prometheus on HANA servers
+# Wait until installation process finished
+- name: Wait until installation process fully terminates
+  ansible.builtin.shell: while [ $(ps -ef | grep zypper | grep -v grep | wc -l) -gt 0 ]; do echo "Zypper still running"; sleep 3; done
+  args:
+    executable: /bin/bash
 
+# Enable prometheus on HANA servers
 - name: Set OS version
   set_fact:
     distro: "SLE_{{ ansible_facts['distribution_major_version'] }}_SP{{ ansible_facts['distribution_release'] }}"

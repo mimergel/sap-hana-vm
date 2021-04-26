@@ -73,10 +73,16 @@ packages:
 
     suse12: 
       - libyui-qt-pkg7
+      - libgcc_s1  
+      - libstdc++6 
+      - libatomic1 
       - glibc
       - systemd
       - tuned
       - numad
+      - sapconf
+      - saptune
+      - uuidd
 
     suse15: 
       - libyui-qt-pkg11
@@ -94,9 +100,3 @@ sappackages:
       - csh
 
     suse: 
-      - sapconf
-      - saptune
-      - libgcc_s1  
-      - libstdc++6 
-      - libatomic1 
-      - uuidd
