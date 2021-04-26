@@ -246,7 +246,7 @@ stages:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: $(subscriptionname)'
+        azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: 'rg-hana-${{ parameters.sid }}'
