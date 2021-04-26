@@ -6,7 +6,7 @@
 #  Documentation
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
-#  friendly names for disks
+#  friendly names for disks, helps identify disks to exclude form OS backup
 #  execute the HANA Backup
 #  Testing (quality checks and HCMT)
 #  do the same with github actions
@@ -258,3 +258,4 @@ stages:
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
       condition: eq(variables.finalcleanup, true)
+      # todo: unregister HANA and remove from RSV
