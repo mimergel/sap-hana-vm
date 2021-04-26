@@ -103,6 +103,11 @@ parameters:
   type: boolean
   default: False
 
+- name: cleanup
+  displayName: Remove everything at the end
+  type: boolean
+  default: False
+
 trigger:
   none
 
@@ -115,6 +120,7 @@ variables:
   # perform the backup setup only when the DB will be installed
   backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   hcmttest: ${{ parameters.hcmt }}
+  finalcleanup: ${{ parameters.cleanup }}
 
 stages:
 - stage: Deploy
@@ -232,3 +238,16 @@ stages:
         args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
         failOnStdErr: false
       condition: eq(variables.hcmttest, true)
+
+- stage: Cleanup
+  jobs:
+  - job: Cleanup
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: $(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'DeleteRG'
+        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
+      condition: eq(variables.finalcleanup, true)
