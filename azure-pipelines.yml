@@ -141,7 +141,7 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
+        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/azuredeploy.json'
@@ -214,7 +214,7 @@ stages:
             --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
-            --resource-id $(az vm show -g 'rg-hana-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
+            --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
           # Enable Protection
           az backup protection enable-for-azurewl --resource-group ${env:RSV_RG} \
             --policy-name HANA-${{ parameters.hanabackupsetup }} \
@@ -256,5 +256,5 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
-        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
+        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
       condition: eq(variables.finalcleanup, true)
