@@ -123,9 +123,9 @@ variables:
   finalcleanup: ${{ parameters.cleanup }}
 
 stages:
-- stage: Deploy
+- stage: Deploy VM
   jobs:
-  - job: Deploy
+  - job: Deploy VM
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -156,6 +156,8 @@ stages:
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 
+  - job: Prepare OS
+    steps:
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
       inputs:
@@ -202,8 +204,8 @@ stages:
         script: |
           # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
           # Register the SAP HANA Instance
-          az backup container register --resource-group ${env:RSV_RG} \
-            --vault-name ${env:RSV} \
+          az backup container register --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
             --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
