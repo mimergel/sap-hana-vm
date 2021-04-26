@@ -1,18 +1,6 @@
 ---
 
-# TODO: rewrite like Task 3.2
-
-# Implement manual preparation steps for RHEL-7
-# The tasks' name follows:
-#   - Red Hat Enterprise Linux (RHEL) 7.x Configuration Guide for SAP HANA
-#   - SAP Notes for RHEL OS recommendations
-
-# - name: Task 3.2 - Installing OS package
-#   package:
-#     name: "{{ item }}" 
-#     state: present
-#   loop: 
-#     - "{{ packages[ansible_os_family|lower] }}"
+# RHEL specifics
 
 - name: Task 1 - Disable SELinux 1
   selinux:

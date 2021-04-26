@@ -1,16 +1,5 @@
 ---
-# TODO: rewrite like Task 3.2
-
-# Implement manual preparation steps for SLES-12
-# The tasks' name follows:
-#   - SUSE Linux Enterprise Server 12.x for SAP Applications &onʦJuUDtLon Guide for SAP HANA x86_64 and POWER Architectures
-#   - SAP Notes for RHEL OS recommendations
-
-# - name: Install OS packages
-#   package:
-#     name: "{{ item }}"
-#     state: present
-#   loop: "{{ packages[ansible_os_family|lower] }}"
+# SLES 12 specifics
 
 - name: Task Tweak the Default System Settings for SAP HANA 1 
   command: "saptune solution apply HANA"
