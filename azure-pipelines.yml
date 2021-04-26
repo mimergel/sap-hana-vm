@@ -7,13 +7,11 @@
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
 #  friendly names for disks
-#  OS settings from OSS notes (waiting loop for install finish)
 #  execute the HANA Backup
 #  Testing (quality checks and HCMT)
-#  cleanup everything (unregister HANA and RSV + delete RG)
 #  do the same with github actions
 #  opotinally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-
+#  cleanup everything (unregister HANA and RSV + delete RG)
 
 parameters:
 - name: size
@@ -116,6 +114,7 @@ variables:
   hanadbinst: ${{ parameters.hanadbinstallation }}
   # perform the backup setup only when the DB will be installed
   backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
+  hcmttest: ${{ parameters.hcmt }}
 
 stages:
 - stage: Deploy
@@ -213,14 +212,26 @@ stages:
             --output table
         errorActionPreference: 'continue'
         showWarnings: true
-        condition: eq(variables.backuptodo, true)
+      condition: eq(variables.backuptodo, true)
 
 - stage: Test
   dependsOn: Deploy
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
-    
+    steps:
+    - task: Ansible@0
+      displayName: 'Run HCMT (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'hcmt_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          ${{ parameters.vmname }}.$(privatednszone)
+        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
+        failOnStdErr: false
+      condition: eq(variables.hcmttest, true)
 
 - stage: Cleanup
   jobs:
@@ -236,5 +247,11 @@ stages:
         instructions: 'Please confirm cleanup with resume or reject'
         onTimeout: 'reject'
   - job: Cleanup
-
-
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
+        subscriptionId: '35b67b4c-4fd4-4f0b-997c-bbb82032d45d'
+        action: 'DeleteRG'
+        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
