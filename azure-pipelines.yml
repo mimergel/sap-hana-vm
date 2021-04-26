@@ -135,7 +135,7 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'HANA-Test-$(Build.BuildId)'
+        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/azuredeploy.json'
@@ -191,6 +191,7 @@ stages:
       condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
+      displayName: 'HANA Backup Registration and Execution'
       inputs:
         targetType: 'inline'
         script: |
@@ -201,7 +202,7 @@ stages:
             --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
-            --resource-id VMResourceId
+            --resource-id $(az vm show -g 'rg-hana-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
           # wie bekomme ich die VMResourceId? Adham fragen :-)
           # Enable Protection
           az backup protection enable-for-azurewl --resource-group saphanaResourceGroup \
