@@ -103,6 +103,11 @@ parameters:
   type: boolean
   default: False
 
+- name: cleanup
+  displayName: Remove everything at the end
+  type: boolean
+  default: False
+
 trigger:
   none
 
@@ -113,13 +118,15 @@ variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   hanadbinst: ${{ parameters.hanadbinstallation }}
   # perform the backup setup only when the DB will be installed
-  backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
+  # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
+  backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hcmttest: ${{ parameters.hcmt }}
+  finalcleanup: ${{ parameters.cleanup }}
 
 stages:
-- stage: Deploy
+- stage: Deploy_VM
   jobs:
-  - job: Deploy
+  - job: Deploy_VM
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -134,7 +141,7 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'rg-hana-${{ parameters.sid }}'
+        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/azuredeploy.json'
@@ -150,6 +157,8 @@ stages:
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 
+  - job: Prepare_OS
+    steps:
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
       inputs:
@@ -163,6 +172,8 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
+  - job: HANA_Installation
+    steps:
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -176,6 +187,8 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
+  - job: Backup_Setup
+    steps:
     - task: Ansible@0
       displayName: 'HANA Backup Preparations (Ansible)'
       inputs:
@@ -196,12 +209,12 @@ stages:
         script: |
           # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
           # Register the SAP HANA Instance
-          az backup container register --resource-group ${env:RSV_RG} \
-            --vault-name ${env:RSV} \
+          az backup container register --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
             --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
-            --resource-id $(az vm show -g 'rg-hana-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
+            --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
           # Enable Protection
           az backup protection enable-for-azurewl --resource-group ${env:RSV_RG} \
             --policy-name HANA-${{ parameters.hanabackupsetup }} \
@@ -215,7 +228,7 @@ stages:
       condition: eq(variables.backuptodo, true)
 
 - stage: Test
-  dependsOn: Deploy
+  # dependsOn: Deploy
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
@@ -232,3 +245,16 @@ stages:
         args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
         failOnStdErr: false
       condition: eq(variables.hcmttest, true)
+
+- stage: Cleanup
+  jobs:
+  - job: Cleanup
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'DeleteRG'
+        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
+      condition: eq(variables.finalcleanup, true)
