@@ -209,6 +209,7 @@
               "name": "[concat(variables('vmName'), '-usrsap-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
+              "HyperVGeneration": "V2",
               "diskSizeGB": 64
             },
             {

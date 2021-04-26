@@ -77,13 +77,16 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 # Prerequesites
 1. Azure Subscription 
 2. Azure DevOps and Github account
-3. VNET + Subnet
+3. Basic Resources
+	- VNET + Subnet
+	- KeyVault (For OS ssh key and DB password)
+	- Recovery Service Vault (For OS + DB Backups)
+	- Storage Account (For SAP binaries and Scripts)
+	- Private DNS Zone (Makes everything easier)
 4. Linux VM as deployment agent within the same or peered VNET 
    See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
-5. KeyVault
-6. Storage account with a blob container for the SAP binaries
-7. Private DNS Zone
-8. Run 'ansible-galaxy collection install community.general' on deployment server
+   pwsh installed
+   ansible-galaxy collection install community.general
 
 # Deployment via Azure DevOps
 Steps:
