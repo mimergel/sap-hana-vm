@@ -118,14 +118,15 @@ variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   hanadbinst: ${{ parameters.hanadbinstallation }}
   # perform the backup setup only when the DB will be installed
-  backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
+  # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
+  backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hcmttest: ${{ parameters.hcmt }}
   finalcleanup: ${{ parameters.cleanup }}
 
 stages:
-- stage: Deploy VM
+- stage: Deploy_VM
   jobs:
-  - job: Deploy VM
+  - job: Deploy_VM
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -156,7 +157,7 @@ stages:
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 
-  - job: Prepare OS
+  - job: Prepare_OS
     steps:
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
@@ -171,6 +172,8 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
+  - job: HANA_Installation
+    steps:
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -184,6 +187,8 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
+  - job: Backup_Setup
+    steps:
     - task: Ansible@0
       displayName: 'HANA Backup Preparations (Ansible)'
       inputs:
@@ -223,7 +228,7 @@ stages:
       condition: eq(variables.backuptodo, true)
 
 - stage: Test
-  dependsOn: Deploy
+  # dependsOn: Deploy
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
