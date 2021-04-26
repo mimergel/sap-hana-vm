@@ -208,38 +208,4 @@ else
   log "count not equal"
 fi
 
-if [[ $(grep SUSE /proc/version | wc -l) = 1 ]]
-then
-  log "Found SUSE SLES, setting up sapconf"
-  # https://launchpad.support.sap.com/#/notes/1275776
-  # https://github.com/scmschmidt/sapconf_saptune_check/blob/master/sapconf_saptune_check
-  zypper install -y sapconf
-  sapconf hana
-  systemctl enable sapconf.service
-fi
-
-if [[ $(grep 'Red Hat' /proc/version | wc -l) = 1 ]]
-then
-  log "Found Red Hat Linux, setting up sapconf"
-  # https://launchpad.support.sap.com/#/notes/0002292690
-  # https://github.com/scmschmidt/sapconf_saptune_check/blob/master/sapconf_saptune_check
-  yum -y install at
-  yum install tuned-profiles-sap-hana
-  systemctl start tuned
-  systemctl enable tuned
-  tuned-adm profile sap-hana
-
-  sapconf hana
-  systemctl enable sapconf.service
-fi
-
-log "Configure SWAP in /etc/waagent.conf"
-sed -i.bak "s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g"    /etc/waagent.conf
-sed -i     "s/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g" /etc/waagent.conf
-
-log "Enabling SWAP via waagent restart in 1 minute"
-
-atd
-echo "systemctl restart waagent" | at now + 1 minute
-
 exit

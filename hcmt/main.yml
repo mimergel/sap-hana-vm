@@ -1,0 +1,24 @@
+---
+# https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/
+- name: download HCMT SAR file
+  get_url:
+    url: "{{ url_hcmt }}"
+    dest: /tmp/msawb-plugin-config-com-sap-hana.sh
+    mode: 0750
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+- name: Extract HCMT
+  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM KblkE201Dp'
+
+- name: Setup HCMT
+  command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+
+- name: Execute HCMT
+  command: ./hcmt -v -p <path>/setup/config/executionplan.json
+
+- name: Upload Results 
+  command: ./hcmt -v -p <path>/setup/config/executionplan.json

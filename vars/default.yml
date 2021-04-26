@@ -30,3 +30,8 @@ package_retries_cnt: 3
 package_retries_delay: 3
 useHana2: true
 vm_user: 
+# URL for the Azure HANA Backint Integration Script
+url_hana_backup_script: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
+# url_hana_backup_script: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
+# URL for HCMT package
+url_hcmt: https://terraform2021.blob.core.windows.net/sapbits/archives/HCMT_055_0-80003261.SAR
