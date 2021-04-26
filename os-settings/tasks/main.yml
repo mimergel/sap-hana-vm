@@ -17,6 +17,24 @@
     line:       DHCLIENT_SET_HOSTNAME="no"
   when:         ansible_os_family|upper == 'SUSE'
 
+# Update all packages SLES
+- name: Update all packages on OpenSUSE/SUSE Linux
+  zypper:
+    name: '*'
+    state: latest
+    type: patch
+  when: ansible_os_family|upper == "SUSE"
+
+# Update all packages RHEL
+- name: Update all installed packages using YUM module
+  yum:
+    name: '*'
+    state: latest
+      update_cache: yes
+      update_only: yes
+    register: yum_update_status
+  when: ansible_os_family|upper == "REDHAT"
+
 # Package Installation
 - name:             Import package list
   include_vars:     os-vars.yml
