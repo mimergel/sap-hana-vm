@@ -7,7 +7,7 @@
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
 #  friendly names for disks
-#  OS settings from OSS notes
+#  OS settings from OSS notes (waiting loop for install finish)
 #  execute the HANA Backup
 #  Testing (quality checks and HCMT)
 #  cleanup everything (unregister HANA and RSV + delete RG)
@@ -205,7 +205,7 @@ stages:
             --resource-id $(az vm show -g 'rg-hana-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
           # Enable Protection
           az backup protection enable-for-azurewl --resource-group ${env:RSV_RG} \
-            --policy-name HANA \
+            --policy-name HANA-${{ parameters.hanabackupsetup }} \
             --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
             --protectable-item-type SAPHANADatabase \
             --server-name ${{ parameters.vmname }} \
@@ -213,6 +213,7 @@ stages:
             --output table
         errorActionPreference: 'continue'
         showWarnings: true
+        condition: eq(variables.backuptodo, true)
 
 - stage: Test
   dependsOn: Deploy
