@@ -192,19 +192,20 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
           # Register the SAP HANA Instance
-          az backup container register --resource-group saphanaResourceGroup \
-            --vault-name saphanaVault \
-            --location westus2 \
+          az backup container register --resource-group ${env:RSV_RG} \
+            --vault-name ${env:RSV} \
+            --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
             --resource-id VMResourceId
           # Enable Protection
           az backup protection enable-for-azurewl --resource-group saphanaResourceGroup \
             --policy-name saphanaPolicy \
-            --protectable-item-name "saphanadatabase;hxe;hxe"  \
+            --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
             --protectable-item-type SAPHANADatabase \
-            --server-name hxehost \
+            --server-name ${{ parameters.vmname }} \
             --workload-type SAPHANA \
             --output table
         errorActionPreference: 'continue'
