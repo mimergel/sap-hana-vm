@@ -221,10 +221,9 @@ stages:
           az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
           az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name 'saphanadatabase;${{ parameters.sid }};systemdb' --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' --backup-type full --output table
           az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' --backup-type full --output table
-        errorActionPreference: 'continue'
+        errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
-        errorActionPreference: continue
       condition: eq(variables.backuptodo, true)
 
 - stage: Testing_HCMT
