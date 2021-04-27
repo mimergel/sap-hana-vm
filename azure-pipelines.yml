@@ -232,6 +232,20 @@ stages:
             --server-name ${{ parameters.vmname }} \
             --workload-type SAPHANA \
             --output table
+          # Backup systemdb
+          az backup protection backup-now --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
+            --item-name 'saphanadatabase;${{ parameters.sid }};systemdb' \
+            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
+            --backup-type full \
+            --output table
+          # Backup Tenant DB
+          az backup protection backup-now --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
+            --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' \
+            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
+            --backup-type full \
+            --output table
         errorActionPreference: 'continue'
         showWarnings: true
       condition: eq(variables.backuptodo, true)
