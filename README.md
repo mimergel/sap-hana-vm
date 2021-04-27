@@ -13,6 +13,7 @@ Options:
 	- Hana Performance Checks (HCMT) can be triggered.
 	- The whole deployment can be removed at the end.
 
+
 Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only.
 
 <table>
