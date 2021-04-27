@@ -124,9 +124,9 @@ variables:
   finalcleanup: ${{ parameters.cleanup }}
 
 stages:
-- stage: Deploy_VM
+- stage: Deploy
   jobs:
-  - job: Deploy_VM
+  - job: Deploy
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -157,8 +157,6 @@ stages:
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 
-  - job: Prepare_OS
-    steps:
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
       inputs:
@@ -172,8 +170,6 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
-  - job: HANA_Installation
-    steps:
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -187,8 +183,6 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
-  - job: Backup_Setup
-    steps:
     - task: Ansible@0
       displayName: 'HANA Backup Preparations (Ansible)'
       inputs:
