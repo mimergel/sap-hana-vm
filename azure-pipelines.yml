@@ -262,6 +262,7 @@ stages:
   jobs:
   - job: Test
     timeoutInMinutes: 360
+    cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
     steps:
     - task: Ansible@0
