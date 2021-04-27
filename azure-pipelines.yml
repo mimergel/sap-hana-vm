@@ -6,6 +6,7 @@
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
 #  friendly names for disks
+#  Check the pipeline on RHEL
 #  Quality Checks when avaialbe for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
 #  Cleanup Backup Setup in the Cleanup Stage (unregister HANA and RSV + delete RG)
