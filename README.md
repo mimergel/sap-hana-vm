@@ -7,9 +7,11 @@ The "Deploy to Azure" button deploys the VM and handles the disks setup. For the
 This template takes a minimum amount of parameters and deploys an Azure VM that is customized for use with SAP HANA DB, using the latest patched version of the selected operating system. 
 The template deploys the chosen VM size with the recommended Premium Managed Disks configuration. 
 Filesystems are created via a custom script and will use logical volumes with striping wherevery multiple disks are used. 
-Optionally the DB can be integrated into an Azure Recovery Service Vault including OS and HANA Backup Setup for different Policies (PRD or Non-PRD).
-Optionally Hana Performance Checks (HCMT) can be triggered.
-Optionally the whole deployment can be removed at the end.
+
+Options: 
+	- The DB can be integrated into an Azure Recovery Service Vault including OS and HANA Backup Setup for different Policies (PRD or Non-PRD).
+	- Hana Performance Checks (HCMT) can be triggered.
+	- The whole deployment can be removed at the end.
 
 Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only.
 
