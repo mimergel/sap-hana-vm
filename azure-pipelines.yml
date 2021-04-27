@@ -3,15 +3,12 @@
 # Testing consists of quality checks and HCMT
 # 
 # Todo:
-#  Documentation
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
-#  friendly names for disks, helps identify disks to exclude form OS backup
-#  execute the HANA Backup
-#  Testing (quality checks and HCMT)
-#  do the same with github actions
-#  opotinally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-#  cleanup everything (unregister HANA and RSV + delete RG)
+#  friendly names for disks
+#  Quality Checks when avaialbe for SSH login
+#  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
+#  Cleanup Backup Setup in the Cleanup Stage (unregister HANA and RSV + delete RG)
 
 parameters:
 - name: size
@@ -205,7 +202,7 @@ stages:
           ${{ parameters.vmname }}.$(privatednszone)
         args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
         failOnStdErr: false
-      condition: eq(${{ parameters.hanabackupsetup }}, true)
+      condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
@@ -223,7 +220,7 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
-      condition: eq(${{ parameters.hanabackupsetup }}, true)
+      condition: eq(variables.backuptodo, true)
 
 - stage: Testing_HCMT
   jobs:
