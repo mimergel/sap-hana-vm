@@ -204,19 +204,28 @@ stages:
 
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution'
+      # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
+        # Register the SAP HANA Instance
         targetType: 'inline'
         script: |
-          # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
-          # Register the SAP HANA Instance
           az backup container register --resource-group ${RSV_RG} \
             --vault-name ${RSV} \
-            --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
             --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
-          # Enable Protection
-          az backup protection enable-for-azurewl --resource-group ${env:RSV_RG} \
+          # Enable Protection systemdb
+          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
+            --policy-name HANA-${{ parameters.hanabackupsetup }} \
+            --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb"  \
+            --protectable-item-type SAPHANADatabase \
+            --server-name ${{ parameters.vmname }} \
+            --workload-type SAPHANA \
+            --output table
+          # Enable Protection Tenant DB
+          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
             --policy-name HANA-${{ parameters.hanabackupsetup }} \
             --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
             --protectable-item-type SAPHANADatabase \
