@@ -30,7 +30,8 @@
     creates: /hana/shared/install/setup/hcmtsetup
 
 - name: Setup HCMT
-    chdir: /hana/shared/install
+  command: ./hcmtsetup
+    chdir: /hana/shared/install/setup
     creates: /hana/shared/install/setup/hcmt
 
 - name: Set Request to false to allow non-interactive run
