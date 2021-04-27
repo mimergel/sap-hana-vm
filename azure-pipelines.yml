@@ -207,7 +207,7 @@ stages:
           ${{ parameters.vmname }}.$(privatednszone)
         args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
         failOnStdErr: false
-      condition: eq(variables.backuptodo, false)
+      condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
@@ -223,6 +223,8 @@ stages:
           az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' --backup-type full --output table
         errorActionPreference: 'continue'
         showWarnings: true
+        failOnStderr: false
+        errorActionPreference: continue
       condition: eq(variables.backuptodo, true)
 
 - stage: Testing_HCMT
