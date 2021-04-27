@@ -261,6 +261,8 @@ stages:
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
+    timeoutInMinutes: 360
+    # HCMT runs very loooooooooooooooooong
     steps:
     - task: Ansible@0
       displayName: 'Run HCMT (Ansible)'
