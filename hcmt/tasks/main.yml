@@ -41,7 +41,7 @@
     regexp: '"Request": "true"'
     replace: '"Request": "false"'
 
-- name: run hdblcm
+- name: run hcmt
   shell: ./hcmt -v -p config/executionplan.json
   args:
     chdir: /hana/shared/install/setup

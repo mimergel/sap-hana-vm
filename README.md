@@ -1,10 +1,17 @@
-# SAP HANA VM deployments using Azure Marketplace images
+# SAP HANA VM deployments using Azure Marketplace Images
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2Fazuredeploy.json) 
 
-This template takes a minimum amount of parameters and deploys a VM that is customized for use with SAP NetWeaver and HANA DB, using the latest patched version of the selected operating system. This is a template for a 2-tier configuration and it deploys 1 server on Premium Storage with Managed Disks. Filesystems are created via custom script. Where multiple disks are used for the filesystem the logical volume is setup with striping for optimal performance. 
+The "Deploy to Azure" button deploys the VM and handles the disks setup. For the full functionality including HANA DB installation, Backup Integration and Performance Testing an Azure DevOps Pipeline can be used.
 
-Eds_v4 Series use premium dissk without write accellerations, therefore this is not recommended for PRD usage but might be suitable for Non-PRD envrionments.
+This template takes a minimum amount of parameters and deploys an Azure VM that is customized for use with SAP HANA DB, using the latest patched version of the selected operating system. 
+The template deploys the chosen VM size with the recommended Premium Managed Disks configuration. 
+Filesystems are created via a custom script and will use logical volumes with striping wherevery multiple disks are used. 
+Optionally the DB can be integrated into an Azure Recovery Service Vault including OS and HANA Backup Setup for different Policies (PRD or Non-PRD).
+Optionally Hana Performance Checks (HCMT) can be triggered.
+Optionally the whole deployment can be removed at the end.
+
+Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only.
 
 <table>
 	<tr>
@@ -86,7 +93,6 @@ Eds_v4 Series use premium dissk without write accellerations, therefore this is 
 4. Linux VM as deployment agent within the same or peered VNET 
    See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
    ansible & pwsh installed
-   ansible-galaxy collection install community.general
 
 # Deployment via Azure DevOps
 Steps:
@@ -96,14 +102,12 @@ Steps:
 4. Enter required variables to the pipeline configuration
 5. Download sapbits and store in storage account, update urls in vars/default.yml
 
-# Deployments in an Azure environment without internet access 
-There might be multiple solutions to handle this situation which is most common for SAP environments. 
-The challenge here is that the deployed HANA VM has no access to Github to download the diskConfig.sh script. 
-Furthermore you might want to keep the provided details like subscription and subnetId from the azuredeployparamfile.json file private. 
-For me the following solution works fine:
+# Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
+In this typical situation downloads from github or SAP won't work. Therefore the following files need to be placed into a storage container that is reachable from the SAP subnets. 
+Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sap-hana.sh
 
 1. Create a storage account with a private endpoint on relevant subnets in your Azure subscription
 2. Create a container with read access in this storage account 
-3. Upload the diskConfig.sh file and the HANA Backup Integration Script msawb-plugin-config-com-sap-hana.sh into the container
-4. Get the URLs diskConfig.sh and update the link in azuredeploy.json of your forked repository
+3. Upload the files into the container
+4. Get the URLs update the links in vars/defaults.yml. The URL to diskConfig.sh must be adapted in the azuredeploy.json.
 5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
