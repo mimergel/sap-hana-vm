@@ -41,6 +41,12 @@
     regexp: '"Request": "true"'
     replace: '"Request": "false"'
 
+- name: Lower Repeat Value to 1 to reduce long runtime
+  ansible.builtin.replace:
+    path: /hana/shared/install/setup/config/executionplan.json
+    regexp: '"Value": "2"'
+    replace: '"Value": "1"'
+
 - name: run hcmt
   shell: ./hcmt -v -p config/executionplan.json
   args:
