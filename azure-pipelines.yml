@@ -213,11 +213,14 @@ stages:
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
-        # Register the SAP HANA Instance
+        # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'inline'
-        script: |
+        script: |          
           az backup container register -g $(RSV_RG) -v $(RSV) --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv) 
-          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb" --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
+          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name 'saphanadatabase;${{ parameters.sid }};systemdb' --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
+          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
+          az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name 'saphanadatabase;${{ parameters.sid }};systemdb' --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' --backup-type full --output table
+          az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' --backup-type full --output table
         errorActionPreference: 'continue'
         showWarnings: true
       condition: eq(variables.backuptodo, true)
