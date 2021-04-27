@@ -163,7 +163,7 @@ stages:
       displayName: 'OS Preparations (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'os-settings-playbook.yml'
+        playbookPathOnAgentMachine: 'os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -178,7 +178,7 @@ stages:
       displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'single_node_playbook.yml'
+        playbookPathOnAgentMachine: 'saphana-install_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
