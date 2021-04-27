@@ -31,6 +31,7 @@
 
 - name: Setup HCMT
   command: ./hcmtsetup
+  args:
     chdir: /hana/shared/install/setup
     creates: /hana/shared/install/setup/hcmt
 
