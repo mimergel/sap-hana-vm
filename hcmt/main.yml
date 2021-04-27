@@ -33,6 +33,12 @@
     chdir: /hana/shared/install
     creates: /hana/shared/install/setup/hcmt
 
+- name: Set Request to false to allow non-interactive run
+  ansible.builtin.replace:
+    path: /hana/shared/install/config/executionplan.json 
+    regexp: '"Request": "true"'
+    replace: '"Request": "false"'
+
 - name: run hdblcm
   shell: ./hcmt -v -p config/executionplan.json
   args:
