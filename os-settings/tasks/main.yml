@@ -3,7 +3,7 @@
 # Swap Space
 - name: Ensure variables are available
   include_vars:
-    file: "../vars/os-vars.yml"
+    file: "../../vars/os-vars.yml"
 
 - include_tasks: swap.yml
   loop: "{{ sap_swap }}"
