@@ -216,43 +216,7 @@ stages:
         # Register the SAP HANA Instance
         targetType: 'inline'
         script: |
-          az backup container register --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --workload-type SAPHANA \
-            --backup-management-type AzureWorkload \
-            --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
-          # Enable Protection systemdb
-          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --policy-name HANA-${{ parameters.hanabackupsetup }} \
-            --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb"  \
-            --protectable-item-type SAPHANADatabase \
-            --server-name ${{ parameters.vmname }} \
-            --workload-type SAPHANA \
-            --output table
-          # Enable Protection Tenant DB
-          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --policy-name HANA-${{ parameters.hanabackupsetup }} \
-            --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
-            --protectable-item-type SAPHANADatabase \
-            --server-name ${{ parameters.vmname }} \
-            --workload-type SAPHANA \
-            --output table
-          # Backup systemdb
-          az backup protection backup-now --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --item-name 'saphanadatabase;${{ parameters.sid }};systemdb' \
-            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
-            --backup-type full \
-            --output table
-          # Backup Tenant DB
-          az backup protection backup-now --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' \
-            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
-            --backup-type full \
-            --output table
+          az backup container register --resource-group ${RSV_RG} --vault-name ${RSV} --workload-type SAPHANA --backup-management-type AzureWorkload --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
         errorActionPreference: 'continue'
         showWarnings: true
       condition: eq(variables.backuptodo, true)
