@@ -149,6 +149,10 @@ stages:
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.hanavmdeployment }}, true)
 
+- stage: Prepare_OS
+  jobs:
+  - job: Prepare_OS
+    steps:
     - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
       displayName: Remove known_hosts entries from former runs
       failOnStderr: false
@@ -157,8 +161,6 @@ stages:
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 
-  - job: Prepare_OS
-    steps:
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
       inputs:
@@ -172,7 +174,9 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
-  - job: HANA_Installation
+- stage: Install_HANA
+  jobs:
+  - job: Install_HANA
     steps:
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
@@ -187,10 +191,13 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
-  - job: Backup_Setup
+- stage: Backup_Integration
+  jobs:
+  - job: Backup_Integration
     steps:
     - task: Ansible@0
-      displayName: 'HANA Backup Preparations (Ansible)'
+      displayName: 'HANA Backup Prerequesites (Ansible)'
+      # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'backup_playbook.yml'
@@ -203,35 +210,59 @@ stages:
       condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
-      displayName: 'HANA Backup Registration and Execution'
+      displayName: 'HANA Backup Registration and Execution (PWSH)'
+      # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
+        # Register the SAP HANA Instance
         targetType: 'inline'
         script: |
-          # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
-          # Register the SAP HANA Instance
           az backup container register --resource-group ${RSV_RG} \
             --vault-name ${RSV} \
-            --location ${{ parameters.location }} \
             --workload-type SAPHANA \
             --backup-management-type AzureWorkload \
             --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
-          # Enable Protection
-          az backup protection enable-for-azurewl --resource-group ${env:RSV_RG} \
+          # Enable Protection systemdb
+          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
+            --policy-name HANA-${{ parameters.hanabackupsetup }} \
+            --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb"  \
+            --protectable-item-type SAPHANADatabase \
+            --server-name ${{ parameters.vmname }} \
+            --workload-type SAPHANA \
+            --output table
+          # Enable Protection Tenant DB
+          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
             --policy-name HANA-${{ parameters.hanabackupsetup }} \
             --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
             --protectable-item-type SAPHANADatabase \
             --server-name ${{ parameters.vmname }} \
             --workload-type SAPHANA \
             --output table
+          # Backup systemdb
+          az backup protection backup-now --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
+            --item-name 'saphanadatabase;${{ parameters.sid }};systemdb' \
+            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
+            --backup-type full \
+            --output table
+          # Backup Tenant DB
+          az backup protection backup-now --resource-group ${RSV_RG} \
+            --vault-name ${RSV} \
+            --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' \
+            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
+            --backup-type full \
+            --output table
         errorActionPreference: 'continue'
         showWarnings: true
       condition: eq(variables.backuptodo, true)
 
-- stage: Test
-  # dependsOn: Deploy
+- stage: Testing_HCMT
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
+    timeoutInMinutes: 360
+    # HCMT runs very loooooooooooooooooong
     steps:
     - task: Ansible@0
       displayName: 'Run HCMT (Ansible)'
@@ -242,7 +273,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
+        args: -v 
         failOnStdErr: false
       condition: eq(variables.hcmttest, true)
 
