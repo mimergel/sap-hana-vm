@@ -37,7 +37,7 @@
 
 - name: Set Request to false to allow non-interactive run
   ansible.builtin.replace:
-    path: /hana/shared/install/config/executionplan.json 
+    path: /hana/shared/install/setup/config/executionplan.json
     regexp: '"Request": "true"'
     replace: '"Request": "false"'
 
