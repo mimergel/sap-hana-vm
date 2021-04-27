@@ -216,7 +216,7 @@ stages:
         # Register the SAP HANA Instance
         targetType: 'inline'
         script: |
-          az backup container register -g $($env:PS_RSV_RG) -v $($env:PS_RSV) --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g '$($env:PS_VM_RG)' -n $($env:PS_VM) --query id --output tsv)
+          az backup container register -g $env:PS_RSV_RG -v $env:PS_RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g '$($env:PS_VM_RG)' -n $($env:PS_VM) --query id --output tsv)
         errorActionPreference: 'continue'
         showWarnings: true
       env:
