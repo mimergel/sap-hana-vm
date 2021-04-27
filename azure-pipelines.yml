@@ -124,9 +124,9 @@ variables:
   finalcleanup: ${{ parameters.cleanup }}
 
 stages:
-- stage: Deploy
+- stage: Deploy_VM
   jobs:
-  - job: Deploy
+  - job: Deploy_VM
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -149,6 +149,10 @@ stages:
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.hanavmdeployment }}, true)
 
+- stage: Prepare_OS
+  jobs:
+  - job: Prepare_OS
+    steps:
     - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
       displayName: Remove known_hosts entries from former runs
       failOnStderr: false
@@ -170,6 +174,10 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
+- stage: Install_HANA
+  jobs:
+  - job: Install_HANA
+    steps:
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -183,8 +191,13 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
+- stage: Backup_Integration
+  jobs:
+  - job: Backup_Integration
+    steps:
     - task: Ansible@0
-      displayName: 'HANA Backup Preparations (Ansible)'
+      displayName: 'HANA Backup Prerequesites (Ansible)'
+      # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'backup_playbook.yml'
@@ -197,7 +210,7 @@ stages:
       condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
-      displayName: 'HANA Backup Registration and Execution'
+      displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         # Register the SAP HANA Instance
@@ -244,8 +257,7 @@ stages:
         showWarnings: true
       condition: eq(variables.backuptodo, true)
 
-- stage: Test
-  # dependsOn: Deploy
+- stage: Testing_HCMT
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
