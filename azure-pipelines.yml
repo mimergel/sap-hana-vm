@@ -192,6 +192,7 @@ stages:
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
 - stage: Backup_Integration
+  condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Integration
     steps:
@@ -249,6 +250,7 @@ stages:
       condition: eq(variables.hcmttest, true)
 
 - stage: Cleanup
+  condition: eq(variables.finalcleanup, true)
   jobs:
   - job: Cleanup
     steps:
