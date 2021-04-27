@@ -207,7 +207,7 @@ stages:
           ${{ parameters.vmname }}.$(privatednszone)
         args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
         failOnStdErr: false
-      condition: eq(variables.backuptodo, true)
+      condition: eq(variables.backuptodo, false)
 
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
@@ -216,7 +216,7 @@ stages:
         # Register the SAP HANA Instance
         targetType: 'inline'
         script: |
-          az backup container register -g $env:PS_RSV_RG -v $env:PS_RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g '$($env:PS_VM_RG)' -n $($env:PS_VM) --query id --output tsv)
+          az backup container register -g $(RSV_RG) -v $(RSV) --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
         errorActionPreference: 'continue'
         showWarnings: true
       env:
