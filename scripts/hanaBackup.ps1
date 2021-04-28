@@ -48,6 +48,9 @@ param(
 )
 
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
+WriteOutput -output "$VMID=az vm show -g $VMRG -n $VM --query id --output tsv"
+WriteOutput -output "$VMID"
+WriteOutput -output "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $VMID"
 az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $VMID
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMSYS --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMTEN --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
