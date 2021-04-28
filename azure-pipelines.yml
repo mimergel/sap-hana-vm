@@ -225,14 +225,15 @@ stages:
         showWarnings: true
         failOnStderr: false
       condition: eq(variables.backuptodo, true)
+
     - task: CmdLine@2
       displayName: 'Dummy command for successful stage run'
       inputs:
         script: 'echo Backup Integration not selected'
 
-- stage: Testing_HCMT
+- stage: Testing
   jobs:
-  - job: Test
+  - job: HCMT
     timeoutInMinutes: 360
     cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
@@ -249,23 +250,25 @@ stages:
         args: -v 
         failOnStdErr: false
       condition: eq(${{ parameters.hcmt }}, true)
+
     - task: CmdLine@2
       displayName: 'Dummy command for successful stage run'
       inputs:
         script: 'echo HCMT Test not selected'
 
 - stage: Cleanup
+  condition: eq(${{ parameters.cleanup }}, true)
   jobs:
   - job: Remove_RG
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
-      condition: eq(${{ parameters.cleanup }}, true)
 
   - job: Remove_Backup_Definitions
     steps:
@@ -287,4 +290,3 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
-      condition: eq(${{ parameters.cleanup }}, true)
