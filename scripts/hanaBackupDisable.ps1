@@ -1,10 +1,8 @@
 <#
 .SYNOPSIS
-    This script activates the SAP HANA Backups
+    This script disables the SAP HANA Backups
 .DESCRIPTION
-	This script activates the SAP HANA Backups by registering the SAP HANA Instance, 
-    enable protection and finally running the backups for the systemdb and tenant db.
-	The script requires as prerequesite a successfully finished pre-registration script from here:
+	This script disables the SAP HANA Backups including all required cleanup activities
 .EXAMPLE
     Test the script:
     $RGV="HANABackups"
@@ -40,17 +38,17 @@ param(
     [Parameter(Mandatory = $true)][string]$CONTAINER
 )
 
+
 # Get VM ID
-$VMID=az vm show -g $VMRG -n $VM --query id --output tsv
-# Discovery
-az backup protectable-item initialize --container-name $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA
-# Register
-az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $VMID
+# $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
+
+# Disable Backups
+az backup protection disable --container-name $CONTAINER --delete-backup-data true --item-name $ITEMSYS -g $RGV -v $RSV --yes
+az backup protection disable --container-name $CONTAINER --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes
+
+# Unregister Container
+az backup container unregister -c $CONTAINER -g $RGV -v $RSV --backup-management-type AzureWorkload -yes
+
 # List protectable items
 az backup protectable-item  list --container-name $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA --output tsv
-# Enable Backups
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMSYS --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMTEN --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
-# Run Backups
-az backup protection backup-now -g $RGV -v $RSV --item-name $ITEMSYS --container-name $CONTAINER --backup-type full
-az backup protection backup-now -g $RGV -v $RSV --item-name $ITEMTEN --container-name $CONTAINER --backup-type full
+
