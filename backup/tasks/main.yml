@@ -14,7 +14,7 @@
   command: 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
   become: true
   become_method: su
-  become_user: "{{ sap_sid|lower }}"adm
+  become_user: "{{ sap_sid|lower }}adm"
   
 
 - name: Run integration script
