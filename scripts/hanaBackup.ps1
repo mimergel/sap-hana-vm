@@ -17,7 +17,7 @@
 .NOTES
     v0.1 - Initial version
 
-Example:
+Test the script:
 $RGV="HANABackups"
 $RSV="hanabackupvault"
 $VM="hanatest06"
@@ -29,14 +29,12 @@ $CONTAINER="VMAppContainer;Compute;$VMRG;$VM"
 
 ./hanaBackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
 
-# IaasVMContainer;iaasvmcontainerv2;rg-HANA-MM6;hanatest06
-# az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
-# az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureIaasVM --output tsv
-# az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureWorkload  --output tsv
-#>
+some helpful commands:
+az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
+az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureIaasVM --output tsv
+az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureWorkload  --output tsv
 
-#Requires -Modules Az.Compute
-#Requires -Version 5.1
+#>
 
 param(
     [Parameter(Mandatory = $true)][string]$RGV, 
