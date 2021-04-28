@@ -43,12 +43,12 @@ param(
 # $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
 
 # Disable Backups
-az backup protection disable --container-name $CONTAINER --delete-backup-data true --item-name $ITEMSYS -g $RGV -v $RSV --yes
-az backup protection disable --container-name $CONTAINER --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes
+az backup protection disable -c $CONTAINER --delete-backup-data true --item-name $ITEMSYS -g $RGV -v $RSV --yes
+az backup protection disable -c $CONTAINER --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes
 
 # Unregister Container
 az backup container unregister -c $CONTAINER -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
 
 # List protectable items
-az backup protectable-item  list --container-name $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+az backup protectable-item  list -c $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 
