@@ -16,7 +16,7 @@
     $ITEMTEN="saphanadatabase;mm6;mm6"
     $CONTAINER="VMAppContainer;Compute;$VMRG;$VM"
 
-    ./hanaBackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
+    ./hanaBackupEnable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -43,14 +43,14 @@ param(
 # Get VM ID
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
 # Discovery
-az backup protectable-item initialize --container-name $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA
+az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHANA -c "$CONTAINER" 
 # Register
 az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $VMID
 # List protectable items
-az backup protectable-item  list --container-name $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 # Enable Backups
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMSYS --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMTEN --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
 # Run Backups
-az backup protection backup-now -g $RGV -v $RSV --item-name $ITEMSYS --container-name $CONTAINER --backup-type full
-az backup protection backup-now -g $RGV -v $RSV --item-name $ITEMTEN --container-name $CONTAINER --backup-type full
+az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMSYS" --container-name "$CONTAINER" --backup-type full
+az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
