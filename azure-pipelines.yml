@@ -184,7 +184,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system variables.hana-pw
+        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
