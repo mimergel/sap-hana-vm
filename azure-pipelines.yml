@@ -3,15 +3,13 @@
 # Testing consists of quality checks and HCMT
 # 
 # Todo:
-#  Documentation
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
 #  use SSH key and passwords from KeyVault
-#  friendly names for disks, helps identify disks to exclude form OS backup
-#  execute the HANA Backup
-#  Testing (quality checks and HCMT)
-#  do the same with github actions
-#  opotinally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-#  cleanup everything (unregister HANA and RSV + delete RG)
+#  friendly names for disks
+#  Check the pipeline on RHEL
+#  Quality Checks when avaialbe for SSH login
+#  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
+#  Cleanup Backup Setup in the Cleanup Stage (unregister HANA and RSV + delete RG)
 
 parameters:
 - name: size
@@ -120,8 +118,6 @@ variables:
   # perform the backup setup only when the DB will be installed
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  hcmttest: ${{ parameters.hcmt }}
-  finalcleanup: ${{ parameters.cleanup }}
 
 stages:
 - stage: Deploy_VM
@@ -213,55 +209,29 @@ stages:
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
-        # Register the SAP HANA Instance
+        # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'inline'
-        script: |
-          az backup container register --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --workload-type SAPHANA \
-            --backup-management-type AzureWorkload \
-            --resource-id $(az vm show -g 'rg-HANA-${{ parameters.sid }}' -n ${{ parameters.vmname }} --query id --output tsv)
-          # Enable Protection systemdb
-          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --policy-name HANA-${{ parameters.hanabackupsetup }} \
-            --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb"  \
-            --protectable-item-type SAPHANADatabase \
-            --server-name ${{ parameters.vmname }} \
-            --workload-type SAPHANA \
-            --output table
-          # Enable Protection Tenant DB
-          az backup protection enable-for-azurewl --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --policy-name HANA-${{ parameters.hanabackupsetup }} \
-            --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"  \
-            --protectable-item-type SAPHANADatabase \
-            --server-name ${{ parameters.vmname }} \
-            --workload-type SAPHANA \
-            --output table
-          # Backup systemdb
-          az backup protection backup-now --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --item-name 'saphanadatabase;${{ parameters.sid }};systemdb' \
-            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
-            --backup-type full \
-            --output table
-          # Backup Tenant DB
-          az backup protection backup-now --resource-group ${RSV_RG} \
-            --vault-name ${RSV} \
-            --item-name 'saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}' \
-            --container-name 'VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}' \
-            --backup-type full \
-            --output table
-        errorActionPreference: 'continue'
+        script: |          
+          az backup container register -g $(RSV_RG) -v $(RSV) --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g "rg-HANA-${{ parameters.sid }}" -n ${{ parameters.vmname }} --query id --output tsv)
+          Write-Host $(az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table)
+          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb" --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
+          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}" --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
+          az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name "saphanadatabase;${{ parameters.sid }};systemdb" --container-name "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}" --backup-type full --output table
+          az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}" --container-name "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}" --backup-type full --output table
+        errorActionPreference: continue
         showWarnings: true
+        failOnStderr: false
       condition: eq(variables.backuptodo, true)
+    - task: CmdLine@2
+      displayName: 'Dummy command for successful stage run'
+      inputs:
+        script: 'echo Backup Integration not selected'
 
 - stage: Testing_HCMT
-  condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: Test
     timeoutInMinutes: 360
+    cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
     steps:
     - task: Ansible@0
@@ -275,7 +245,11 @@ stages:
           ${{ parameters.vmname }}.$(privatednszone)
         args: -v 
         failOnStdErr: false
-      condition: eq(variables.hcmttest, true)
+      condition: eq(${{ parameters.hcmt }}, true)
+    - task: CmdLine@2
+      displayName: 'Dummy command for successful stage run'
+      inputs:
+        script: 'echo HCMT Test not selected'
 
 - stage: Cleanup
   jobs:
@@ -288,5 +262,4 @@ stages:
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
-      condition: eq(variables.finalcleanup, true)
-      # todo: unregister HANA and remove from RSV
+      condition: eq(${{ parameters.cleanup }}, true)
