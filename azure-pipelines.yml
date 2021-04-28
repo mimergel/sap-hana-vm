@@ -10,6 +10,7 @@
 #  Quality Checks when avaialbe for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
 #  Cleanup Backup Setup in the Cleanup Stage (unregister HANA and RSV + delete RG)
+#  smaller items: tier, backup tag, ...
 
 parameters:
 - name: size
@@ -166,7 +167,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
+        args: -v
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
@@ -212,15 +213,15 @@ stages:
         # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackup.ps1'
-        arguments: > 
-          RGV=$(RSV_RG)
-          RSV=$(RSV)
-          VM=${{ parameters.sid }}
-          VMRG=rg-HANA-${{ parameters.sid }}
-          POL=HANA-${{ parameters.hanabackupsetup }}
-          ITEMSYS=saphanadatabase;${{ parameters.sid }};systemdb
-          ITEMTEN=saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}
-          CONTAINER=VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}
+        arguments: >
+          -RGV=$(RSV_RG)
+          -RSV=$(RSV)
+          -VM=${{ parameters.sid }}
+          -VMRG=rg-HANA-${{ parameters.sid }}
+          -POL=HANA-${{ parameters.hanabackupsetup }}
+          -ITEMSYS=saphanadatabase;${{ parameters.sid }};systemdb
+          -ITEMTEN=saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}
+          -CONTAINER=VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -266,3 +267,14 @@ stages:
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
       condition: eq(${{ parameters.cleanup }}, true)
+
+
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
+    scriptType: 'ps'
+    scriptLocation: 'scriptPath'
+    scriptPath: 
+    arguments: '-sadfsadf VAR -adfasdf VAR2'
+    powerShellErrorActionPreference: 'continue'
