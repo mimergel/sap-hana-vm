@@ -257,17 +257,18 @@ stages:
         script: 'echo HCMT Test not selected'
 
 - stage: Cleanup
+  condition: eq(${{ parameters.cleanup }}, true)
   jobs:
   - job: Remove_RG
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
-      condition: eq(${{ parameters.cleanup }}, true)
 
   - job: Remove_Backup_Definitions
     steps:
@@ -289,4 +290,3 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
-      condition: eq(${{ parameters.cleanup }}, true)
