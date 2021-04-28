@@ -211,7 +211,7 @@ stages:
       inputs:
         # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackup.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackupEnable.ps1'
         arguments: >
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
@@ -256,7 +256,7 @@ stages:
 
 - stage: Cleanup
   jobs:
-  - job: Cleanup
+  - job: Remove_RG
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
@@ -265,4 +265,26 @@ stages:
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
+      condition: eq(${{ parameters.cleanup }}, true)
+
+  - job: Remove_Backup_Definitions
+    steps:
+    - task: PowerShell@2
+      displayName: 'HANA Backup Removal (PWSH)'
+      inputs:
+        # Register the SAP HANA Instance, enable protection and run backup
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackupDisable.ps1'
+        arguments: >
+          -RGV "$(RSV_RG)"
+          -RSV "$(RSV)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "rg-HANA-${{ parameters.sid }}"
+          -POL "HANA-${{ parameters.hanabackupsetup }}"
+          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
+          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
+          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
       condition: eq(${{ parameters.cleanup }}, true)
