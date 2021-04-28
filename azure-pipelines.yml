@@ -222,6 +222,10 @@ stages:
         showWarnings: true
         failOnStderr: false
       condition: eq(variables.backuptodo, true)
+    - task: CmdLine@2
+      displayName: 'Dummy command for successful stage run'
+      inputs:
+        script: 'echo Backup Integration not selected'
 
 - stage: Testing_HCMT
   jobs:
