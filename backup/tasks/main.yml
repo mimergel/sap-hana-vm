@@ -11,10 +11,11 @@
   delay: "{{ url_retries_delay }}"
 
 - name: Setup SYSTEM user for Backup integration
-  command: hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
-  become: true
-  become_method: sudo
-  become_user: "{{ sap_sid|lower }}adm"
+  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
+  # below doesn't work, so sticking with above line for now
+  # become: true
+  # become_method: su
+  # become_user: "{{ sap_sid|lower }}adm"
   # become_flags: '-s /bin/sh'
 
 - name: Run integration script
