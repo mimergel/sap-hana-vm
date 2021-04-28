@@ -42,10 +42,10 @@ param(
 
 # Get VM ID
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
-# Discovery
-az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHANA -c "$CONTAINER" 
 # Register
-az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $VMID
+az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id "$VMID"
+# Discovery
+az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHANA -c "$CONTAINER"
 # List protectable items
 az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 # Enable Backups
