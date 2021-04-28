@@ -47,7 +47,7 @@ az backup protection disable --container-name $CONTAINER --delete-backup-data tr
 az backup protection disable --container-name $CONTAINER --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes
 
 # Unregister Container
-az backup container unregister -c $CONTAINER -g $RGV -v $RSV --backup-management-type AzureWorkload -yes
+az backup container unregister -c $CONTAINER -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
 
 # List protectable items
 az backup protectable-item  list --container-name $CONTAINER -g $RGV -v $RSV --workload-type SAPHANA --output tsv
