@@ -242,6 +242,10 @@ stages:
         args: -v 
         failOnStdErr: false
       condition: eq(${{ parameters.hcmt }}, true)
+    - task: CmdLine@2
+      displayName: 'Dummy command for successful stage run'
+      inputs:
+        script: 'echo HCMT Test not selected'
 
 - stage: Cleanup
   jobs:
