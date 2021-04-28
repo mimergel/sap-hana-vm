@@ -231,9 +231,9 @@ stages:
       inputs:
         script: 'echo Backup Integration not selected'
 
-- stage: Testing_HCMT
+- stage: Testing
   jobs:
-  - job: Test
+  - job: HCMT
     timeoutInMinutes: 360
     cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
