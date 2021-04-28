@@ -37,7 +37,7 @@
 - name: Enter provided password into password file
   replace:
     path: /hana/shared/install/hdbserver_{{ sap_sid }}_passwords.xml
-    regexp: '***'
+    regexp: '\*\*\*'
     replace: "{{ pw_db_system }}"
 
 - name: download sapcar
