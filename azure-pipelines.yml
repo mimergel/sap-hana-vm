@@ -210,14 +210,17 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         # Register the SAP HANA Instance, enable protection and run backup
-        targetType: 'inline'
-        script: |          
-          az backup container register -g $(RSV_RG) -v $(RSV) --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $(az vm show -g "rg-HANA-${{ parameters.sid }}" -n ${{ parameters.vmname }} --query id --output tsv)
-          Write-Host $(az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table)
-          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name "saphanadatabase;${{ parameters.sid }};systemdb" --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
-          az backup protection enable-for-azurewl -g $(RSV_RG) -v $(RSV) --policy-name HANA-${{ parameters.hanabackupsetup }} --protectable-item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}" --protectable-item-type SAPHANADatabase --server-name ${{ parameters.vmname }} --workload-type SAPHANA --output table
-          az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name "saphanadatabase;${{ parameters.sid }};systemdb" --container-name "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}" --backup-type full --output table
-          az backup protection backup-now -g $(RSV_RG) -v $(RSV) --item-name "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}" --container-name "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}" --backup-type full --output table
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackup.ps1'
+        arguments: > 
+          RGV=$(RSV_RG)
+          RSV=$(RSV)
+          VM=${{ parameters.sid }}
+          VMRG=rg-HANA-${{ parameters.sid }}
+          POL=HANA-${{ parameters.hanabackupsetup }}
+          ITEMSYS=saphanadatabase;${{ parameters.sid }};systemdb
+          ITEMTEN=saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}
+          CONTAINER=VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
