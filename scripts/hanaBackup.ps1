@@ -29,14 +29,13 @@ $CONTAINER=VMAppContainer;Compute;$VMRG;$VM
 # IaasVMContainer;iaasvmcontainerv2;rg-HANA-MM6;hanatest06
 # az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
 # az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureIaasVM --output tsv
-
+# az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureWorkload  --output tsv
 #>
 
 #Requires -Modules Az.Compute
 #Requires -Version 5.1
 
 param(
-    [Parameter(Mandatory = $true)][string]$SubscriptionName,
     [Parameter(Mandatory = $true)][string]$RGV, 
     [Parameter(Mandatory = $true)][string]$RSV,
     [Parameter(Mandatory = $true)][string]$VM,
@@ -47,17 +46,7 @@ param(
     [Parameter(Mandatory = $true)][string]$CONTAINER
 )
 
-# select subscription
-Write-Verbose "setting azure subscription"
-$Subscription = Get-AzSubscription -SubscriptionName $SubscriptionName
-if (-Not $Subscription) {
-    Write-Host -ForegroundColor Red -BackgroundColor White "Sorry, it seems you are not connected to Azure or don't have access to the subscription. Please use Connect-AzAccount to connect."
-    exit
-}
-Select-AzSubscription -Subscription $SubscriptionName -Force
-
-$VMID = az vm show -g VMRG -n $VM --query id --output tsv
-
+$VMID=az vm show -g $VMRG -n $VM --query id --output tsv
 az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHANA --resource-id $VMID
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMSYS --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name $ITEMTEN --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHANA
