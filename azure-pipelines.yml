@@ -213,14 +213,14 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackup.ps1'
         arguments: >
-          -RGV=$(RSV_RG)
-          -RSV=$(RSV)
-          -VM=${{ parameters.vmname }}
-          -VMRG=rg-HANA-${{ parameters.sid }}
-          -POL=HANA-${{ parameters.hanabackupsetup }}
-          -ITEMSYS=saphanadatabase;${{ parameters.sid }};systemdb
-          -ITEMTEN=saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}
-          -CONTAINER=VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}
+          -RGV "$(RSV_RG)"
+          -RSV "$(RSV)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "rg-HANA-${{ parameters.sid }}"
+          -POL "HANA-${{ parameters.hanabackupsetup }}"
+          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
+          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
+          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
