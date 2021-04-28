@@ -4,7 +4,7 @@
 # 
 # Todo:
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
-#  use SSH key and passwords from KeyVault
+#  replace *** password in template file
 #  friendly names for disks
 #  Check the pipeline on RHEL
 #  Quality Checks when avaialbe for SSH login
@@ -183,7 +183,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }}
+        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system variables.hana-pw
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
