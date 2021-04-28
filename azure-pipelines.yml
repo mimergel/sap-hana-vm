@@ -267,14 +267,3 @@ stages:
         action: 'DeleteRG'
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
       condition: eq(${{ parameters.cleanup }}, true)
-
-
-
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'Michael Mergell - Azure Subscription(35b67b4c-4fd4-4f0b-997c-bbb82032d45d)'
-    scriptType: 'ps'
-    scriptLocation: 'scriptPath'
-    scriptPath: 
-    arguments: '-sadfsadf VAR -adfasdf VAR2'
-    powerShellErrorActionPreference: 'continue'
