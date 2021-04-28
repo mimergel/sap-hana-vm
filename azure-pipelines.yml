@@ -4,10 +4,9 @@
 # 
 # Todo:
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
-#  replace *** password in template file
 #  friendly names for disks
 #  Check the pipeline on RHEL
-#  Quality Checks when avaialbe for SSH login
+#  Include Quality Checks when available for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
 #  Cleanup Backup Setup in the Cleanup Stage (unregister HANA and RSV + delete RG)
 #  smaller items: tier, backup tag, ...
@@ -202,7 +201,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system variables.hana-pw
+        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
       condition: eq(variables.backuptodo, true)
 
@@ -214,14 +213,14 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackup.ps1'
         arguments: >
-          -RGV=$(RSV_RG)
-          -RSV=$(RSV)
-          -VM=${{ parameters.vmname }}
-          -VMRG=rg-HANA-${{ parameters.sid }}
-          -POL=HANA-${{ parameters.hanabackupsetup }}
-          -ITEMSYS=saphanadatabase;${{ parameters.sid }};systemdb
-          -ITEMTEN=saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}
-          -CONTAINER=VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}
+          -RGV "$(RSV_RG)"
+          -RSV "$(RSV)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "rg-HANA-${{ parameters.sid }}"
+          -POL "HANA-${{ parameters.hanabackupsetup }}"
+          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
+          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
+          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
