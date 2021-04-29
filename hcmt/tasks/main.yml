@@ -1,0 +1,53 @@
+---
+# https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/
+
+- name: download sapcar
+  get_url:
+    url: "{{ url_sapcar }}"
+    dest: /hana/shared/install/SAPCAR_LINUX.EXE
+    mode: 0755
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+- name: download HCMT 
+  get_url:
+    url: "{{ url_hcmt }}"
+    dest: /hana/shared/install/HCMT.SAR
+    mode: 0750
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+- name: extract HCMT 
+  command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf HCMT.SAR
+  args:
+    chdir: /hana/shared/install
+    creates: /hana/shared/install/setup/hcmtsetup
+
+- name: Setup HCMT
+  command: ./hcmtsetup
+  args:
+    chdir: /hana/shared/install/setup
+    creates: /hana/shared/install/setup/hcmt
+
+- name: Set Request to false to allow non-interactive run
+  ansible.builtin.replace:
+    path: /hana/shared/install/setup/config/executionplan.json
+    regexp: '"Request": "true"'
+    replace: '"Request": "false"'
+
+- name: Lower Repeat Value to 1 to reduce long runtime
+  ansible.builtin.replace:
+    path: /hana/shared/install/setup/config/executionplan.json
+    regexp: '"Value": "2"'
+    replace: '"Value": "1"'
+
+- name: run hcmt
+  shell: ./hcmt -v -p config/executionplan.json
+  args:
+    chdir: /hana/shared/install/setup

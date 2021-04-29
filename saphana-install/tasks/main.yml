@@ -34,6 +34,12 @@
     src: hdbserver_passwords.j2
     dest: /hana/shared/install/hdbserver_{{ sap_sid }}_passwords.xml
 
+- name: Enter provided password into password file
+  replace:
+    path: /hana/shared/install/hdbserver_{{ sap_sid }}_passwords.xml
+    regexp: '\*\*\*'
+    replace: "{{ pw_db_system }}"
+
 - name: download sapcar
   get_url:
     url: "{{ url_sapcar }}"
