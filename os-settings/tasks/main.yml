@@ -1,0 +1,68 @@
+---
+
+# Swap Space
+- name: Ensure variables are available
+  include_vars:
+    file: "../../vars/os-vars.yml"
+
+- include_tasks: swap.yml
+  loop: "{{ sap_swap }}"
+  when: item.tier == "HANA" or item.tier == "all"
+
+# SUSE bug 1167134
+- name:         "Ensure DHCLIENT_SET_HOSTNAME is set to no for SLES"
+  lineinfile:
+    path:       /etc/sysconfig/network/dhcp
+    regexp:     '^DHCLIENT_SET_HOSTNAME='
+    line:       DHCLIENT_SET_HOSTNAME="no"
+  when:         ansible_os_family|upper == 'SUSE'
+
+# Update all packages SLES
+- name: Update all packages on OpenSUSE/SUSE Linux
+  zypper:
+    name: '*'
+    state: latest
+    type: patch
+  when: ansible_os_family|upper == "SUSE"
+
+# Update all packages RHEL
+- name: Update all installed packages using YUM module
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_os_family|upper == "REDHAT"
+
+# Package Installation
+- name:             Import package list
+  include_vars:     os-vars.yml
+
+- name:             "Install OS packages: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+  package:
+    name:           "{{ item }}" 
+    state:          present
+  loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
+
+# Wait until installation process finished
+#- name: Wait until installation process fully terminates
+#  ansible.builtin.shell: while [ $(ps -ef | grep zypper | grep -v grep | wc -l) -gt 0 ]; do echo "Zypper still running"; sleep 3; done
+#  args:
+#    executable: /bin/bash
+
+# SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+#
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 1
+  command:    "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 2
+  lineinfile: 
+     dest:    /etc/default/grub 
+     regexp:  "GRUB_CMDLINE_LINUX=" 
+     line:    "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
+
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 3
+  command:    grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name:     "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
+  include_tasks:    "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
+  when:     ansible_os_family|upper == "REDHAT" or
+            ansible_os_family|upper == "SUSE"

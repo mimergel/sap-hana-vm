@@ -1,6 +1,0 @@
----
-# replace with download URL for the Azure HANA Backint Integration Script
-# URL example in case it's placed on your own Azure storage account:
-# url_script: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
-# Official link which requires access to the internet: 
-url_script: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409

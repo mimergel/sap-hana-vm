@@ -1,7 +1,7 @@
 ---
 - name: download msawb-plugin-config-com-sap-hana.sh
   get_url:
-    url: "{{ url_script }}"
+    url: "{{ url_hana_backup_script }}"
     dest: /tmp/msawb-plugin-config-com-sap-hana.sh
     mode: 0750
     timeout: "{{ url_timeout }}"
@@ -11,7 +11,12 @@
   delay: "{{ url_retries_delay }}"
 
 - name: Setup SYSTEM user for Backup integration
-  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM KblkE201Dp'
+  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
+  # below doesn't work, so sticking with above line for now
+  # become: true
+  # become_method: su
+  # become_user: "{{ sap_sid|lower }}adm"
+  # become_flags: '-s /bin/sh'
 
 - name: Run integration script
   command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
