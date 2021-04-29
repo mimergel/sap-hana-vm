@@ -142,7 +142,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "${{ parameters.diskconfigurl }}"'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.hanavmdeployment }}, true)
 
