@@ -49,7 +49,8 @@
 #    executable: /bin/bash
 
 # SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-#
+# SAP Note 2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+
 - name:     Task Disable Transparent Hugepages & Configure Processor C-States 1
   command:    "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 
