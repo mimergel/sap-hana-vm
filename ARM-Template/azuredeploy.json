@@ -149,9 +149,9 @@
     },
     "Script_URL": {
       "type": "string",
-      "defaultValue": "Non-PRD",
+      "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh",
       "metadata": {
-        "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
+        "description": "URL of the disk configuration script"
       }
     }
   },
