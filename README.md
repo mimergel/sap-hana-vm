@@ -113,4 +113,4 @@ Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sa
 2. Create a container with read access in this storage account 
 3. Upload the files into the container
 4. Get the URLs update the links in Ansible/vars/defaults.yml. The URL to diskConfig.sh must be adapted in the ARM-Template/azuredeploy.json.
-5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
+5. Adapt the csmFileLink variable in the DevOpsPipeline/azure-pipeline.yml to point to the ARM template location of your git repo. 
