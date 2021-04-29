@@ -112,5 +112,5 @@ Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sa
 1. Create a storage account with a private endpoint on relevant subnets in your Azure subscription
 2. Create a container with read access in this storage account 
 3. Upload the files into the container
-4. Get the URLs update the links in vars/defaults.yml. The URL to diskConfig.sh must be adapted in the azuredeploy.json.
+4. Get the URLs update the links in Ansible/vars/defaults.yml. The URL to diskConfig.sh must be adapted in the ARM-Template/azuredeploy.json.
 5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
