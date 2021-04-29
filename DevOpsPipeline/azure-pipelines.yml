@@ -8,6 +8,9 @@
 #  Include Quality Checks when available for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
 #  smaller items: tier, backup tag, ...
+#  SLES 15 Settings: https://launchpad.support.sap.com/#/notes/2684254
+#  SLES 12 Settings: https://launchpad.support.sap.com/#/notes/2205917
+#  NW Settings: https://launchpad.support.sap.com/#/notes/2382421
 
 parameters:
 - name: size
