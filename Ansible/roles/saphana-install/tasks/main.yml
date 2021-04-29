@@ -57,6 +57,7 @@
     url: "{{ url_hdbserver }}"
     dest: /hana/shared/install/IMDB_SERVER_LINUX.SAR
     timeout: "{{ url_timeout }}"
+    tmp_dest: /tmp
   register: result
   until: result is succeeded
   retries: "{{ url_retries_cnt }}"
