@@ -146,6 +146,13 @@
       "metadata": {
         "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
       }
+    },
+    "Script_URL": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh",
+      "metadata": {
+        "description": "URL of the disk configuration script"
+      }
     }
   },
   "variables": {
@@ -188,7 +195,7 @@
         "Publisher": "Microsoft.Azure.Extensions",
         "Name": "CustomScript",
         "Version": "2.0",
-        "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.sh",
+        "script": "[parameters('Script_URL')]",
         "scriptCall": "sh diskConfig.sh"
       }
     },

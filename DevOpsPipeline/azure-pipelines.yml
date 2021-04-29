@@ -8,6 +8,9 @@
 #  Include Quality Checks when available for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
 #  smaller items: tier, backup tag, ...
+#  SLES 15 Settings: https://launchpad.support.sap.com/#/notes/2684254
+#  SLES 12 Settings: https://launchpad.support.sap.com/#/notes/2205917
+#  NW Settings: https://launchpad.support.sap.com/#/notes/2382421
 
 parameters:
 - name: size
@@ -139,7 +142,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.hanavmdeployment }}, true)
 

@@ -42,14 +42,11 @@
     state:          present
   loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
 
-# Wait until installation process finished
-#- name: Wait until installation process fully terminates
-#  ansible.builtin.shell: while [ $(ps -ef | grep zypper | grep -v grep | wc -l) -gt 0 ]; do echo "Zypper still running"; sleep 3; done
-#  args:
-#    executable: /bin/bash
-
 # SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-#
+# SAP Note 2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+# SAP Note 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7 
+# SAP Note 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+
 - name:     Task Disable Transparent Hugepages & Configure Processor C-States 1
   command:    "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 
