@@ -87,21 +87,22 @@ Note:
 # Prerequesites
 1. Azure Subscription 
 2. Azure DevOps and Github account
-3. Basic Resources
+3. S-User for SAP Software Downloads
+4. Basic Resources
 	- VNET + Subnet
 	- Recovery Service Vault (For OS + DB Backups)
 	- Storage Account (For SAP binaries and Scripts)
 	- Private DNS Zone (Makes everything easier)
-4. Linux VM as deployment agent within the same or peered VNET 
+5. Linux VM as deployment agent within the same or peered VNET 
    See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
    ansible & pwsh installed
 
 # Deployment via Azure DevOps
 Steps:
-1. Fork this repository 
-2. Connect Azure DevOps with your forked repository (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-3. Create a pipeline similar to the example in this repository (azure-pipelines.yml) by adapting to your Azure envrionment
-4. Enter required variables to the pipeline configuration
+1. Fork this repository in Github or create your own new Repository based on this template
+2. Connect your Github Repository with Azure DevOps (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
+3. Create a pipeline similar in DevOps based on the example azure-pipelines.yml, choose manual trigger as a start
+4. Enter your required variables to the pipeline configuration
 5. Download sapbits and store in storage account, update urls in vars/default.yml
 
 # Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
@@ -111,5 +112,5 @@ Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sa
 1. Create a storage account with a private endpoint on relevant subnets in your Azure subscription
 2. Create a container with read access in this storage account 
 3. Upload the files into the container
-4. Get the URLs update the links in vars/defaults.yml. The URL to diskConfig.sh must be adapted in the azuredeploy.json.
-5. Preferable let the pipeline only run manually to avoid automatic deployments during every repository change
+4. Get the URLs update the links in Ansible/vars/defaults.yml. The URL to diskConfig.sh must be adapted in the ARM-Template/azuredeploy.json.
+5. Adapt the csmFileLink variable in the DevOpsPipeline/azure-pipeline.yml to point to the ARM template location of your git repo. 
