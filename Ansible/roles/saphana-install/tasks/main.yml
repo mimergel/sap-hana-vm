@@ -46,6 +46,7 @@
     dest: /hana/shared/install/SAPCAR_LINUX.EXE
     mode: 0755
     timeout: "{{ url_timeout }}"
+    tmp_dest: /usr/sap
   register: result
   until: result is succeeded
   retries: "{{ url_retries_cnt }}"
@@ -56,6 +57,7 @@
     url: "{{ url_hdbserver }}"
     dest: /hana/shared/install/IMDB_SERVER_LINUX.SAR
     timeout: "{{ url_timeout }}"
+    tmp_dest: /usr/sap
   register: result
   until: result is succeeded
   retries: "{{ url_retries_cnt }}"

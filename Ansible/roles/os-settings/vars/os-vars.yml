@@ -82,21 +82,25 @@ packages:
       - csh
 
     suse12: 
+      - chrony
       - libyui-qt-pkg7
-      - libgcc_s1  
-      - libstdc++6 
-      - libatomic1 
       - glibc
       - systemd
       - tuned
       - numad
+      - ntp
       - sapconf
       - saptune
       - uuidd
+      - libgcc_s1
+      - libstdc++6
+      - libatomic1
 
     suse15: 
+      - chrony
       - libyui-qt-pkg11
       - glibc
       - systemd
       - tuned
       - numad
+      - ntp
