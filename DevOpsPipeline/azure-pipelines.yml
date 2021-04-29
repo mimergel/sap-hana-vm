@@ -140,7 +140,7 @@ stages:
         resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
-        csmFileLink: '$(System.DefaultWorkingDirectory)/ARM-Template/azuredeploy.json'
+        csmFileLink: $(System.DefaultWorkingDirectory)/ARM-Template/azuredeploy.json
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}"'
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.hanavmdeployment }}, true)
