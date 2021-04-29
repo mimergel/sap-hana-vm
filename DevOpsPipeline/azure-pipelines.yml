@@ -4,11 +4,9 @@
 # 
 # Todo:
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
-#  friendly names for disks
 #  Check the pipeline on RHEL & SLES 15
 #  Include Quality Checks when available for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-#  Cleanup Backup Setup in the Cleanup Stage (unregister HANA and RSV + delete RG)
 #  smaller items: tier, backup tag, ...
 
 parameters:
