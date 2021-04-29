@@ -2,7 +2,7 @@
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2Fazuredeploy.json) 
 
-The "Deploy to Azure" button deploys the VM and handles the disks setup. For the full functionality including HANA DB installation, Backup Integration and Performance Testing an Azure DevOps Pipeline can be used.
+The "Deploy to Azure" button deploys the VM and handles the disks setup. For the full functionality including OS Preparations, HANA DB installation, Backup Integration and Performance Testing an Azure DevOps Pipeline can be used.
 
 This template takes a minimum amount of parameters and deploys an Azure VM that is customized for use with SAP HANA DB, using the latest patched version of the selected operating system. 
 The template deploys the chosen VM size with the recommended Premium Managed Disks configuration. 
