@@ -161,7 +161,7 @@ stages:
       displayName: 'OS Preparations (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'os-settings_playbook.yml'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -178,7 +178,7 @@ stages:
       displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'saphana-install_playbook.yml'
+        playbookPathOnAgentMachine: 'Ansible/saphana-install_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -196,7 +196,7 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'backup_playbook.yml'
+        playbookPathOnAgentMachine: 'Ansible/backup_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -211,7 +211,7 @@ stages:
       inputs:
         # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackupEnable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupEnable.ps1'
         arguments: >
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
@@ -242,7 +242,7 @@ stages:
       displayName: 'Run HCMT (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'hcmt_playbook.yml'
+        playbookPathOnAgentMachine: 'Ansible/hcmt_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -277,7 +277,7 @@ stages:
       inputs:
         # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/scripts/hanaBackupDisable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupDisable.ps1'
         arguments: >
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
