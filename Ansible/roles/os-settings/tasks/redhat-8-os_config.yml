@@ -33,31 +33,7 @@
        '@sapsys soft nproc unlimited'
        '@sapsys hard nproc unlimited'
 
-- name: Disable ABRT, Core Dumps and kdump 1
-  systemd:
-     name: abrt-ccpp
-     state: stopped
-     enabled: no
-
-- name: Disable ABRT, Core Dumps and kdump 2
-  systemd: 
-     name: abrtd
-     state: stopped
-     enabled: no
-
-- name: Disable ABRT, Core Dumps and kdump 3
-  lineinfile:
-    dest: /etc/security/limits.conf
-    line: "{{ item }}"
-  loop:
-    - '* soft core 0'
-    - '* hard core 0'
-
-- name: Disable ABRT, Core Dumps and kdump 4
-  systemd:
-     name: kdump.service
-     state: stopped
-     enabled: no
+# ABRT related actions removed here as the corresponding packages abrt and abrt-addon-ccpp are not part of the RHEL 8 image
 
 - name: Firewall Configuration
   systemd:
