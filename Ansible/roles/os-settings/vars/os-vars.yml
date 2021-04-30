@@ -111,8 +111,6 @@ packages:
       - libopenssl1_0_0
       - libssh2-1 
       - sysstat
-
-# need to check if required
-#      - libgcc_s1
-#      - libstdc++6
-#      - libatomic1
+      - libgcc_s1
+      - libstdc++6
+      - libatomic1
