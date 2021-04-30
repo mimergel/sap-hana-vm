@@ -11,16 +11,10 @@
   delay: "{{ url_retries_delay }}"
 
 - name: Setup SYSTEM user for Backup integration
-  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
-  # below doesn't work, so sticking with above line for now
-  # command: hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
-  # become: true
-  # become_method: su
-  # become_user: "{{ sap_sid|lower }}adm"
-  # become_flags: '-s /bin/sh'
+  shell: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
 
 - name: Run integration script
-  command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+  shell: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
 
 - name: Delete SYSTEM user after Backup integration
-  command: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Delete SYSTEM'
+  shell: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Delete SYSTEM'
