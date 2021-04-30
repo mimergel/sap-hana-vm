@@ -51,3 +51,4 @@
   shell: ./hcmt -v -p config/executionplan.json
   args:
     chdir: /hana/shared/install/setup
+    

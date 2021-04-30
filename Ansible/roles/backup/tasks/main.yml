@@ -18,3 +18,4 @@
 
 - name: Delete SYSTEM user after Backup integration
   shell: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Delete SYSTEM'
+  

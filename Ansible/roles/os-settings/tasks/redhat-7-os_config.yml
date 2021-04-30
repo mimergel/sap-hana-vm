@@ -102,3 +102,4 @@
 
 - name: SAP Note 2292690 - SAP HANA DB Recommended OS settings for RHEL 7 - Tuned profile 2
   command: "tuned-adm profile sap-hana"
+  
