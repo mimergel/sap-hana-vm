@@ -1,5 +1,6 @@
 # SAP HANA VM deployments using Azure Marketplace Images
 This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
+
 	* SLES 12 & 15
 	* RHEL 7 & 8 
 	* VM sizes from 128GB to 12TB
