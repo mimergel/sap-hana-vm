@@ -17,15 +17,6 @@
         "description": "HANA System ID."
       }
     },
-    "instancenumber": {
-      "type": "string",
-      "defaultValue": "20",
-      "maxLength": 2,
-      "minLength": 2,
-      "metadata": {
-        "description": "HANA Instance Number"
-      }
-    },
     "osType": {
       "type": "string",
       "allowedValues": [
