@@ -204,8 +204,6 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           ${{ parameters.vmname }}.$(privatednszone)
-        sudoEnabled: true
-        sudoUser: 'lower(${{ parameters.sid }})adm'
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         timeoutInMinutes: 5
         showWarnings: true
