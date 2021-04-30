@@ -368,6 +368,7 @@
             },
             {
               "lun": 1,
+              "name": "[concat(variables('vmName'), '-data1-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
@@ -387,7 +388,7 @@
               "diskSizeGB": 64
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
