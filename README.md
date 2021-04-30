@@ -1,17 +1,15 @@
 # SAP HANA VM deployments using Azure Marketplace Images
 This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
-	- SLES 12 & 15
-	- RHEL 7 & 8 
-	- VM sizes from 128GB to 12TB
-	- Preparation of the OS with required patches and configurations according to relevant SAP notes
-	- HANA 2.0 DB Installation 
-	- Backup Integration into an Azure Recovery Service Vault including execution of initial backups
-	- Execution of HANA Clound Measurement Tool (HCMT)
-	- Removal of the complete deployment 
-	with following aims template takes a minimum amount of parameters and deploys an Azure VM that is customized for use with SAP HANA DB, using the latest patched version of the selected operating system. 
+	* SLES 12 & 15
+	* RHEL 7 & 8 
+	* VM sizes from 128GB to 12TB
+	* Preparation of the OS with required patches and configurations according to relevant SAP notes
+	* HANA 2.0 DB Installation 
+	* Backup Integration into an Azure Recovery Service Vault including execution of initial backups
+	* Execution of HANA Clound Measurement Tool (HCMT)
+	* Removal of the complete deployment 
 
-Note:
-	- Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
+Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
 # VM Sizes and Storage Configurations
 <table>
