@@ -368,6 +368,7 @@
             },
             {
               "lun": 1,
+              "name": "[concat(variables('vmName'), '-data1-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
               "diskSizeGB": 64
@@ -387,7 +388,7 @@
               "diskSizeGB": 64
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -471,7 +472,7 @@
               "diskSizeGB": 64
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -555,7 +556,7 @@
               "diskSizeGB": 128
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -639,7 +640,7 @@
               "diskSizeGB": 256
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -723,7 +724,7 @@
               "diskSizeGB": 512
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -807,7 +808,7 @@
               "diskSizeGB": 512
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -891,7 +892,7 @@
               "diskSizeGB": 1024
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -975,7 +976,7 @@
               "diskSizeGB": 1024
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -1066,7 +1067,7 @@
               "diskSizeGB": 2048
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",
@@ -1150,7 +1151,7 @@
               "diskSizeGB": 4095
             },
             {
-              "lun": 3,
+              "lun": 4,
               "name": "[concat(variables('vmName'), '-data4-disk')]",
               "caching": "ReadOnly",
               "createOption": "Empty",

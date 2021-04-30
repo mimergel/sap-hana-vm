@@ -120,6 +120,8 @@ variables:
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
 
+name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
 stages:
 - stage: Deploy_VM
   jobs:
@@ -154,7 +156,7 @@ stages:
       displayName: Remove known_hosts entries from former runs
       failOnStderr: false
 
-    - script: nslookup ${{ parameters.vmname }}.$(privatednszone) ; while [ $? -ne 0 ]; do nslookup ${{ parameters.vmname }}.$(privatednszone) ; sleep 3 ; done
+    - script: until ping -c1 "${{ parameters.vmname }}".$(privatednszone) >/dev/null 2>&1; do :; done
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 

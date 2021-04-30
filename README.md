@@ -1,21 +1,19 @@
 # SAP HANA VM deployments using Azure Marketplace Images
-
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2Fazuredeploy.json) 
-
-The "Deploy to Azure" button deploys the VM and handles the disks setup. For the full functionality including OS Preparations, HANA DB installation, Backup Integration and Performance Testing an Azure DevOps Pipeline can be used.
-
-This template takes a minimum amount of parameters and deploys an Azure VM that is customized for use with SAP HANA DB, using the latest patched version of the selected operating system. 
-The template deploys the chosen VM size with the recommended Premium Managed Disks configuration. 
-Filesystems are created via a custom script and will use logical volumes with striping wherevery multiple disks are used. 
-
-Options: 
-	- The DB can be integrated into an Azure Recovery Service Vault including OS and HANA Backup Setup for different Policies (PRD or Non-PRD).
-	- Hana Performance Checks (HCMT) can be triggered.
-	- The whole deployment can be removed at the end.
+This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
+	- SLES 12 & 15
+	- RHEL 7 & 8 
+	- VM sizes from 128GB to 12TB
+	- Preparation of the OS with required patches and configurations according to relevant SAP notes
+	- HANA 2.0 DB Installation 
+	- Backup Integration into an Azure Recovery Service Vault including execution of initial backups
+	- Execution of HANA Clound Measurement Tool (HCMT)
+	- Removal of the complete deployment 
+	with following aims template takes a minimum amount of parameters and deploys an Azure VM that is customized for use with SAP HANA DB, using the latest patched version of the selected operating system. 
 
 Note:
-	- Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only.
+	- Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
+# VM Sizes and Storage Configurations
 <table>
 	<tr>
 		<th>Size</th>
