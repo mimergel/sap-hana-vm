@@ -104,3 +104,8 @@ packages:
       - tuned
       - numad
       - ntp
+
+# need to check if required
+#      - libgcc_s1
+#      - libstdc++6
+#      - libatomic1
