@@ -12,25 +12,32 @@
             "type": "String"
         },
         "backupManagementType": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "AzureWorkload"
         },
         "workloadType": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "SAPHanaDatabase"
         },
         "fabricName": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "Azure"
         },
         "protectionContainers": {
             "type": "Array"
         },
         "protectionContainerTypes": {
-            "type": "Array"
+            "type": "Array",
+            "defaultValue": [
+                "VMAppContainer"
+            ]
         },
         "sourceResourceIds": {
             "type": "Array"
         },
         "operationType": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "Register"
         }
     },
     "resources": [
