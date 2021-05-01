@@ -2,14 +2,10 @@
 
 # RHEL specifics
 
-- name: Disable SELinux Step 1
+- name: Disable SELinux
   selinux:
     state: disabled
   register: se_state
-
-- name: Disable SELinux Step 2
-  reboot:
-  when: se_state.changed
 
 - name: Disable Automatic NUMA Balancing Step 1
   copy:

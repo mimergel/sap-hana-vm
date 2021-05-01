@@ -7,10 +7,6 @@
     state: disabled
   register: se_state
 
-- name: Disable SELinux Step 2
-  reboot:
-  when: se_state.changed
-
 - name: Disable Automatic NUMA Balancing Step 1
   copy:
     dest: /etc/sysctl.d/sap_hana.conf
