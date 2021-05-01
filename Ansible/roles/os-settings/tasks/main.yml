@@ -32,6 +32,7 @@
   yum:
     name: '*'
     state: latest
+    locktimeout: 300
   when: ansible_os_family|upper == "REDHAT"
 
 # Hang-on until previous package installations completely finishes and removes the lock
@@ -48,6 +49,7 @@
     state:          present
   environment:
     ZYPP_LOCK_TIMEOUT: 300
+    lock_timeout: 300
   loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
 
 # SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
