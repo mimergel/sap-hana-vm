@@ -125,7 +125,7 @@ variables:
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanavmrg: rg-HANA-${{ parameters.sid }}
-  backupcontainer: VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}
+  backupcontainer: "VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
 
@@ -324,7 +324,7 @@ stages:
           -RSV "$(RSV)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -POL "HANA-${{ parameters.hanabackupsetup }}"
+          -POL "NA"
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
           -CONTAINER $(backupcontainer)
