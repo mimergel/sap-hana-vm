@@ -10,11 +10,8 @@
   retries: "{{ url_retries_cnt }}"
   delay: "{{ url_retries_delay }}"
 
-# - name: Setup SYSTEM user for Backup integration
-#  shell: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
-
+# This must be set on the deployment agent server in /etc/ansible/ansible.cfg
 # allow_world_readable_tmpfiles = True
-# must be set on the deployment agent server in /etc/ansible/ansible.cfg
 # otherwise the underprivileged user sidadm won't be able to execute the command
 
 - name: Setup SYSTEM user for Backup integration
@@ -29,4 +26,3 @@
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
   command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
-  
