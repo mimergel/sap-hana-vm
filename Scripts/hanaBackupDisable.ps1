@@ -61,5 +61,5 @@ Write-Host "-----------------------------------------------------" -ForegroundCo
 Write-Host "---------------List protectable items----------------" -ForegroundColor DarkBlue
 Write-Host "az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
 az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
-Write-Host ""
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host ""
