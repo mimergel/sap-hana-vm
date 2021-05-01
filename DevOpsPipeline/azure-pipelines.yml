@@ -78,13 +78,13 @@ parameters:
   type: boolean
   default: true
 
-- name: hanadbinstallation
-  displayName: HANA DB Installation
+- name: osprep
+  displayName: OS Preparations
   type: boolean
   default: true
 
-- name: osprep
-  displayName: OS Preparations
+- name: hanadbinstallation
+  displayName: HANA DB Installation
   type: boolean
   default: true
 
