@@ -1,6 +1,6 @@
 ---
 
-# RHEL specifics
+# RHEL 7 specifics
 
 - name: Disable SELinux
   selinux:
