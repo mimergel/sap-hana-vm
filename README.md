@@ -90,10 +90,14 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	- Recovery Service Vault (For OS + DB Backups)
 	- Storage Account (For SAP binaries and Scripts)
 	- Private DNS Zone (Makes everything easier)
-5. Linux VM as deployment agent within the same or peered VNET 
-   See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
-	- Install ansible & pwsh 
-	- Set Parameter allow_world_readable_tmpfiles = True in /etc/ansible/ansible.cfg
+5. Setup your own DevOps Deployment Agent within the same or peered VNET 
+    - Deploy for example an Ubuntu 18.04 host
+	- Install PowerShell: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804
+	- Install Ansible with "sudo apt install ansible"
+	- Set Parameter "allow_world_readable_tmpfiles = True" in /etc/ansible/ansible.cfg
+	- Setup the Deployment Agent Software: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
+	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
+	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
 
 # Deployment via Azure DevOps
 Steps:
