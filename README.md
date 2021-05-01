@@ -92,7 +92,8 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	- Private DNS Zone (Makes everything easier)
 5. Linux VM as deployment agent within the same or peered VNET 
    See: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
-   ansible & pwsh installed
+	- Install ansible & pwsh 
+	- Set Parameter allow_world_readable_tmpfiles = True in /etc/ansible/ansible.cfg
 
 # Deployment via Azure DevOps
 Steps:
