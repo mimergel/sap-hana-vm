@@ -1,0 +1,37 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vaultName": {
+    },
+    "vaultRG": {
+    },
+    "vaultSubID": {
+    },
+    "backupManagementType": {
+        "value": "AzureWorkload"
+    },
+    "workloadType": {
+        "type": "String",
+        "value": "SAPHanaDatabase"
+    },
+    "fabricName": {
+        "type": "String",
+        "value": "Azure"
+    },
+    "protectionContainers": {
+    },
+    "protectionContainerTypes": {
+        "value": [
+         "VMAppContainer"
+        ]
+        },
+    "sourceResourceIds": {
+        "type": "Array"
+    },
+    "operationType": {
+        "type": "String",
+        "value": "Register"
+    }
+  }
+}

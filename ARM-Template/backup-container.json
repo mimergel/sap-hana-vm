@@ -1,19 +1,19 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "vaultName": {
-            "type": "String"
-        },
-        "vaultRG": {
-            "type": "String"
-        },
-        "vaultSubID": {
-            "type": "String"
-        },
-        "backupManagementType": {
-            "type": "String",
-            "defaultValue": "AzureWorkload"
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "vaultName": {
+          "type": "String"
+      },
+      "vaultRG": {
+          "type": "String"
+      },
+      "vaultSubID": {
+          "type": "String"
+      },
+      "backupManagementType": {
+          "type": "String",
+          "defaultValue": "AzureWorkload"
         },
         "workloadType": {
             "type": "String",
