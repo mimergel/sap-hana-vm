@@ -124,6 +124,9 @@ variables:
   # perform the backup setup only when the DB will be installed
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
+  hanavmrg: rg-HANA-${{ parameters.sid }}
+  backupcontainer: VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}
+  hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -145,7 +148,7 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
+        resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
@@ -227,6 +230,21 @@ stages:
         failOnStdErr: false
       condition: eq(variables.backuptodo, true)
 
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Register the Backup Containers for OS and HANA Workload'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(RSV_RG)'
+        location: ${{ parameters.location }}
+        templateLocation: 'URL of the file'
+        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers "$(backupcontainer)" - sourceResourceIds '
+        deploymentMode: 'Complete'
+      condition: eq(${{ parameters.backuptodo }}, true)
+
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
@@ -238,11 +256,11 @@ stages:
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
           -VM "${{ parameters.vmname }}"
-          -VMRG "rg-HANA-${{ parameters.sid }}"
+          -VMRG "$(hanavmrg)"
           -POL "HANA-${{ parameters.hanabackupsetup }}"
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
+          -CONTAINER "$(backupcontainer)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -290,7 +308,7 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
-        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
+        resourceGroupName: '$(hanavmrg)'
 
   - job: Remove_Backup_Definitions
     steps:
@@ -304,11 +322,11 @@ stages:
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
           -VM "${{ parameters.vmname }}"
-          -VMRG "rg-HANA-${{ parameters.sid }}"
+          -VMRG "$(hanavmrg)"
           -POL "HANA-${{ parameters.hanabackupsetup }}"
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
+          -CONTAINER $(backupcontainer)
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
