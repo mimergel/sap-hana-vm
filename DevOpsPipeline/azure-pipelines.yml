@@ -152,7 +152,7 @@ stages:
   jobs:
   - job: Prepare_OS
     steps:
-    - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
+    - script: ssh-keygen -f "~/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
       displayName: Remove known_hosts entries from former runs
       failOnStderr: false
 
