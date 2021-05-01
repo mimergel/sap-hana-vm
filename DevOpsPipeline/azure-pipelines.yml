@@ -84,7 +84,7 @@ parameters:
   default: true
 
 - name: osprep
-  displayName: HANA DB Installation
+  displayName: OS Preparations
   type: boolean
   default: true
 
