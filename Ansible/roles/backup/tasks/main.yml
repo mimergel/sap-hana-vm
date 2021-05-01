@@ -10,7 +10,7 @@
   retries: "{{ url_retries_cnt }}"
   delay: "{{ url_retries_delay }}"
 
-# This must be set on the deployment agent server in /etc/ansible/ansible.cfg
+# The following must be set on the deployment agent server in /etc/ansible/ansible.cfg
 # allow_world_readable_tmpfiles = True
 # otherwise the underprivileged user sidadm won't be able to execute the command
 

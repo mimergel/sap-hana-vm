@@ -14,7 +14,7 @@
     $ITEMTEN="saphanadatabase;mm6;mm6"
     $CONTAINER="VMAppContainer;Compute;$VMRG;$VM"
 
-    ./hanaBackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
+    ./Scripts/hanaBackupDisable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -39,16 +39,27 @@ param(
 )
 
 
-# Get VM ID
-# $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
-
-# Disable Backups
+Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host "-----------------Disable Backups---------------------" -ForegroundColor DarkBlue
+Write-Host "az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name $ITEMSYS -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
 az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name $ITEMSYS -g $RGV -v $RSV --yes
+Write-Host ""
+
+Write-Host "az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
 az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes
+Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host ""
 
-# Unregister Container
+Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host "----------------Unregister Container-----------------" -ForegroundColor DarkBlue
+Write-Host "az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes" -ForegroundColor DarkGreen
 az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
+Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host ""
 
-# List protectable items
+Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host "---------------List protectable items----------------" -ForegroundColor DarkBlue
+Write-Host "az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
 az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
-
+Write-Host ""
+Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
