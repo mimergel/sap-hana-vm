@@ -97,7 +97,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	- Set Parameter "allow_world_readable_tmpfiles = True" in /etc/ansible/ansible.cfg
 	- Setup the Deployment Agent Software: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
 	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
-	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
+	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash" and perform "az login"
 
 # Deployment via Azure DevOps
 Steps:
