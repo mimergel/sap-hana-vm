@@ -23,6 +23,8 @@
     name: '*'
     state: latest
     type: patch
+  environment:
+    ZYPP_LOCK_TIMEOUT: 300
   when: ansible_os_family|upper == "SUSE"
 
 # Update all packages RHEL
@@ -32,6 +34,10 @@
     state: latest
   when: ansible_os_family|upper == "REDHAT"
 
+# Hang-on until previous package installations completely finishes and removes the lock
+- name:             Wait until package installation lock is removed
+  command:          "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+
 # Package Installation
 - name:             Import package list
   include_vars:     os-vars.yml
@@ -40,6 +46,8 @@
   package:
     name:           "{{ item }}" 
     state:          present
+  environment:
+    ZYPP_LOCK_TIMEOUT: 300
   loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
 
 # SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
