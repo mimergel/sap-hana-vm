@@ -24,7 +24,10 @@
             "defaultValue": "Azure"
         },
         "protectionContainers": {
-            "type": "Array"
+            "type": "Array",
+            "defaultValue": [
+                "VMAppContainer;Compute;rg-of-vm;vmname"
+            ]
         },
         "protectionContainerTypes": {
             "type": "Array",
