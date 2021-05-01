@@ -83,6 +83,11 @@ parameters:
   type: boolean
   default: true
 
+- name: osprep
+  displayName: HANA DB Installation
+  type: boolean
+  default: true
+
 - name: hanabackupsetup
   displayName: HANA Backup Setup
   type: string
@@ -152,13 +157,25 @@ stages:
   jobs:
   - job: Prepare_OS
     steps:
-    - script: ssh-keygen -f "~/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
-      displayName: Remove known_hosts entries from former runs
+    - script: |
+        #!/bin/bash
+        entry=`ssh-keygen -F ${{ parameters.vmname }}.$(privatednszone)`
+        if [[ -n $entry ]]
+        then
+          echo "Known host entry will be removed"
+          ssh-keygen -f "~/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
+        else
+          echo "No entry found, nothing to remove"
+        fi
+        exit 0
+      displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
+      condition: eq(${{ parameters.osprep }}, true)
 
     - script: until ping -c1 "${{ parameters.vmname }}".$(privatednszone) >/dev/null 2>&1; do :; done
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
+      condition: eq(${{ parameters.osprep }}, true)
 
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
@@ -171,7 +188,7 @@ stages:
           ${{ parameters.vmname }}.$(privatednszone)
         args: -v
         failOnStdErr: false
-      condition: eq(${{ parameters.hanadbinstallation }}, true)
+      condition: eq(${{ parameters.osprep }}, true)
 
 - stage: Install_HANA
   jobs:
