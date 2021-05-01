@@ -1,6 +1,12 @@
 ---
-
 # RHEL 7 specifics
+
+# Update all packages RHEL
+- name: Update all installed packages using YUM module
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_os_family|upper == "REDHAT"
 
 - name: Disable SELinux
   selinux:
