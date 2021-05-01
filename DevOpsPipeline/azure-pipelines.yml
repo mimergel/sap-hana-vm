@@ -232,7 +232,7 @@ stages:
       condition: eq(variables.backuptodo, true)
 
     - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Register the Backup Containers for OS and HANA Workload'
+      displayName: 'Register the Backup Containers for the HANA Workload'
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(subscriptionname)'
@@ -242,7 +242,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers "$(backupcontainer)" - sourceResourceIds '
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers "$(backupcontainer)" -sourceResourceIds "$(hanavmid)" '
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.backuptodo }}, true)
 
