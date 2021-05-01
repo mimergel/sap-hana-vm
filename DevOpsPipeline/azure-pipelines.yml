@@ -121,12 +121,13 @@ pool:
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   hanadbinst: ${{ parameters.hanadbinstallation }}
-  # perform the backup setup only when the DB will be installed
+  # set this line in case to perform the backup setup only when the DB will be installed
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanavmrg: rg-HANA-${{ parameters.sid }}
   backupcontainer: VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -162,11 +163,11 @@ stages:
     steps:
     - script: |
         #!/bin/bash
-        entry=`ssh-keygen -F ${{ parameters.vmname }}.$(privatednszone)`
+        entry=`ssh-keygen -F $(hanavmfqdn)`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
+          ssh-keygen -f "~/.ssh/known_hosts" -R $(hanavmfqdn)
         else
           echo "No entry found, nothing to remove"
         fi
@@ -188,7 +189,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
+          $(hanavmfqdn)
         args: -vv
         failOnStdErr: false
       condition: eq(${{ parameters.osprep }}, true)
@@ -205,7 +206,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
+          $(hanavmfqdn)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
@@ -223,7 +224,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
+          $(hanavmfqdn)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         timeoutInMinutes: 5
         showWarnings: true
@@ -286,7 +287,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
+          $(hanavmfqdn)
         args: -v 
         failOnStdErr: false
       condition: eq(${{ parameters.hcmt }}, true)
