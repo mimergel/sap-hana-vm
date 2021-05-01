@@ -3,34 +3,37 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "vaultName": {
+        "value": "Vault"
     },
     "vaultRG": {
+        "value": "VaultRG"
     },
     "vaultSubID": {
+        "value": "subscription"
     },
     "backupManagementType": {
         "value": "AzureWorkload"
     },
     "workloadType": {
-        "type": "String",
         "value": "SAPHanaDatabase"
     },
     "fabricName": {
-        "type": "String",
         "value": "Azure"
     },
     "protectionContainers": {
+        "value": "VMAppContainer;Compute;rg-of-vm;vmname"
     },
     "protectionContainerTypes": {
         "value": [
          "VMAppContainer"
         ]
-        },
+    },
     "sourceResourceIds": {
-        "type": "Array"
+        "value": [
+                "/subscriptions/subscription-id/resourceGroups/rg-of-vm/providers/Microsoft.Compute/virtualMachines/vmname"
+        ]
     },
     "operationType": {
-        "type": "String",
         "value": "Register"
     }
   }
