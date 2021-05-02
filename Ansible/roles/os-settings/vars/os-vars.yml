@@ -98,6 +98,7 @@ packages:
       - sysstat
 
     suse15: 
+      - python
       - chrony
       - libyui-qt-pkg11
       - glibc
