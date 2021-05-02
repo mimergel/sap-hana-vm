@@ -54,12 +54,14 @@ Write-Host "-----------------------------------------------------" -ForegroundCo
 Write-Host "---------------List protectable items----------------" -ForegroundColor DarkBlue
 Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
 $PROTECT=az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+Write-Host $PROTECT
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----Register the container if not yet in place -----" -ForegroundColor DarkBlue
 if([string]::IsNullOrEmpty($PROTECT)){
+   Write-Host "--------Container will be registered-----------------" -ForegroundColor DarkGree
    Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
    az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
 }else {
@@ -83,9 +85,11 @@ Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "----------------Enable Backups-----------------------"  -ForegroundColor DarkBlue
+Write-Host "------------Enable SYSTEM DB Backups-----------------"  -ForegroundColor DarkBlue
 Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" -ForegroundColor DarkGreen
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host ""
+Write-Host "------------Enable TENANT DB Backups-----------------"  -ForegroundColor DarkBlue
 Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" -ForegroundColor DarkGreen
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
 Write-Host ""

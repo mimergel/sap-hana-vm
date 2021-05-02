@@ -53,11 +53,12 @@ Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
-Write-Host "-----------------Disable Backups---------------------" -ForegroundColor DarkBlue
+Write-Host "-----------Disable SYSTEMDB Backups------------------" -ForegroundColor DarkBlue
 Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
 az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
 Write-Host ""
 
+Write-Host "-----------Disable TENANT DB Backups-----------------" -ForegroundColor DarkBlue
 Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMTEN' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
 az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMTEN" -g $RGV -v $RSV --yes
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
