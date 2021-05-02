@@ -196,7 +196,7 @@ stages:
           $(hanavmfqdn)
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
-      condition: and(eq(${{ parameters.osprep }}, true), eq($(python3), true))
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
 
     - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
@@ -209,7 +209,7 @@ stages:
           $(hanavmfqdn)
         args: -vv 
         failOnStdErr: false
-      condition: and(eq(${{ parameters.osprep }}, true), eq($(python3), false))
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
   jobs:
