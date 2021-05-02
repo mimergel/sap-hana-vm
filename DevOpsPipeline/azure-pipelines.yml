@@ -243,7 +243,8 @@ stages:
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
         overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
-        deploymentMode: 'Complete'
+        deploymentMode: 'Incremental'
+        deploymentName: 'hana-backup-container-${{ parameters.sid }}'
       condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
