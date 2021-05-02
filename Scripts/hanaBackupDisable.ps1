@@ -38,6 +38,19 @@ param(
     [Parameter(Mandatory = $true)][string]$CONTAINER
 )
 
+Write-Host "-----------------------------------------------------"
+Write-Host "----------Remove only an existing container----------" -ForegroundColor DarkBlue
+Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
+$PROTECT=az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+if([string]::IsNullOrEmpty($PROTECT)){
+   Write-Host "----------------No Container for disabling-----------" -ForegroundColor DarkGree
+}else {
+   Write-Host "-------------Container will be disabled--------------" -ForegroundColor DarkGree
+   Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
+   az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
+}
+Write-Host "-----------------------------------------------------"
+Write-Host ""
 
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host "-----------------Disable Backups---------------------" -ForegroundColor DarkBlue
