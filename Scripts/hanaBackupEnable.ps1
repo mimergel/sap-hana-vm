@@ -53,7 +53,7 @@ Write-Host ""
 Write-Host "-----------------------------------------------------"
 Write-Host "Register the container" -ForegroundColor DarkBlue
 Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
-az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
+# az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
