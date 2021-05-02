@@ -125,7 +125,7 @@ variables:
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanavmrg: rg-HANA-${{ parameters.sid }}
-  backupcontainer: VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}
+  backupcontainer: "VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
 
@@ -242,8 +242,9 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID ["$(subscription)"] -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
-        deploymentMode: 'Complete'
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        deploymentMode: 'Incremental'
+        deploymentName: 'hana-backup-container-${{ parameters.sid }}'
       condition: eq(variables.backuptodo, true)
 
     - task: PowerShell@2
@@ -324,7 +325,7 @@ stages:
           -RSV "$(RSV)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -POL "HANA-${{ parameters.hanabackupsetup }}"
+          -POL "NA"
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
           -CONTAINER $(backupcontainer)
