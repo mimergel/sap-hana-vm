@@ -87,7 +87,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 3. S-User for SAP Software Downloads
 4. Basic Resources
 	- VNET + Subnet
-	- Recovery Service Vault (For OS + DB Backups)
+	- Recovery Service Vault with 2 Policies named "HANA-Non-PRD" and "HANA-PRD"
 	- Storage Account (For SAP binaries and Scripts)
 	- Private DNS Zone (Makes everything easier)
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 

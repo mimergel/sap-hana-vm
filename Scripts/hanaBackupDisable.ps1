@@ -42,24 +42,24 @@ param(
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host "-----------------Disable Backups---------------------" -ForegroundColor DarkBlue
 Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
-az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes
+az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
 Write-Host ""
 
 Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMTEN' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
-az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMTEN' -g $RGV -v $RSV --yes
+az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMTEN" -g $RGV -v $RSV --yes
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host ""
 
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host "----------------Unregister Container-----------------" -ForegroundColor DarkBlue
 Write-Host "az backup container unregister -c '$CONTAINER' -g $RGV -v $RSV --backup-management-type AzureWorkload --yes" -ForegroundColor DarkGreen
-az backup container unregister -c '$CONTAINER' -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
+az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host ""
 
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host "---------------List protectable items----------------" -ForegroundColor DarkBlue
 Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
-az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host ""
