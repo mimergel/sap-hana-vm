@@ -231,27 +231,10 @@ stages:
         failOnStdErr: false
       condition: eq(variables.backuptodo, true)
 
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Register the Backup Containers for the HANA Workload'
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
-        subscriptionId: '$(subscription)'
-        action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(RSV_RG)'
-        location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
-        deploymentMode: 'Incremental'
-        deploymentName: 'hana-backup-container-${{ parameters.sid }}'
-      condition: eq(variables.backuptodo, true)
-
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
-        # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupEnable.ps1'
         arguments: >
@@ -303,21 +286,9 @@ stages:
   jobs:
   - job: Remove_RG
     steps:
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Remove Resource Group'
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
-        subscriptionId: '$(subscription)'
-        action: 'DeleteRG'
-        resourceGroupName: '$(hanavmrg)'
-
-  - job: Remove_Backup_Definitions
-    steps:
     - task: PowerShell@2
       displayName: 'HANA Backup Removal (PWSH)'
       inputs:
-        # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupDisable.ps1'
         arguments: >
@@ -328,7 +299,17 @@ stages:
           -POL "NA"
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER $(backupcontainer)
+          -CONTAINER "$(backupcontainer)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'DeleteRG'
+        resourceGroupName: '$(hanavmrg)'
+
