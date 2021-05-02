@@ -122,7 +122,6 @@ pool:
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   hanadbinst: ${{ parameters.hanadbinstallation }}
-  osvar: ${{ parameters.os }}
   # set this line in case to perform the backup setup only when the DB will be installed
   # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
