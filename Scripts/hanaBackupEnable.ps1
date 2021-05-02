@@ -61,11 +61,11 @@ Write-Host ""
 Write-Host "-----------------------------------------------------"
 Write-Host "-----Register the container if not yet in place -----" -ForegroundColor DarkBlue
 if([string]::IsNullOrEmpty($PROTECT)){
-   Write-Host "--------Container will be registered-----------------" -ForegroundColor DarkGree
-   Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
-   az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
+    Write-Host "--------Container will be registered-----------------" -ForegroundColor DarkGree
+    Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
+    az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
 }else {
-   Write-Host "--------Container is already in palce----------------" -ForegroundColor DarkGree
+    Write-Host "--------Container is already in palce----------------" -ForegroundColor DarkGree
 }
 Write-Host "-----------------------------------------------------"
 Write-Host ""
