@@ -286,17 +286,6 @@ stages:
   jobs:
   - job: Remove_RG
     steps:
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Remove Resource Group'
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
-        subscriptionId: '$(subscription)'
-        action: 'DeleteRG'
-        resourceGroupName: '$(hanavmrg)'
-
-  - job: Remove_Backup_Definitions
-    steps:
     - task: PowerShell@2
       displayName: 'HANA Backup Removal (PWSH)'
       inputs:
@@ -314,3 +303,14 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
+
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'DeleteRG'
+        resourceGroupName: '$(hanavmrg)'
+
