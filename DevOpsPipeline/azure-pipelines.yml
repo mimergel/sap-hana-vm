@@ -11,6 +11,7 @@
 #  SLES 15 Settings: https://launchpad.support.sap.com/#/notes/2684254
 #  SLES 12 Settings: https://launchpad.support.sap.com/#/notes/2205917
 #  NW Settings: https://launchpad.support.sap.com/#/notes/2382421
+#  check if python3 can be use on all OS
 
 parameters:
 - name: size
@@ -128,9 +129,7 @@ variables:
   backupcontainer: "VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
-
-# use python3 as of sles15
-  usepyth3: ${{ if ne(parameters.os, '"SLES 15 SP2"') }}:"-e 'ansible_python_interpreter=/usr/bin/python3'"
+  usepyth3: $[ eq( "${{ parameters.os }}", "SLES 15 SP2") ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -185,6 +184,19 @@ stages:
       condition: eq(${{ parameters.osprep }}, true)
 
     - task: Ansible@0
+      displayName: 'OS Preparations SLES 15(Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(hanavmfqdn)
+        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        failOnStdErr: false
+      condition: and( eq(${{ parameters.osprep }}, true), eq($(python3), true))
+
+    - task: Ansible@0
       displayName: 'OS Preparations (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
@@ -193,9 +205,9 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(hanavmfqdn)
-        args: -vv $(usepyth3)
+        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
-      condition: eq(${{ parameters.osprep }}, true)
+      condition: and( eq(${{ parameters.osprep }}, true), eq($(python3), false))
 
 - stage: Install_HANA
   jobs:
