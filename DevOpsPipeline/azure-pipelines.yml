@@ -205,9 +205,9 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(hanavmfqdn)
-        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        args: -vv 
         failOnStdErr: false
-      condition: and( eq(${{ parameters.osprep }}, true), eq($(python3), false))
+      condition: and( eq(${{ parameters.osprep }}, true), eq( $(python3), false) )
 
 - stage: Install_HANA
   jobs:
