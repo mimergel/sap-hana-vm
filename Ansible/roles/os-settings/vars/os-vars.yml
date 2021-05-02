@@ -26,7 +26,7 @@ packages:
       - PackageKit-gtk3-module
       - libcanberra-gtk2
       - libtool-ltdl
-      - xorg-x11-xauth 
+      - xorg-x11-xauth
       - numactl
       - xfsprogs
       - net-tools
@@ -37,9 +37,9 @@ packages:
       - lvm2
       - numad
       - cifs-utils
-      - tuned-profiles-sap-hana
-      - compat-sap-c++-9                
-      - libatomic                     
+      - tuned-profiles-sap
+      - compat-sap-c++-7
+      - libatomic
       - uuidd
       - csh
     
@@ -75,9 +75,9 @@ packages:
       - lvm2
       - numad
       - cifs-utils      
-      - tuned-profiles-sap-hana
-      - compat-sap-c++-9
-      - libatomic                     
+      - tuned-profiles-sap
+      - compat-sap-c++-7
+      - libatomic
       - uuidd
       - csh
 
@@ -115,3 +115,5 @@ packages:
       - libgcc_s1
       - libstdc++6
       - libatomic1
+      - sysstat
+
