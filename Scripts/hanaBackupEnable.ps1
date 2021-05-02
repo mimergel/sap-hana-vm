@@ -43,7 +43,7 @@ param(
 $VMID = ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "Get VM ID" -ForegroundColor DarkBlue
+Write-Host "-----------Get VM ID---------------------------------" -ForegroundColor DarkBlue
 Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" -ForegroundColor DarkGreen
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
 Write-Host "$VMID" -ForegroundColor Red
@@ -60,13 +60,16 @@ Write-Host ""
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----Register the container if not yet in place -----" -ForegroundColor DarkBlue
-if([string]::IsNullOrEmpty($PROTECT)){
-    Write-Host "--------Container will be registered-----------------" -ForegroundColor DarkGree
-    Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
-    az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
-}else {
-    Write-Host "--------Container is already in palce----------------" -ForegroundColor DarkGree
-}
+
+    if ([string]::IsNullOrEmpty($PROTECT)) {
+        Write-Host "--------Container will be registered-----------------" -ForegroundColor DarkGree
+        Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
+        az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
+    }
+    else {
+        Write-Host "--------Container is already in palce----------------" -ForegroundColor DarkGree
+    }
+
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 

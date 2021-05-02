@@ -39,40 +39,43 @@ param(
 )
 
 Write-Host "-----------------------------------------------------"
-Write-Host "----------Remove only an existing container----------" -ForegroundColor DarkBlue
+Write-Host "----------Disable existing backup items--------------" -ForegroundColor DarkBlue
 Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
 $PROTECT=az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
-if([string]::IsNullOrEmpty($PROTECT)){
-   Write-Host "----------------No Container for disabling-----------" -ForegroundColor DarkGree
-}else {
-   Write-Host "-------------Container will be disabled--------------" -ForegroundColor DarkGree
-   Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
-   az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
-}
-Write-Host "-----------------------------------------------------"
-Write-Host ""
+Write-Host $PROTECT
 
-Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
-Write-Host "-----------Disable SYSTEMDB Backups------------------" -ForegroundColor DarkBlue
-Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
-az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
-Write-Host ""
+    if([string]::IsNullOrEmpty($PROTECT)){
+        Write-Host "----------------No Container for disabling-----------" -ForegroundColor DarkGree
+    }
+    else {
+        Write-Host "---------Found items will be disabled----------------" -ForegroundColor DarkGree
+        Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
+        az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
+        Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSTEN' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
+        az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMTEN" -g $RGV -v $RSV --yes
+    }
 
-Write-Host "-----------Disable TENANT DB Backups-----------------" -ForegroundColor DarkBlue
-Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMTEN' -g $RGV -v $RSV --yes" -ForegroundColor DarkGreen
-az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMTEN" -g $RGV -v $RSV --yes
-Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+    Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host "----------------Unregister Container-----------------" -ForegroundColor DarkBlue
 Write-Host "az backup container unregister -c '$CONTAINER' -g $RGV -v $RSV --backup-management-type AzureWorkload --yes" -ForegroundColor DarkGreen
-az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
+$CONTDIS=az backup container show  -g $RGV -v $RSV --name "$CONTAINER"
+
+    if([string]::IsNullOrEmpty($CONTDIS)){
+        Write-Host "----------------No Container for disabling-----------" -ForegroundColor DarkGree
+    }
+    else {
+        Write-Host "-------------Container will be disabled--------------" -ForegroundColor DarkGree
+        az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
+    }   
+
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
 Write-Host ""
 
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
-Write-Host "---------------List protectable items----------------" -ForegroundColor DarkBlue
+Write-Host "---------------Checking results----------------------" -ForegroundColor DarkBlue
 Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
 az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
