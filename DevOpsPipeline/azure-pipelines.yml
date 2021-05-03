@@ -244,6 +244,21 @@ stages:
   jobs:
   - job: Backup_Activation
     steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Setup Backup Container (ARM)'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(RSV_RG)'
+        location: ${{ parameters.location }}
+        templateLocation: 'URL of the file'
+        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        deploymentMode: 'Incremental'
+        deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
+      condition: eq(variables.backuptodo, true)
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
