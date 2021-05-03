@@ -198,18 +198,18 @@ stages:
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
 
-#    - task: Ansible@0
-#      displayName: 'OS Preparations (Ansible)'
-#      inputs:
-#        ansibleInterface: 'agentMachine'
-#        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
-#        inventoriesAgentMachine: inlineContent
-#        inventoryInlineContentAgentMachine: |
-#          [hana]
-#          $(hanavmfqdn)
-#        args: -vv 
-#        failOnStdErr: false
-#      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+    - task: Ansible@0
+      displayName: 'OS Preparations (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(hanavmfqdn)
+        args: -vv 
+        failOnStdErr: false
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
   jobs:
