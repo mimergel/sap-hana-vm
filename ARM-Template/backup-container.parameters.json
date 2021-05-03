@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vaultName": {
+            "value": "vault" 
+        },
+        "vaultRG": {
+            "value": "vaultrg" 
+        },
+        "vaultSubID": {
+            "value": "subscription" 
+        },
+        "backupManagementType": {
+            "value": "AzureWorkload"
+        },
+        "workloadType": {
+            "value": "SAPHanaDatabase"
+        },
+        "fabricName": {
+            "value": "Azure"
+        },
+        "protectionContainers": {
+            "value": [
+                "VMAppContainer;Compute;rg-of-vm;vmname"
+            ]
+        },
+        "protectionContainerTypes": {
+            "value": [
+                "VMAppContainer"
+            ]
+        },
+        "sourceResourceIds": {
+            "value": [
+                "/subscriptions/subscription-id/resourceGroups/rg-of-vm/providers/Microsoft.Compute/virtualMachines/vmname" 
+            ]
+        },
+        "operationType": {
+            "value": "Register"
+        }
+    }
+}

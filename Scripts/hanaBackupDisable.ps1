@@ -14,7 +14,7 @@
     $ITEMTEN="saphanadatabase;mm6;mm6"
     $CONTAINER="VMAppContainer;Compute;$VMRG;$VM"
 
-    ./hanaBackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
+    ./Scripts/hanaBackupDisable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -38,17 +38,46 @@ param(
     [Parameter(Mandatory = $true)][string]$CONTAINER
 )
 
+Write-Host "-----------------------------------------------------"
+Write-Host "----------Disable existing backup items--------------"
+Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv"
+$PROTECT=az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+Write-Host $PROTECT
 
-# Get VM ID
-# $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
+    if([string]::IsNullOrEmpty($PROTECT)){
+        Write-Host "----------------No Container for disabling-----------" -ForegroundColor DarkGree
+    }
+    else {
+        Write-Host "---------Found items will be disabled----------------" -ForegroundColor DarkGree
+        Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSYS' -g $RGV -v $RSV --yes"
+        az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMSYS" -g $RGV -v $RSV --yes
+        Write-Host "az backup protection disable -c '$CONTAINER' --delete-backup-data true --item-name '$ITEMSTEN' -g $RGV -v $RSV --yes"
+        az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name "$ITEMTEN" -g $RGV -v $RSV --yes
+    }
 
-# Disable Backups
-az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name $ITEMSYS -g $RGV -v $RSV --yes
-az backup protection disable -c "$CONTAINER" --delete-backup-data true --item-name $ITEMTEN -g $RGV -v $RSV --yes
+    Write-Host "-----------------------------------------------------"
+Write-Host ""
 
-# Unregister Container
-az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
+Write-Host "-----------------------------------------------------"
+Write-Host "----------------Unregister Container-----------------"
+$CONTDIS=az backup container show  -g $RGV -v $RSV --name "$CONTAINER"
+Write-Host $CONTDIS
 
-# List protectable items
+    if([string]::IsNullOrEmpty($CONTDIS)){
+        Write-Host "-------------No Container for disabling--------------" -ForegroundColor DarkGree
+    }
+    else {
+        Write-Host "-------------Container will be disabled--------------" -ForegroundColor DarkGree
+        Write-Host "az backup container unregister -c '$CONTAINER' -g $RGV -v $RSV --backup-management-type AzureWorkload --yes"
+        az backup container unregister -c "$CONTAINER" -g $RGV -v $RSV --backup-management-type AzureWorkload --yes
+    }   
+
+Write-Host "-----------------------------------------------------"
+Write-Host ""
+
+Write-Host "-----------------------------------------------------"
+Write-Host "---------------Checking results----------------------"
+Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv"
 az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
-
+Write-Host "-----------------------------------------------------"
+Write-Host ""

@@ -4,12 +4,8 @@
 # 
 # Todo:
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
-#  Check the pipeline on RHEL & SLES 15
 #  Include Quality Checks when available for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-#  smaller items: tier, backup tag, ...
-#  SLES 15 Settings: https://launchpad.support.sap.com/#/notes/2684254
-#  SLES 12 Settings: https://launchpad.support.sap.com/#/notes/2205917
 #  NW Settings: https://launchpad.support.sap.com/#/notes/2382421
 
 parameters:
@@ -78,6 +74,11 @@ parameters:
   type: boolean
   default: true
 
+- name: osprep
+  displayName: OS Preparations
+  type: boolean
+  default: true
+
 - name: hanadbinstallation
   displayName: HANA DB Installation
   type: boolean
@@ -115,10 +116,14 @@ pool:
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
-  hanadbinst: ${{ parameters.hanadbinstallation }}
-  # perform the backup setup only when the DB will be installed
-  # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
+  hanadbinst: ${{ parameters.hanadbinstallation }}
+  hanavmrg: rg-HANA-${{ parameters.sid }}
+  hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
+  backupcontainer: "VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}"
+  hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  osvar: ${{ parameters.os }}
+  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -140,11 +145,11 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
+        resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -instancenumber "${{ parameters.nr }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
       condition: eq(${{ parameters.hanavmdeployment }}, true)
 
@@ -152,26 +157,51 @@ stages:
   jobs:
   - job: Prepare_OS
     steps:
-    - script: ssh-keygen -f "/home/mimergel/.ssh/known_hosts" -R ${{ parameters.vmname }}.$(privatednszone)
-      displayName: Remove known_hosts entries from former runs
+    - script: |
+        #!/bin/bash
+        entry=`ssh-keygen -F $(hanavmfqdn)`
+        if [[ -n $entry ]]
+        then
+          echo "Known host entry will be removed"
+          ssh-keygen -f "~/.ssh/known_hosts" -R $(hanavmfqdn)
+        else
+          echo "No entry found, nothing to remove"
+        fi
+        exit 0
+      displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
+      condition: eq(${{ parameters.osprep }}, true)
 
     - script: until ping -c1 "${{ parameters.vmname }}".$(privatednszone) >/dev/null 2>&1; do :; done
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
+      condition: eq(${{ parameters.osprep }}, true)
 
     - task: Ansible@0
-      displayName: 'OS Preparations (Ansible)'
+      displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
-        args: -v
+          $(hanavmfqdn)
+        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
-      condition: eq(${{ parameters.hanadbinstallation }}, true)
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
+
+    - task: Ansible@0
+      displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(hanavmfqdn)
+        args: -vv 
+        failOnStdErr: false
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
   jobs:
@@ -185,14 +215,14 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+          $(hanavmfqdn)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
-- stage: Backup_Integration
+- stage: Backup_Prerequesite
   jobs:
-  - job: Backup_Integration
+  - job: Backup_Prerequesite
     steps:
     - task: Ansible@0
       displayName: 'HANA Backup Prerequesites (Ansible)'
@@ -203,27 +233,47 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
-        args: -v -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+          $(hanavmfqdn)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+        timeoutInMinutes: 5
+        showWarnings: true
         failOnStdErr: false
       condition: eq(variables.backuptodo, true)
 
+- stage: Backup_Activation
+  jobs:
+  - job: Backup_Activation
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Setup Backup Container (ARM)'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(subscriptionname)'
+        subscriptionId: '$(subscription)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(RSV_RG)'
+        location: ${{ parameters.location }}
+        templateLocation: 'URL of the file'
+        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        deploymentMode: 'Incremental'
+        deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
+      condition: eq(variables.backuptodo, true)
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
-        # Register the SAP HANA Instance, enable protection and run backup
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupEnable.ps1'
         arguments: >
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
           -VM "${{ parameters.vmname }}"
-          -VMRG "rg-HANA-${{ parameters.sid }}"
+          -VMRG "$(hanavmrg)"
           -POL "HANA-${{ parameters.hanabackupsetup }}"
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
+          -CONTAINER "$(backupcontainer)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -249,7 +299,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          ${{ parameters.vmname }}.$(privatednszone)
+          $(hanavmfqdn)
         args: -v 
         failOnStdErr: false
       condition: eq(${{ parameters.hcmt }}, true)
@@ -264,6 +314,24 @@ stages:
   jobs:
   - job: Remove_RG
     steps:
+    - task: PowerShell@2
+      displayName: 'HANA Backup Removal (PWSH)'
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupDisable.ps1'
+        arguments: >
+          -RGV "$(RSV_RG)"
+          -RSV "$(RSV)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(hanavmrg)"
+          -POL "NA"
+          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
+          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
+          -CONTAINER "$(backupcontainer)"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Remove Resource Group'
       inputs:
@@ -271,25 +339,5 @@ stages:
         azureResourceManagerConnection: '$(subscriptionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
-        resourceGroupName: 'rg-HANA-${{ parameters.sid }}'
+        resourceGroupName: '$(hanavmrg)'
 
-  - job: Remove_Backup_Definitions
-    steps:
-    - task: PowerShell@2
-      displayName: 'HANA Backup Removal (PWSH)'
-      inputs:
-        # Register the SAP HANA Instance, enable protection and run backup
-        targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupDisable.ps1'
-        arguments: >
-          -RGV "$(RSV_RG)"
-          -RSV "$(RSV)"
-          -VM "${{ parameters.vmname }}"
-          -VMRG "rg-HANA-${{ parameters.sid }}"
-          -POL "HANA-${{ parameters.hanabackupsetup }}"
-          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
-          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER "VMAppContainer;Compute;rg-HANA-${{ parameters.sid }};${{ parameters.vmname }}"
-        errorActionPreference: continue
-        showWarnings: true
-        failOnStderr: false

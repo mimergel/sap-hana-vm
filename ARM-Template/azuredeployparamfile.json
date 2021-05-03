@@ -11,9 +11,6 @@
     "hanaSystemSize": {
       "value": "256_GB"
     },
-    "instancenumber": {
-      "value": "20"
-    },
     "location": {
       "value": "Europe West"
     },

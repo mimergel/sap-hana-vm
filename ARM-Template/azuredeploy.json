@@ -17,15 +17,6 @@
         "description": "HANA System ID."
       }
     },
-    "instancenumber": {
-      "type": "string",
-      "defaultValue": "20",
-      "maxLength": 2,
-      "minLength": 2,
-      "metadata": {
-        "description": "HANA Instance Number"
-      }
-    },
     "osType": {
       "type": "string",
       "allowedValues": [
@@ -159,8 +150,8 @@
     "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
     "images": {
       "RHEL 7": {
-        "sku": "77sap-gen2",
-        "offer": "RHEL-SAP",
+        "sku": "77sapha-gen2",
+        "offer": "RHEL-SAP-HA",
         "publisher": "RedHat",
         "OSType": "Linux"
       },
@@ -269,7 +260,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -350,7 +341,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -434,7 +425,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -518,7 +509,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -602,7 +593,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -686,7 +677,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -770,7 +761,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -854,7 +845,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -938,7 +929,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -1029,7 +1020,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4,5#6,7,8#9#10'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4,5#6,7,8#9#10'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -1113,7 +1104,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
@@ -1197,7 +1188,7 @@
             }
           ],
           "scriptArguments": {
-              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/shared/',parameters('hanaSystemId'),'/HDB',parameters('instancenumber'),'/backup'' -sizes ''100#100#100#100#100''')]"
+              "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
           },
           "useFastNetwork": true
         }
