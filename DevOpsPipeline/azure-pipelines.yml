@@ -121,16 +121,13 @@ pool:
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
-  hanadbinst: ${{ parameters.hanadbinstallation }}
-  osvar: ${{ parameters.os }}
-  # set this line in case to perform the backup setup only when the DB will be installed
-  # backuptodo: $[and (ne(variables['backuptype'], 'None'), eq(variables['hanadbinst'], true)) ]
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
+  hanadbinst: ${{ parameters.hanadbinstallation }}
   hanavmrg: rg-HANA-${{ parameters.sid }}
+  hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
   backupcontainer: "VMAppContainer;Compute;$(hanavmrg);${{ parameters.vmname }}"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
-  hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
-  osprepvar: ${{ parameters.osprep }}
+  osvar: ${{ parameters.os }}
   usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
@@ -198,18 +195,18 @@ stages:
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
 
-#    - task: Ansible@0
-#      displayName: 'OS Preparations (Ansible)'
-#      inputs:
-#        ansibleInterface: 'agentMachine'
-#        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
-#        inventoriesAgentMachine: inlineContent
-#        inventoryInlineContentAgentMachine: |
-#          [hana]
-#          $(hanavmfqdn)
-#        args: -vv 
-#        failOnStdErr: false
-#      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+    - task: Ansible@0
+      displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(hanavmfqdn)
+        args: -vv 
+        failOnStdErr: false
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
   jobs:
