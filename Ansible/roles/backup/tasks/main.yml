@@ -15,10 +15,12 @@
 # otherwise the underprivileged user sidadm won't be able to execute the command
 
 - name: Setup SYSTEM user for Backup integration
+  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
-  become_method: sudo -i
-  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
+  become_flags: -i
+  vars:
+        python_interpreter: /bin/python
 
 - name: Run integration script
   command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
@@ -26,5 +28,5 @@
 - name: Delete SYSTEM user after Backup integration
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
-  become_method: sudo -i
+  become_flags: -i
   command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
