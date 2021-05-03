@@ -11,7 +11,7 @@
   delay: "{{ url_retries_delay }}"
 
 - name: Setup SYSTEM user for Backup integration
-  raw: su - "{{ sap_sid|lower }}adm" -c 'hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
+  raw: su - {{ sap_sid|lower }}adm -c 'hdbuserstore Set SYSTEM {{ sap_hostname }}:3{{ sap_instancenum }}13@SYSTEMDB SYSTEM {{ pw_db_system }}'
 
 - name: Run integration script
   command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
