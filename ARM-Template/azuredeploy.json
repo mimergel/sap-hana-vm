@@ -150,8 +150,8 @@
     "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
     "images": {
       "RHEL 7": {
-        "sku": "77sap-gen2",
-        "offer": "RHEL-SAP",
+        "sku": "77sapha-gen2",
+        "offer": "RHEL-SAP-HA",
         "publisher": "RedHat",
         "OSType": "Linux"
       },

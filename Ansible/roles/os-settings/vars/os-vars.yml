@@ -37,7 +37,7 @@ packages:
       - lvm2
       - numad
       - cifs-utils
-      - tuned-profiles-sap
+      - tuned-profiles-sap-hana
       - compat-sap-c++-7
       - libatomic
       - uuidd
@@ -75,7 +75,7 @@ packages:
       - lvm2
       - numad
       - cifs-utils      
-      - tuned-profiles-sap
+      - tuned-profiles-sap-hana
       - compat-sap-c++-7
       - libatomic
       - uuidd

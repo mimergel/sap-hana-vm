@@ -96,6 +96,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	- Install Ansible with "sudo apt install ansible"
 	- Set Parameter "allow_world_readable_tmpfiles = True" in /etc/ansible/ansible.cfg
 	- Setup the Deployment Agent Software: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
+		use this agent version: https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz
 	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
 	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash" and perform "az login"
 
