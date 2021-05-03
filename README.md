@@ -94,7 +94,6 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
     - Deploy for example an Ubuntu 18.04 host
 	- Install PowerShell: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804
 	- Install Ansible ansible 2.10.* https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
-	- Set Parameter "allow_world_readable_tmpfiles = True" in /etc/ansible/ansible.cfg
 	- Setup the Deployment Agent Software: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
 		use this agent version: https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz
 	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
