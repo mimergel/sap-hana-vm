@@ -4,14 +4,9 @@
 # 
 # Todo:
 #  selective disk backup (exclude HANA Data and LOG from OS Backups)
-#  Check the pipeline on RHEL & SLES 15
 #  Include Quality Checks when available for SSH login
 #  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-#  smaller items: tier, backup tag, ...
-#  SLES 15 Settings: https://launchpad.support.sap.com/#/notes/2684254
-#  SLES 12 Settings: https://launchpad.support.sap.com/#/notes/2205917
 #  NW Settings: https://launchpad.support.sap.com/#/notes/2382421
-#  check if python3 can be use on all OS
 
 parameters:
 - name: size
