@@ -220,9 +220,9 @@ stages:
         failOnStdErr: false
       condition: eq(${{ parameters.hanadbinstallation }}, true)
 
-- stage: Backup_Integration
+- stage: Backup_Prerequesite
   jobs:
-  - job: Backup_Integration
+  - job: Backup_Prerequesite
     steps:
     - task: Ansible@0
       displayName: 'HANA Backup Prerequesites (Ansible)'
@@ -240,6 +240,10 @@ stages:
         failOnStdErr: false
       condition: eq(variables.backuptodo, true)
 
+- stage: Backup_Activation
+  jobs:
+  - job: Backup_Activation
+  steps:
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
