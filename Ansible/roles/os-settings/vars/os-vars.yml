@@ -38,7 +38,7 @@ packages:
       - numad
       - cifs-utils
       - tuned-profiles-sap-hana
-      - compat-sap-c++-7
+      - compat-sap-c++-9
       - libatomic
       - uuidd
       - csh
@@ -76,7 +76,7 @@ packages:
       - numad
       - cifs-utils      
       - tuned-profiles-sap-hana
-      - compat-sap-c++-7
+      - compat-sap-c++-9
       - libatomic
       - uuidd
       - csh
