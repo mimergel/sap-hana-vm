@@ -131,7 +131,7 @@ variables:
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
   osprepvar: ${{ parameters.osprep }}
-  usepyth3: $[ eq(variables['osvar'], 'SLES 15 SP2') ]
+  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -186,7 +186,7 @@ stages:
       condition: eq(${{ parameters.osprep }}, true)
 
     - task: Ansible@0
-      displayName: 'OS Preparations SLES 15(Ansible)'
+      displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
@@ -198,18 +198,18 @@ stages:
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
 
-    - task: Ansible@0
-      displayName: 'OS Preparations (Ansible)'
-      inputs:
-        ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
-        inventoriesAgentMachine: inlineContent
-        inventoryInlineContentAgentMachine: |
-          [hana]
-          $(hanavmfqdn)
-        args: -vv 
-        failOnStdErr: false
-      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+#    - task: Ansible@0
+#      displayName: 'OS Preparations (Ansible)'
+#      inputs:
+#        ansibleInterface: 'agentMachine'
+#        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+#        inventoriesAgentMachine: inlineContent
+#        inventoryInlineContentAgentMachine: |
+#          [hana]
+#          $(hanavmfqdn)
+#        args: -vv 
+#        failOnStdErr: false
+#      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
   jobs:
