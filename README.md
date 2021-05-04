@@ -105,7 +105,7 @@ Steps:
 2. Create a Project in Azure DevOps
 3. Connect your Github Repository with Azure DevOps (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
 3. Create a pipeline in DevOps based on the example in DevOpsPipeline/azure-pipelines.yml, choose manual trigger as a start
-4. Enter your required variables to the pipeline configuration, see example [@here](./Documentation/Images/variables.jpg)
+4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
 5. Download sapbits and store in storage account, update urls in vars/default.yml
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
