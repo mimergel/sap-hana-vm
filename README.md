@@ -126,7 +126,7 @@ Files to place into the storage acount: IMDB_SERVER..., HCMT..., SAPCAR, diskCon
 2. Create a container with read access in this storage account 
 3. Upload the files into the container
 4. Get the new URLs from the storage container and update the vars for `url_sapcar`, `url_hdbserver` & `url_hcmt` in `Ansible/vars/defaults.yml` accordingly. The URL for `diskConfig.sh` must be adapted in `ARM-Template/azuredeploy.json`.
-5. Adapt the input variable `csmFileLink` in `DevOpsPipeline/azure-pipeline.yml` to point to the ARM template location of your GitHub repository (2x).
+5. Adapt the input variable `csmFileLink` 2x in `DevOpsPipeline/azure-pipeline.yml` to point to the ARM template location of your GitHub repository.
 
 
 
