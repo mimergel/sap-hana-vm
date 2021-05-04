@@ -285,6 +285,7 @@ stages:
         script: 'echo Backup Integration not selected'
 
 - stage: Testing
+  condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: HCMT
     timeoutInMinutes: 360
@@ -302,12 +303,6 @@ stages:
           $(hanavmfqdn)
         args: -v 
         failOnStdErr: false
-      condition: eq(${{ parameters.hcmt }}, true)
-
-    - task: CmdLine@2
-      displayName: 'Dummy command for successful stage run'
-      inputs:
-        script: 'echo HCMT Test not selected'
 
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
