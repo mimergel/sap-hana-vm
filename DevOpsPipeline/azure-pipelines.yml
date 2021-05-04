@@ -1,4 +1,4 @@
-# Azure DevOps Pipeline to deploy SAP HANA and subsequential tasks
+# Azure DevOps Pipeline to deploy SAP HANA and subsequent tasks
 
 parameters:
 - name: size
