@@ -21,7 +21,7 @@ url_sapcar: https://terraform2021.blob.core.windows.net/sapbits/archives/SAPCAR_
 # url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_054_0-80002031.SAR
 url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_055_0-80002031.SAR
 # URL for the Azure HANA Backint Integration Script
-url_hana_backup_script: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
+url-msawb-plugin: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
 # url_hana_backup_script: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
 # URL for HCMT package
 # https://softwaredownloads.sap.com/file/0020000000392012021
