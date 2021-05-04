@@ -121,7 +121,7 @@ name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ pa
 
 stages:
 - stage: Deploy_VM
-  condition: and(eq(${{ parameters.osprep }}, true)
+  condition: eq(${{ parameters.hanavmdeployment }}, true)
   jobs:
   - job: Deploy_VM
     steps:
@@ -146,7 +146,7 @@ stages:
         deploymentMode: 'Complete'
 
 - stage: Prepare_OS
-  condition: eq(${{ parameters.osprep }}, true
+  condition: eq(${{ parameters.osprep }}, true)
   jobs:
   - job: Prepare_OS
     steps:
