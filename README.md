@@ -82,33 +82,41 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 </table>
 
 ## Prerequesites
-1. Azure Subscription 
-2. Azure DevOps and Github account
-3. S-User for SAP Software Downloads
+1. [Azure Subscription](https://portal.azure.com/) 
+2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account 
+3. S-User for SAP [Software Downloads](https://launchpad.support.sap.com/)
 4. Basic Resources
 	- VNET + Subnet
 	- Recovery Service Vault with 2 Policies named "HANA-Non-PRD" and "HANA-PRD"
 	- Storage Account (For SAP binaries and Scripts)
 	- Private DNS Zone (Makes everything easier)
+	- For green field deployments and especially production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
     - Deploy an Ubuntu 18.04 VM
-	- Install PowerShell [link](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
+	- Install PowerShell: [link](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 	- Install Ansible [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
 	- Setup your own [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops)
-		Use this tested [agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz)
-		The latest Version doesn't handel SLES 15 SP2 correctly
+		* Use this tested [agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz)
+		* The latest Version doesn't handel SLES 15 SP2 correctly
 	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
 	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash" and perform "az login"
 
 ## Deployment via Azure DevOps
-Steps:
 1. Fork this repository in Github or create your own new Repository based on this template
 2. Create a Project in Azure DevOps
-3. Connect your Github Repository with Azure DevOps [Description](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-4. Create a pipeline in DevOps based on the example in DevOpsPipeline/azure-pipelines.yml, choose manual trigger as a start
-5. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
-6. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
-7. Update URLs in the pipeline: 
+3. In the DevOps Pipeline Area
+	* Create a "New Pipeline" 
+	* Where is your code? => "GitHub" 
+	* Select a repository => "<git-user>/sap-hana-vm" 
+	* Configure your pipeline => "Existing Azure Pipeline YAML file"
+	* Branch "Main" 
+	* Path "/DevOpsPipeline/azure-pipelines.yml" 
+	* Continue and Click on the right side of the Run button to "Save" 
+	* Optionally change the name in the Pipeline overview
+	In the process you might need to connect your Github Repository with Azure DevOps [See here for details](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
+4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
+5. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
+6. Update the URL in the pipeline at 2 locations of "csmFileLink"
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
 In this typical situation downloads from github or SAP won't work. Therefore the following files need to be placed into a storage container that is reachable from the SAP subnets. 
