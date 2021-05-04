@@ -4,7 +4,7 @@ This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with t
 * SLES 12 & 15
 * RHEL 7 & 8 
 * VM sizes from 128GB to 12TB
-* Preparation of the OS with required patches and configurations according to relevant SAP notes
+* OS Preparation with required patches and configurations according to relevant SAP notes
 * HANA 2.0 DB Installation 
 * Backup Integration into an Azure Recovery Service Vault including execution of initial backups
 * Execution of HANA Clound Measurement Tool (HCMT)
@@ -126,7 +126,7 @@ Files to place into the storage acount: IMDB_SERVER..., HCMT..., SAPCAR, diskCon
 2. Create a container with read access in this storage account 
 3. Upload the files into the container
 4. Get the new URLs from the storage container and update the vars for `url_sapcar`, `url_hdbserver` & `url_hcmt` in `Ansible/vars/defaults.yml` accordingly. The URL for `diskConfig.sh` must be adapted in `ARM-Template/azuredeploy.json`.
-5. Adapt the variable `csmFileLink` in `DevOpsPipeline/azure-pipeline.yml` to point to the ARM template location of your GitHub repository.
+5. Adapt the input variable `csmFileLink` in `DevOpsPipeline/azure-pipeline.yml` to point to the ARM template location of your GitHub repository (2x).
 
 
 
