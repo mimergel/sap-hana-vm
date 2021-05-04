@@ -40,6 +40,6 @@ email_shine: "shinedemo@microsoft.com"
 # Default:
 # url-msawb-plugin: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
 # using own accessible storage account:
-url_hana_backup_script: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
+url-msawb-plugin: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
 
 # ------------------------------------------------------------------------------------------------------------------------
