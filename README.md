@@ -12,7 +12,7 @@ This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with t
 
 Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
-# VM Sizes and Storage Configurations
+## VM Sizes and Storage Configurations
 <table>
 	<tr>
 		<th>Size</th>
@@ -81,7 +81,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	</tr>
 </table>
 
-# Prerequesites
+## Prerequesites
 1. Azure Subscription 
 2. Azure DevOps and Github account
 3. S-User for SAP Software Downloads
@@ -99,15 +99,16 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
 	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash" and perform "az login"
 
-# Deployment via Azure DevOps
+## Deployment via Azure DevOps
 Steps:
 1. Fork this repository in Github or create your own new Repository based on this template
-2. Connect your Github Repository with Azure DevOps (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-3. Create a pipeline similar in DevOps based on the example azure-pipelines.yml, choose manual trigger as a start
+2. Create a Project in Azure DevOps
+3. Connect your Github Repository with Azure DevOps (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
+3. Create a pipeline in DevOps based on the example in DevOpsPipeline/azure-pipelines.yml, choose manual trigger as a start
 4. Enter your required variables to the pipeline configuration
 5. Download sapbits and store in storage account, update urls in vars/default.yml
 
-# Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
+## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
 In this typical situation downloads from github or SAP won't work. Therefore the following files need to be placed into a storage container that is reachable from the SAP subnets. 
 Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sap-hana.sh
 
@@ -116,3 +117,12 @@ Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sa
 3. Upload the files into the container
 4. Get the URLs update the links in Ansible/vars/defaults.yml. The URL to diskConfig.sh must be adapted in the ARM-Template/azuredeploy.json.
 5. Adapt the csmFileLink variable in the DevOpsPipeline/azure-pipeline.yml to point to the ARM template location of your git repo. 
+
+
+
+### Todo in future releases
+* selective disk backup (exclude HANA Data and LOG from OS Backups) 
+* Include Quality Checks when available for SSH login
+* Optionally setup basic resources (VNET, Subnet, RSV, Storage Account, DNS, ...)
+* Check OS NW Settings: https://launchpad.support.sap.com/#/notes/2382421
+
