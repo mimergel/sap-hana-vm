@@ -116,6 +116,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
 5. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
 6. Update the URL in the pipeline at 2 locations of "csmFileLink"
+7. Run the pipeline. During first run you'll be asked to allow the Service Connection to Azure
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
 In this typical situation downloads from github or SAP won't work. Therefore the following files need to be placed into a storage container that is reachable from the SAP subnets. 
