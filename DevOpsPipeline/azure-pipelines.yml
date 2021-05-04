@@ -312,7 +312,7 @@ stages:
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
   jobs:
-  - job: Remove_RG
+  - job: Remove_Backups
     steps:
     - task: PowerShell@2
       displayName: 'HANA Backup Removal (PWSH)'
@@ -332,6 +332,8 @@ stages:
         showWarnings: true
         failOnStderr: false
 
+  - job: Remove_RG
+    steps:
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Remove Resource Group'
       inputs:
