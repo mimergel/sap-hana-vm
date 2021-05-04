@@ -129,6 +129,7 @@ name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ pa
 
 stages:
 - stage: Deploy_VM
+  condition: and(eq(${{ parameters.osprep }}, true)
   jobs:
   - job: Deploy_VM
     steps:
@@ -151,9 +152,9 @@ stages:
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
-      condition: eq(${{ parameters.hanavmdeployment }}, true)
 
 - stage: Prepare_OS
+  condition: eq(${{ parameters.osprep }}, true
   jobs:
   - job: Prepare_OS
     steps:
@@ -170,12 +171,10 @@ stages:
         exit 0
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
-      condition: eq(${{ parameters.osprep }}, true)
 
     - script: until ping -c1 "${{ parameters.vmname }}".$(privatednszone) >/dev/null 2>&1; do :; done
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
-      condition: eq(${{ parameters.osprep }}, true)
 
     - task: Ansible@0
       displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
@@ -204,6 +203,7 @@ stages:
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
+  condition: eq(${{ parameters.hanadbinstallation }}, true)
   jobs:
   - job: Install_HANA
     steps:
@@ -218,9 +218,9 @@ stages:
           $(hanavmfqdn)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
-      condition: eq(${{ parameters.hanadbinstallation }}, true)
 
 - stage: Backup_Prerequesite
+  condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Prerequesite
     steps:
@@ -238,9 +238,9 @@ stages:
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
-      condition: eq(variables.backuptodo, true)
 
 - stage: Backup_Activation
+  condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Activation
     steps:
@@ -258,7 +258,7 @@ stages:
         overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
-      condition: eq(variables.backuptodo, true)
+
     - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
@@ -277,7 +277,6 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
-      condition: eq(variables.backuptodo, true)
 
     - task: CmdLine@2
       displayName: 'Dummy command for successful stage run'
@@ -337,4 +336,3 @@ stages:
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
-
