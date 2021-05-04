@@ -240,7 +240,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(hanavmfqdn)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) -e url-msawb-plugin=$(url-msawb-plugin)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
