@@ -161,6 +161,7 @@ stages:
   jobs:
   - job: Prepare_OS
     steps:
+    - checkout: none
     - script: |
         #!/bin/bash
         entry=`ssh-keygen -F $(hanavmfqdn)`
@@ -210,6 +211,7 @@ stages:
   jobs:
   - job: Install_HANA
     steps:
+    - checkout: none
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -227,6 +229,7 @@ stages:
   jobs:
   - job: Backup_Prerequesite
     steps:
+    - checkout: none
     - task: Ansible@0
       displayName: 'HANA Backup Prerequesites (Ansible)'
       # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
@@ -247,6 +250,7 @@ stages:
   jobs:
   - job: Backup_Activation
     steps:
+    - checkout: none
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Setup Backup Container (ARM)'
       inputs:
@@ -294,6 +298,7 @@ stages:
     cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
     steps:
+    - checkout: none
     - task: Ansible@0
       displayName: 'Run HCMT (Ansible)'
       inputs:
@@ -311,6 +316,7 @@ stages:
   jobs:
   - job: Remove_Backups
     steps:
+    - checkout: none
     - task: PowerShell@2
       displayName: 'HANA Backup Removal (PWSH)'
       inputs:
