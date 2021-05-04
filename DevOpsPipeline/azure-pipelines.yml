@@ -120,9 +120,9 @@ variables:
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
-- stage: Publish Pipeline Artifact
+- stage: Publish_Pipeline_Artifact
   jobs:
-  - job: Publish Pipeline Artifact
+  - job: Publish_Pipeline_Artifact
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
