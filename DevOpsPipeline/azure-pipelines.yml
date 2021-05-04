@@ -1,12 +1,4 @@
-# Pipeline which deploys SAP HANA VM including filesystem layout and DB installation on RHEL or SUSE
-# VM can be added to RSV including hana backup integration script run
-# Testing consists of quality checks and HCMT
-# 
-# Todo:
-#  selective disk backup (exclude HANA Data and LOG from OS Backups)
-#  Include Quality Checks when available for SSH login
-#  Optionally setup basic resources (VNET, Subnet, Key vault, RSV, Storage Account, DNS, ...)
-#  NW Settings: https://launchpad.support.sap.com/#/notes/2382421
+# Azure DevOps Pipeline to deploy SAP HANA and subsequential tasks
 
 parameters:
 - name: size
@@ -149,7 +141,7 @@ stages:
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
+        csmFileLink: '$(Build.Repository.Uri)/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
 
