@@ -1,46 +1,45 @@
 ---
+# ------------------------------------------------------------------------------------------------------------------------
 sap_sid: 
 sap_instancenum: 
 sap_hostname: 
-pw_db_system: 
-pw_os_sapadm: 
-pw_os_sidadm: 
-pwd_db_shine: 
-pwd_db_tenant: 
-pwd_db_xsaadmin: 
-sshkey_path_private:
-useHana2: true
-use_hana2: YES
-vm_user: 
-url_retries_delay: 10
-url_timeout: 30
-url_retries_cnt: 20
-# replace with download URL for SAPCAR
+
+# ------------------------------------------------------------------------------------------------------------------------
+# -----------------------------URLs for HANA DB Installation--------------------------------------------------------------
+# Default URLs
+# url_sapcar:
+# url_hdbserver:
+# url_hcmt: https://softwaredownloads.sap.com/file/0020000000392012021
+# using own accessible storage account:
 url_sapcar: https://terraform2021.blob.core.windows.net/sapbits/archives/SAPCAR_1010-70006178.EXE
-# replace with download URL for HDB server
-# url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_054_0-80002031.SAR
 url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_055_0-80002031.SAR
-# URL for the Azure HANA Backint Integration Script
-url_hana_backup_script: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
-# url_hana_backup_script: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
-# URL for HCMT package
-# https://softwaredownloads.sap.com/file/0020000000392012021
 url_hcmt: https://terraform2021.blob.core.windows.net/sapbits/archives/HCMT_055_0-80003261.SAR 
+
 url_cockpit:
 url_di_core:
-url_hana_studio_windows:
 url_portal_services:
-url_sap_hdbserver:
-url_sap_sapcar:
 url_shine_xsa:
-email_shine: "shinedemo@microsoft.com"
 url_xs_services:
 url_xsa_runtime:
 url_xsa_hrtt:
 url_xsa_webide:
 url_xsa_mta:
-package_retries_cnt: 3
-package_retries_delay: 3
+
+url_retries_delay: 10
+url_timeout: 30
+url_retries_cnt: 20
+
 install_cockpit: false
 install_shine: false
 install_xsa: false
+
+email_shine: "shinedemo@microsoft.com"
+
+# ------------------------------------------------------------------------------------------------------------------------
+# -----------------------------URL for the Azure HANA Backint Integration Script------------------------------------------
+# Default:
+# url-msawb-plugin: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
+# using own accessible storage account:
+url-msawb-plugin: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
+
+# ------------------------------------------------------------------------------------------------------------------------
