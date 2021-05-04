@@ -86,19 +86,19 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account 
 3. S-User for SAP [Software Downloads](https://launchpad.support.sap.com/)
 4. Basic Resources
-	- VNET + Subnet
-	- Recovery Service Vault with 2 Policies named "HANA-Non-PRD" and "HANA-PRD"
-	- Storage Account (For SAP binaries and Scripts)
-	- Private DNS Zone (Makes everything easier)
-	- For green field deployments and especially production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
+	* VNET + Subnet
+	* Recovery Service Vault with 2 Policies named "HANA-Non-PRD" and "HANA-PRD"
+	* Storage Account (For SAP binaries and Scripts)
+	* Private DNS Zone (Makes everything easier)
+	* For green field deployments and especially production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
-    - Deploy an Ubuntu 18.04 VM
-	- Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
-	- Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
-	- Setup an [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops) in your landing zone
+    * Deploy an Ubuntu 18.04 VM
+	* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
+	* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
+	* Setup an [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops) in your landing zone
 		* Use this [tested agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz) as the latest version doesn't handel SLES 15 SP2 correctly
-	- Add your private ssh key to the os user on the agent (.ssh/id_rsa)
-	- Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`
+	* Add your private ssh key to the os user on the agent (.ssh/id_rsa)
+	* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 
 ## Deployment via Azure DevOps
 1. Fork this repository in Github or create your own new Repository based on this template
@@ -119,14 +119,14 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 7. Run the pipeline. During first run you'll be asked to allow the Service Connection to Azure
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
-In this typical situation downloads from github or SAP won't work. Therefore the following files need to be placed into a storage container that is reachable from the SAP subnets. 
-Files: IMDB_SERVER*, HCMT*, SAPCAR, diskConfig.sh and msawb-plugin-config-com-sap-hana.sh
+In this situation downloads from github won't work. Therefore the following files need to be placed into a storage account that is reachable from the SAP subnets. 
+Files to place into the storage acount: IMDB_SERVER..., HCMT..., SAPCAR, diskConfig.sh and msawb-plugin-config-com-sap-hana.sh.
 
 1. Create a storage account with a private endpoint on relevant subnets in your Azure subscription
 2. Create a container with read access in this storage account 
 3. Upload the files into the container
-4. Get the URLs update the links in Ansible/vars/defaults.yml. The URL to diskConfig.sh must be adapted in the ARM-Template/azuredeploy.json.
-5. Adapt the csmFileLink variable in the DevOpsPipeline/azure-pipeline.yml to point to the ARM template location of your git repo. 
+4. Get the new URLs from the storage container and update the vars for `url_sapcar`, `url_hdbserver` & `url_hcmt` in `Ansible/vars/defaults.yml` accordingly. The URL for `diskConfig.sh` must be adapted in `ARM-Template/azuredeploy.json`.
+5. Adapt the variable `csmFileLink` in `DevOpsPipeline/azure-pipeline.yml` to point to the ARM template location of your GitHub repository.
 
 
 
