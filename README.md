@@ -1,14 +1,14 @@
 # SAP HANA VM deployments using Azure Marketplace Images
 This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
 
-	* SLES 12 & 15
-	* RHEL 7 & 8 
-	* VM sizes from 128GB to 12TB
-	* Preparation of the OS with required patches and configurations according to relevant SAP notes
-	* HANA 2.0 DB Installation 
-	* Backup Integration into an Azure Recovery Service Vault including execution of initial backups
-	* Execution of HANA Clound Measurement Tool (HCMT)
-	* Removal of the complete deployment 
+* SLES 12 & 15
+* RHEL 7 & 8 
+* VM sizes from 128GB to 12TB
+* Preparation of the OS with required patches and configurations according to relevant SAP notes
+* HANA 2.0 DB Installation 
+* Backup Integration into an Azure Recovery Service Vault including execution of initial backups
+* Execution of HANA Clound Measurement Tool (HCMT)
+* Removal of the complete deployment 
 
 Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
@@ -91,11 +91,12 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	- Storage Account (For SAP binaries and Scripts)
 	- Private DNS Zone (Makes everything easier)
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
-    - Deploy for example an Ubuntu 18.04 host
-	- Install PowerShell: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804
-	- Install Ansible ansible 2.10.* https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
-	- Setup the Deployment Agent Software: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops 
-		use this agent version: https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz
+    - Deploy an Ubuntu 18.04 VM
+	- Install PowerShell [link](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
+	- Install Ansible [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
+	- Setup your own [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops)
+		Use this tested [agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz)
+		The latest Version doesn't handel SLES 15 SP2 correctly
 	- Add your ssh key (.ssh/id_rsa) to the user that runs the Agent and executes the ansible scripts 
 	- Install Azure CLI: "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash" and perform "az login"
 
@@ -103,10 +104,11 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 Steps:
 1. Fork this repository in Github or create your own new Repository based on this template
 2. Create a Project in Azure DevOps
-3. Connect your Github Repository with Azure DevOps (https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-3. Create a pipeline in DevOps based on the example in DevOpsPipeline/azure-pipelines.yml, choose manual trigger as a start
-4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
-5. Download sapbits and store in storage account, update urls in vars/default.yml
+3. Connect your Github Repository with Azure DevOps [Description](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
+4. Create a pipeline in DevOps based on the example in DevOpsPipeline/azure-pipelines.yml, choose manual trigger as a start
+5. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
+6. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
+7. Update URLs in the pipeline: 
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
 In this typical situation downloads from github or SAP won't work. Therefore the following files need to be placed into a storage container that is reachable from the SAP subnets. 
