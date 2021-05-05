@@ -38,8 +38,8 @@ email_shine: "shinedemo@microsoft.com"
 # ------------------------------------------------------------------------------------------------------------------------
 # -----------------------------URL for the Azure HANA Backint Integration Script------------------------------------------
 # Default:
-# url-msawb-plugin: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
+# url_msawb_plugin: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
 # using own accessible storage account:
-url-msawb-plugin: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
+url_msawb_plugin: https://terraform2021.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
 
 # ------------------------------------------------------------------------------------------------------------------------
