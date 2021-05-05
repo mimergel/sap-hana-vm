@@ -1,7 +1,7 @@
 ---
 - name: download msawb-plugin-config-com-sap-hana.sh
   get_url:
-    url: "{{ url-msawb-plugin }}"
+    url: "{{ url_msawb_plugin }}"
     dest: /tmp/msawb-plugin-config-com-sap-hana.sh
     mode: 0750
     timeout: "{{ url_timeout }}"
