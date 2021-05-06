@@ -135,4 +135,4 @@ Files to place into the storage acount: IMDB_SERVER..., HCMT..., SAPCAR, diskCon
 * Include Quality Checks when available for SSH login
 * Optionally setup basic resources (VNET, Subnet, RSV, Storage Account, DNS, ...)
 * Check OS NW Settings: https://launchpad.support.sap.com/#/notes/2382421
-
+* SAP Monitoring Agent
