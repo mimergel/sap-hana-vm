@@ -29,7 +29,6 @@ parameters:
   - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
-  - "My own Image"
 
 - name: sid
   displayName: HANA System ID
@@ -63,12 +62,6 @@ parameters:
   - "SAPSpokeGWC/subnets/sapdevsubnet"
   # Adapt according to target landing zone
   # "<VNET>/subnets/<subnet>"
-
-- name: vnet_rg
-  displayName: VNET Resource Group
-  type: string
-  default: "SAPonAzureTrial"
-  # Adapt according to target landing zone
 
 - name: hanavmdeployment
   displayName: HANA VM Deployment
@@ -162,7 +155,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/${{ parameters.vnet_rg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
 
 - stage: Prepare_OS
