@@ -56,9 +56,9 @@ parameters:
 - name: subnet
   displayName: Target Subnet
   type: string
-  default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  default: "bae_tooling/subnets/bae_tooling-vnet"
   values:
-  - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  - "bae_tooling/subnets/bae_tooling-vnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
 
 - name: hanavmdeployment
