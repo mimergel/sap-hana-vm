@@ -114,9 +114,12 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Optionally change the name in the Pipeline overview
 	* In the process you might need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
 4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
-5. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
-6. Update the URL in the pipeline at 2 locations of "csmFileLink"
-7. Run the pipeline. During first run you'll be asked to allow the Service Connection to Azure
+5. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
+6. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
+7. Update the URL in the pipeline at 2 locations of "csmFileLink"
+8. Update the parameter vnet_rg in the pipeline
+9. Set target storage account for boot diagnostics in ARM-Template/azuredeploy.json
+10. Run the pipeline. During first run you'll be asked to allow the Service Connection to Azure
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
 In this situation downloads from github won't work. Therefore the following files need to be placed into a storage account that is reachable from the SAP subnets. 
@@ -136,3 +139,4 @@ Files to place into the storage acount: IMDB_SERVER..., HCMT..., SAPCAR, diskCon
 * Optionally setup basic resources (VNET, Subnet, RSV, Storage Account, DNS, ...)
 * Check OS NW Settings: https://launchpad.support.sap.com/#/notes/2382421
 * SAP Monitoring Agent
+* automatic deployment of the agent

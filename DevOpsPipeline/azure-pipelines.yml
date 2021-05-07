@@ -53,13 +53,21 @@ parameters:
   - "West Europe"
   - "Germany West Central"
 
-- name: subnet
+- name: vnet_subnet
   displayName: Target Subnet
   type: string
   default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   values:
   - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
+  # Adapt according to target landing zone
+  # "<VNET>/subnets/<subnet>"
+
+- name: vnet_rg
+  displayName: VNET Resource Group
+  type: string
+  default: "SAPonAzureTrial"
+  # Adapt according to target landing zone
 
 - name: hanavmdeployment
   displayName: HANA VM Deployment
@@ -153,7 +161,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/${{ parameters.vnet_rg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
 
 - stage: Prepare_OS
