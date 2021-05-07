@@ -60,7 +60,7 @@ parameters:
   values:
   - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
-  # Adapt according to target landing zone
+  # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
 
 - name: hanavmdeployment
