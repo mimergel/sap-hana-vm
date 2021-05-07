@@ -162,7 +162,7 @@ stages:
           -hanaSystemSize "${{ parameters.size }}" 
           -osType "${{ parameters.os }}" 
           -adminPasswordOrKey "$(sshkey)" 
-          -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" 
+          -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" 
           -Backup "${{ parameters.hanabackupsetup }}" 
           -Script_URL "$(url-disk-cfg)"
           -Boot_Diag_URL "$(boot_diag_url)"
