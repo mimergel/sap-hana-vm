@@ -121,7 +121,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 7. Place [diskConfig.sh](https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh) in the container and adapt variables `url-disk-cfg` in the Pipeline
 8. Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
 9. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
-10. Setup the [Service Connection to Azure](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure)
+10. Setup the [Azure Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure) in [project settings](./Documentation/Images/azure-service-connection.jpg))
 11. Run the pipeline
 
 
