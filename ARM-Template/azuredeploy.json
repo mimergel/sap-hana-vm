@@ -1379,7 +1379,7 @@
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
-            "storageUri": "https://saponazuretrialdiag.blob.core.windows.net/",
+            "storageUri": "https://baetoolingdiag.blob.core.windows.net/",
             "enabled": true
           }
         }
