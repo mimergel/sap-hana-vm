@@ -64,12 +64,6 @@ parameters:
   # Adapt according to target landing zone
   # "<VNET>/subnets/<subnet>"
 
-- name: vnet_rg
-  displayName: VNET Resource Group
-  type: string
-  default: "SAPonAzureTrial"
-  # Adapt according to target landing zone
-
 - name: hanavmdeployment
   displayName: HANA VM Deployment
   type: boolean
