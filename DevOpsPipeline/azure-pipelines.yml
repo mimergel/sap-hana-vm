@@ -152,7 +152,7 @@ stages:
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
+        csmFileLink: 'https://raw.githubusercontent.com/stbaehr/sap-hana-vm-1/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
         deploymentMode: 'Complete'
 
@@ -261,7 +261,7 @@ stages:
         resourceGroupName: '$(RSV_RG)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/mimergel/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
+        csmFileLink: 'https://raw.githubusercontent.com/stbaehr/sap-hana-vm-1/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
         overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
