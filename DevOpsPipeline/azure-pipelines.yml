@@ -29,6 +29,7 @@ parameters:
   - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
+  - "My own Image"
 
 - name: sid
   displayName: HANA System ID
@@ -154,7 +155,7 @@ stages:
       displayName: 'SAP HANA VM Deployment via ARM'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
+        azureResourceManagerConnection: '$(azureconnectionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(hanavmrg)'
@@ -263,7 +264,7 @@ stages:
       displayName: 'Setup Backup Container (ARM)'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
+        azureResourceManagerConnection: '$(azureconnectionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(RSV_RG)'
@@ -349,7 +350,7 @@ stages:
       displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
+        azureResourceManagerConnection: '$(azureconnectionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
