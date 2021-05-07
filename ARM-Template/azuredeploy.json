@@ -24,7 +24,8 @@
         "RHEL 8",
         "SLES 12 SP4",
         "SLES 12 SP5",
-        "SLES 15 SP2"
+        "SLES 15 SP2",
+        "My own Image"
       ],
       "defaultValue": "SLES 12 SP4",
       "metadata": {
@@ -88,15 +89,6 @@
     },
     "subnetId": {
       "type": "string",
-      "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/sapdevsubnet",
-      "allowedValues": [
-        "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPSpokeGWC/subnets/sapdevsubnet",
-        "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPSpokeGWC/subnets/sapquasubnet",
-        "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPSpokeGWC/subnets/sapprdsubnet",
-        "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/sapdevsubnet",
-        "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/sapquasubnet",
-        "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
-      ],
       "metadata": {
         "description": "The id of the subnet you want to use."
       }
@@ -136,6 +128,13 @@
       "defaultValue": "Non-PRD",
       "metadata": {
         "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
+      }
+    },
+    "Boot_Diag_URL": {
+      "type": "string",
+      "defaultValue": "https://saponazuretrialdiag.blob.core.windows.net",
+      "metadata": {
+        "description": "URL of storage account for boot diagnostics"
       }
     },
     "Script_URL": {
@@ -1379,7 +1378,7 @@
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
-            "storageUri": "https://saponazuretrialdiag.blob.core.windows.net/",
+            "storageUri": "[parameters('Boot_Diag_URL')]",
             "enabled": true
           }
         }
