@@ -130,7 +130,7 @@
         "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
       }
     },
-    "boot_diag_url": {
+    "Boot_Diag_URL": {
       "type": "string",
       "defaultValue": "https://saponazuretrialdiag.blob.core.windows.net",
       "metadata": {
@@ -1378,7 +1378,7 @@
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
-            "storageUri": "[parameters('boot_diag_url')]",
+            "storageUri": "[parameters('Boot_Diag_URL')]",
             "enabled": true
           }
         }
