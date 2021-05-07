@@ -112,14 +112,13 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Path "/DevOpsPipeline/azure-pipelines.yml" 
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
-	* In the process you might need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
+	* In the process you will need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
 4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
 5. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
 6. Download the SAP Binaries and store them in a storage account blob, update urls in vars/default.yml
-7. Update the URL in the pipeline at 2 locations of "csmFileLink"
-8. Update the parameter vnet_rg in the pipeline
-9. Set target storage account for boot diagnostics in ARM-Template/azuredeploy.json
-10. Run the pipeline. During first run you'll be asked to allow the Service Connection to Azure
+7. Update the URL in the pipeline in 2 places from "csmFileLink"
+8. Set target storage account for boot diagnostics in ARM-Template/azuredeploy.json `"storageUri":`
+9. Run the pipeline. During first run you'll be asked to allow the [Service Connection to Azure](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure)
 
 ## Deployments into a SAP landing zone where the target VNETs/subnets cannot access the internet 
 In this situation downloads from github won't work. Therefore the following files need to be placed into a storage account that is reachable from the SAP subnets. 

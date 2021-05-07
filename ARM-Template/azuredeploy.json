@@ -170,12 +170,6 @@
         "offer": "sles-sap-15-sp2",
         "publisher": "SUSE",
         "OSType": "Linux"
-      },
-      "My own Image": {
-        "sku": "81sapha-gen2",
-        "offer": "Humba-Humba",
-        "publisher": "JAMESLAST",
-        "OSType": "Linux"
       }
     },
     "internalOSType": "[variables('images')[parameters('osType')].OSType]",
