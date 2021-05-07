@@ -54,7 +54,7 @@ parameters:
   - "Germany West Central"
 
 - name: vnet_subnet
-  displayName: Target Subnet
+  displayName: Target VNET & Subnet
   type: string
   default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   values:
