@@ -254,22 +254,6 @@ stages:
   - job: Backup_Activation
     steps:
     - checkout: none
-    - task: PowerShell@2
-      displayName: 'Selective Disk OS Backup (PWSH)'
-      # https://docs.microsoft.com/en-us/azure/backup/selective-disk-backup-restore
-      inputs:
-        targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
-        arguments: >
-          -RSV "$(RSV)"
-          -RGV "$(RSV_RG)"
-          -VM "${{ parameters.vmname }}"
-          -VMRG "$(hanavmrg)"
-          -POL "OS-${{ parameters.hanabackupsetup }}"
-        errorActionPreference: continue
-        showWarnings: true
-        failOnStderr: false
-
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Setup HANA Backup Container (ARM)'
       inputs:
@@ -300,6 +284,22 @@ stages:
           -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
           -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
           -CONTAINER "$(backupcontainer)"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
+    - task: PowerShell@2
+      displayName: 'Selective Disk OS Backup (PWSH)'
+      # https://docs.microsoft.com/en-us/azure/backup/selective-disk-backup-restore
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
+        arguments: >
+          -RSV "$(RSV)"
+          -RGV "$(RSV_RG)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(hanavmrg)"
+          -POL "OS-${{ parameters.hanabackupsetup }}"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
