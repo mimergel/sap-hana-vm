@@ -43,64 +43,65 @@ param(
 $VMID = ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "-----------Get VM ID---------------------------------" -ForegroundColor DarkBlue
-Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" -ForegroundColor DarkGreen
+Write-Host "-----------Get VM ID---------------------------------" 
+Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" 
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
 Write-Host "$VMID" -ForegroundColor Red
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
-Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
-Write-Host "---------------List protectable items----------------" -ForegroundColor DarkBlue
-Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" -ForegroundColor DarkGreen
+Write-Host "-----------------------------------------------------" 
+Write-Host "---------------List protectable items----------------" 
+Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" 
 $PROTECT=az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 Write-Host $PROTECT
-Write-Host "-----------------------------------------------------" -ForegroundColor DarkBlue
+Write-Host "-----------------------------------------------------" 
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "-----Register the container if not yet in place -----" -ForegroundColor DarkBlue
+Write-Host "-----Register the container if not yet in place -----" 
 
     if ([string]::IsNullOrEmpty($PROTECT)) {
-        Write-Host "--------Container will be registered-----------------" -ForegroundColor DarkGree
-        Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" -ForegroundColor DarkGreen
+        Write-Host "--------Container will be registered-----------------" 
+        Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" 
         az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
     }
     else {
-        Write-Host "--------Container is already in place----------------" -ForegroundColor DarkGree
+        Write-Host "--------Container is already in place----------------" 
     }
 
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "-------------------Discovery-------------------------" -ForegroundColor DarkBlue
-Write-Host "az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c '$CONTAINER'" -ForegroundColor DarkGreen
+Write-Host "-------------------Discovery-------------------------" 
+Write-Host "az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c '$CONTAINER'" 
 az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c "$CONTAINER"
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "---------------List protectable items----------------"  -ForegroundColor DarkBlue
-Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHanaDatabase --output tsv" -ForegroundColor DarkGreen
+Write-Host "---------------List protectable items----------------"  
+Write-Host "az backup protectable-item  list -c '$CONTAINER' -g $RGV -v $RSV --workload-type SAPHanaDatabase --output tsv" 
 az backup protectable-item  list -c "$CONTAINER" -g $RGV -v $RSV --workload-type SAPHanaDatabase --output tsv
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "------------Enable SYSTEM DB Backups-----------------"  -ForegroundColor DarkBlue
-Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" -ForegroundColor DarkGreen
+Write-Host "------------Enable SYSTEM DB Backups-----------------"  
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
 Write-Host ""
-Write-Host "------------Enable TENANT DB Backups-----------------"  -ForegroundColor DarkBlue
-Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" -ForegroundColor DarkGreen
+Write-Host "------------Enable TENANT DB Backups-----------------"  
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
 az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $POL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
 Write-Host ""
 
-Write-Host "-----------------------------------------------------"
-Write-Host "-------------------Run Backups-----------------------" -ForegroundColor DarkBlue
-Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" -ForegroundColor DarkGreen
-az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMSYS" --container-name "$CONTAINER" --backup-type full
-Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" -ForegroundColor DarkGreen
-az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
-Write-Host ""
+Write-Host "Uncomment following lines to activate immediate initial HANA backups"
+# Write-Host "-----------------------------------------------------"
+# Write-Host "-------------------Run Backups-----------------------" 
+# Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
+# az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMSYS" --container-name "$CONTAINER" --backup-type full
+# Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
+# az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
+# Write-Host ""
