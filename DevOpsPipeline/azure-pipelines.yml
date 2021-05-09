@@ -269,6 +269,22 @@ stages:
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
     - task: PowerShell@2
+      displayName: 'Selective Disk OS Backup (PWSH)'
+      # https://docs.microsoft.com/en-us/azure/backup/selective-disk-backup-restore
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
+        arguments: >
+          -RSV "$(RSV)"
+          -RGV "$(RSV_RG)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(hanavmrg)"
+          -POL "OS-${{ parameters.hanabackupsetup }}"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
+    - task: PowerShell@2
       displayName: 'HANA Backup Registration and Execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
