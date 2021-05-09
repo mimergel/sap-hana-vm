@@ -11,7 +11,7 @@
     $VMRG="rg-HANA-HDB"
     $POL="OS-Non-PRD"
 
-    ./Scripts/SelectiveDiskBackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL 
+    ./Scripts/SelectiveDiskBackup.ps1 -RSV $RSV -RGV $RGV -VM $VM -VMRG $VMRG -POL $POL 
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -35,6 +35,7 @@ param(
 $VMID = ""
 $LUNS = ""
 $CONTAINER = "IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
+Write-Host "Expected Backup Container Name is: $CONTAINER"
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
