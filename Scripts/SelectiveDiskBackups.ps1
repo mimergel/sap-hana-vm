@@ -28,14 +28,11 @@
 #>
 
 param(
-    [Parameter(Mandatory = $true)][string]$RGV, 
     [Parameter(Mandatory = $true)][string]$RSV,
+    [Parameter(Mandatory = $true)][string]$RGV, 
     [Parameter(Mandatory = $true)][string]$VM,
     [Parameter(Mandatory = $true)][string]$VMRG,
-    [Parameter(Mandatory = $true)][string]$POL,
-    [Parameter(Mandatory = $true)][string]$ITEMSYS,
-    [Parameter(Mandatory = $true)][string]$ITEMTEN,
-    [Parameter(Mandatory = $true)][string]$CONTAINER
+    [Parameter(Mandatory = $true)][string]$POL
 )
 
 $VMID = ""
