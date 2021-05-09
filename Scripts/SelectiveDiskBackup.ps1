@@ -71,7 +71,7 @@ $DATALUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains
 $LOGLUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'log')].lun" --output tsv
 
 Foreach ($lun in $DATALUNS) {
-    $LUNS=$LUNS + " " + $lun
+    $LUNS=$LUNS+" "+$lun
     Write-host $LUNS
 }
 
