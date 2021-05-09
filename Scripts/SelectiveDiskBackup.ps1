@@ -67,28 +67,23 @@ Write-Host ""
 
 Write-Host "-----------------------------------------------------"
 Write-Host "---------------Select Luns for exclusion-------------"
-$DATALUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'data')].lun" --output tsv
-$LOGLUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'log')].lun" --output tsv
+[int[]] $DATALUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'data')].lun" --output tsv
+Write-Host " DATA Luns for exclusion:   $DATALUNS"
 
-Foreach ($lun in $DATALUNS) {
-    $LUNS=$LUNS+" "+$lun
-    Write-host $LUNS
-}
+[int[]] $LOGLUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'log')].lun" --output tsv
+Write-Host " LOG Luns for exclusion:    $LOGLUNS"
 
-Foreach ($lun in $LOGLUNS) {
-    $LUNS=$LUNS + " " + $lun
-    Write-host $LUNS
-}
+[int[]] $EX = $DATALUNS + $LOGLUNS
 
-Write-Host "These LUNs will be excluded from OS Backups: $LUNS"
+Write-Host "These LUNs will be excluded from OS Backups: $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]"
 
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
 Write-Host "---------------Exclude relevant LUNs-----------------"
-Write-Host "az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c '$CONTAINER' -i $VM --disk-list-setting exclude --diskslist $LUNS"
-az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c "$CONTAINER" -i $VM --disk-list-setting exclude --diskslist $LUNS
+Write-Host "az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c '$CONTAINER' -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9] "
+az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c "$CONTAINER" -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
