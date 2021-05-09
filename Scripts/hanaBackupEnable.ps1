@@ -67,7 +67,7 @@ Write-Host "-----Register the container if not yet in place -----" -ForegroundCo
         az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
     }
     else {
-        Write-Host "--------Container is already in palce----------------" -ForegroundColor DarkGree
+        Write-Host "--------Container is already in place----------------" -ForegroundColor DarkGree
     }
 
 Write-Host "-----------------------------------------------------"

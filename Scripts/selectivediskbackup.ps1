@@ -39,6 +39,8 @@ param(
 )
 
 $VMID = ""
+$LUNS = ""
+$CONTAINER = "IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
@@ -49,7 +51,42 @@ Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
+Write-Host "-----------Create Container if not yet existing------"
+# using below workaround with | grep $VM | wc -l 
+# as below command is not yet working as expected
+# az backup container show -g $RGV -v $RSV --backup-management-type AzureIaasVM --name '$CONTAINER'
+
+$PROTECT = az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query [].properties.friendlyName | grep $VM | wc -l
+
+if ([string]::IsNullOrEmpty($PROTECT)) {
+    Write-Host "--------Container will be registered-----------------" 
+    Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureIaasVM --resource-id $VMID" 
+    az backup container register -g $RGV -v $RSV --backup-management-type AzureIaasVM --resource-id $VMID
+}
+else {
+    Write-Host "--------Container is already in place----------------"
+}
+
+Write-Host "-----------------------------------------------------"
+Write-Host ""
+
+
+Write-Host "-----------------------------------------------------"
 Write-Host "---------------Select Luns for exclusion-------------"
+$DATALUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'data')].lun" --output tsv
+$LOGLUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'log')].lun" --output tsv
+
+Foreach ($lun in $DATALUNS) {
+    $LUNS=$LUNS + " " + $lun
+    Write-host $LUNS
+}
+
+Foreach ($lun in $LOGLUNS) {
+    $LUNS=$LUNS + " " + $lun
+    Write-host $LUNS
+}
+
+Write-Host "These LUNs will be excluded from OS Backups: $LUNS"
 
 Write-Host "-----------------------------------------------------"
 Write-Host ""

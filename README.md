@@ -126,9 +126,5 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 
 ### Todo in future releases
-* selective disk backup (exclude HANA Data and LOG from OS Backups) 
-* Include Quality Checks when available for SSH login
-* Optionally setup basic resources (VNET, Subnet, RSV, Storage Account, DNS, ...)
-* Check OS NW Settings: https://launchpad.support.sap.com/#/notes/2382421
-* SAP Monitoring Agent
-* automatic deployment of the agent
+* ASCS & DI Installation
+* Cluster Setup 
