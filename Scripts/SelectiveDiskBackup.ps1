@@ -7,14 +7,11 @@
     Test the script:
     $RGV="HANABackups"
     $RSV="hanabackupvault"
-    $VM="hanatest06"
-    $VMRG="rg-HANA-MM6"
-    $POL="HANA-Non-PRD"
-    $ITEMSYS="saphanadatabase;mm6;systemdb"
-    $ITEMTEN="saphanadatabase;mm6;mm6"
-    $CONTAINER="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
+    $VM="hanatest"
+    $VMRG="rg-HANA-HDB"
+    $POL="OS-Non-PRD"
 
-    ./selectivediskbackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -CONTAINER $CONTAINER
+    ./Scripts/SelectiveDiskBackup.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL 
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -91,7 +88,7 @@ Write-Host ""
 Write-Host "-----------------------------------------------------"
 Write-Host "---------------Exclude relevant LUNs-----------------"
 Write-Host "az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c '$CONTAINER' -i $VM --disk-list-setting exclude --diskslist $LUNS"
-az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c $CONTAINER -i $VM --disk-list-setting exclude --diskslist $LUNS
+az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c "$CONTAINER" -i $VM --disk-list-setting exclude --diskslist $LUNS
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
