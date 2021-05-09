@@ -84,7 +84,7 @@ Write-Host ""
 Write-Host "-----------------------------------------------------"
 Write-Host "---------------Exclude relevant LUNs-----------------"
 Write-Host "az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c '$CONTAINER' -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9] "
-az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c "$CONTAINER" -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]
+az backup protection update-for-vm -g $RGV -v $RSV -c "$CONTAINER" -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
