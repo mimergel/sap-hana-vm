@@ -1246,7 +1246,7 @@
     },
     "selectedSecurityRules": "[variables('osSecurityRules')[variables('internalOSType')]]",
     "subnets": {
-      "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('subnetName'))]",
+      "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
       "false": "[parameters('subnetId')]"
     },
     "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]"
