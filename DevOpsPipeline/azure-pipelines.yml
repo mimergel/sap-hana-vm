@@ -53,13 +53,15 @@ parameters:
   - "West Europe"
   - "Germany West Central"
 
-- name: subnet
-  displayName: Target Subnet
+- name: vnet_subnet
+  displayName: Target VNET & Subnet
   type: string
   default: "bae_tooling/subnets/bae_tooling-vnet"
   values:
   - "bae_tooling/subnets/bae_tooling-vnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
+  # Adapt according to your target landing zone
+  # "<VNET>/subnets/<subnet>"
 
 - name: hanavmdeployment
   displayName: HANA VM Deployment
@@ -146,14 +148,14 @@ stages:
       displayName: 'SAP HANA VM Deployment via ARM'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
+        azureResourceManagerConnection: '$(azureconnectionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/stbaehr/sap-hana-vm-1/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/bae_tooling/providers/Microsoft.Network/virtualNetworks/${{ parameters.subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)"'
+        csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -Boot_Diag_URL "$(boot_diag_url)" '
         deploymentMode: 'Complete'
 
 - stage: Prepare_OS
@@ -255,13 +257,13 @@ stages:
       displayName: 'Setup Backup Container (ARM)'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
+        azureResourceManagerConnection: '$(azureconnectionname)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(RSV_RG)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/stbaehr/sap-hana-vm-1/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
+        csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
         overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
@@ -341,7 +343,7 @@ stages:
       displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(subscriptionname)'
+        azureResourceManagerConnection: '$(azureconnectionname)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
