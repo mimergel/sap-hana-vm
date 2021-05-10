@@ -50,6 +50,7 @@
     },
     "variables": {
         "networkInterfaceName": "[concat(parameters('virtualMachineName'), '-nic')]",
+        "internalOSType": "Linux",
         "csExtension": {
             "Linux": {
             "Publisher": "Microsoft.Azure.Extensions",
@@ -141,12 +142,12 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+            "name": "[concat(parameters('virtualMachineName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
             "apiVersion": "2018-10-01",
             "location": "[parameters('location')]",
             "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
             ],
             "properties": {
                 "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
