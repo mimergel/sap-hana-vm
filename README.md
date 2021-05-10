@@ -93,7 +93,8 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Private DNS Zone (Makes everything easier)
 	* For green field deployments and especially production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
-    * Deploy an Ubuntu 18.04 VM. Use a public ssh-key.
+    * Deploy an Ubuntu 18.04 VM. Use a public ssh-key
+	* Store you private ssh-key in ~.ssh/id_rsa. Ensure correct file permission. This step is required for Ansible remote ssh to deployed HANA VMs
 	* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 	* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
 	* Setup an [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops) in your landing zone
