@@ -139,7 +139,7 @@
     },
     "Script_URL": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/stbaehr/sap-hana-vm-1/main/Scripts/diskConfig.sh",
+      "defaultValue": "https://baesapdownloads.blob.core.windows.net/scripts/diskConfig.sh",
       "metadata": {
         "description": "URL of the disk configuration script"
       }
