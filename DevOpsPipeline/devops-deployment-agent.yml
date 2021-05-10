@@ -17,15 +17,16 @@ parameters:
   default: "West Europe"
   values:
   - "West Europe"
+  - "North Europe"
   - "Germany West Central"
 
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  default: "HUBWEU/subnets/admin-subnet"
   values:
-  - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
-  - "SAPSpokeGWC/subnets/sapdevsubnet"
+  - "HUBWEU/subnets/admin-subnet"
+  - "HUBNEU/subnets/admin-subnet"
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
 
