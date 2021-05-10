@@ -8,15 +8,6 @@
         "subnetId": {
             "type": "String"
         },
-        "publicIpAddressName": {
-            "type": "String"
-        },
-        "publicIpAddressType": {
-            "type": "String"
-        },
-        "publicIpAddressSku": {
-            "type": "String"
-        },
         "virtualMachineName": {
             "type": "String"
         },
@@ -27,7 +18,8 @@
             "type": "String"
         },
         "osDiskType": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "Premium_LRS"
         },
         "virtualMachineSize": {
             "type": "String",
@@ -42,13 +34,21 @@
         "diagnosticsStorageAccountName": {
             "type": "String"
         },
-        "diagnosticsStorageAccountId": {
-            "type": "String"
+        "Script_URL": {
+          "type": "string",
+          "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
         }
     },
     "variables": {
-        "vnetId": "[parameters('virtualNetworkId')]",
-        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+        "csExtension": {
+            "Linux": {
+            "Publisher": "Microsoft.Azure.Extensions",
+            "Name": "CustomScript",
+            "Version": "2.0",
+            "script": "[parameters('Script_URL')]",
+            "scriptCall": "sh setup-deployment-agent.sh"
+            }
+        }
     },
     "resources": [
         {
@@ -143,7 +143,30 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            ],
+            "properties": {
+                "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
+                "type": "[variables('csExtension')[variables('internalOSType')].Name]",
+                "typeHandlerVersion": "[variables('csExtension')[variables('internalOSType')].Version]",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                "fileUris": [
+                    "[variables('csExtension')[variables('internalOSType')].script]"
+                ],
+          "commandToExecute": "[variables('csExtension')[variables('internalOSType')].scriptCall]"
         }
+      }
+    }
+
     ],
     "outputs": {
         "adminUsername": {
