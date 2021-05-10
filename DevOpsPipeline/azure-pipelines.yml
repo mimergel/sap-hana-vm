@@ -18,6 +18,7 @@ parameters:
   - 3.892_GB
   - 5.700_GB
   - 11.400_GB
+  - 22.000_GB
 
 - name: os
   displayName: Operating System
