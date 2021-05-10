@@ -11,9 +11,9 @@ sap_hostname:
 # url_hdbserver:
 # url_hcmt: https://softwaredownloads.sap.com/file/0020000000392012021
 # using own accessible storage account:
-url_sapcar: https://terraform2021.blob.core.windows.net/sapbits/archives/SAPCAR_1010-70006178.EXE
-url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_055_0-80002031.SAR
-url_hcmt: https://terraform2021.blob.core.windows.net/sapbits/archives/HCMT_055_0-80003261.SAR 
+url_sapcar: https://baesapdownloads.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
+url_hdbserver: https://baesapdownloads.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR
+url_hcmt: https://baesapdownloads.blob.core.windows.net/sapbits/HCMT_055_0-80003261.SAR 
 
 url_cockpit:
 url_di_core:
