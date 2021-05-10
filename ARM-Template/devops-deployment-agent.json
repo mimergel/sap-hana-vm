@@ -67,9 +67,7 @@
             "name": "[variables('networkInterfaceName')]",
             "location": "[parameters('location')]",
             "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
-            "dependsOn": [
-                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -78,26 +76,10 @@
                             "subnet": {
                                 "id": "[parameters('subnetId')]"
                             },
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIpAddress": {
-                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
-                            }
+                            "privateIPAllocationMethod": "Dynamic"
                         }
                     }
                 ]
-            }
-        },
-        {
-            "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2019-02-01",
-            "name": "[parameters('publicIpAddressName')]",
-            "location": "[parameters('location')]",
-            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
-            "sku": {
-                "name": "[parameters('publicIpAddressSku')]"
-            },
-            "properties": {
-                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
             }
         },
         {
