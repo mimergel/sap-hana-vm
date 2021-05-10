@@ -108,6 +108,11 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 	[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
+	* Complete the DevOps Deployment Agent Setup with 
+		1. login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
+		2. `sudo ./svc.sh install ; sudo ./svc.sh start`
+		3. `az login`
+		4. put your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission)
 
 
 ## Deployment via Azure DevOps
