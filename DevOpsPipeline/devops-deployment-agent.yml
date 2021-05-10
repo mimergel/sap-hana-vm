@@ -7,7 +7,7 @@ parameters:
   default: "devopsagent"
 
 - name: rg
-  displayName: HANA Server Name
+  displayName: Target Resource Group
   type: string
   default: "rg-devopsagent"
 
@@ -41,7 +41,7 @@ steps:
       displayName: 'Publish Pipeline Artifact'
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)'
-        artifact: hana
+        artifact: agent
 
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Deploy an Agent'
