@@ -85,7 +85,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2021-03-01",
+            "apiVersion": "2018-10-01",
             "name": "[parameters('virtualMachineName')]",
             "location": "[parameters('location')]",
             "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
