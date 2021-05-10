@@ -54,6 +54,6 @@ steps:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/devops-deployment-agent.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Script_URL "$(url-agent-cfg)" -Boot_Diag_URL "$(boot_diag_url)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -virtualMachineName "${{ parameters.vmname }}" -adminPasswordOrKey "$(sshkey)" -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Script_URL "$(url-agent-cfg)" -diagnosticsStorageAccountName "$(diagnosticsStorageAccountName)" '
         deploymentMode: 'Complete'
         deploymentName: 'devops-deployment-agent-$(Build.BuildId)'
