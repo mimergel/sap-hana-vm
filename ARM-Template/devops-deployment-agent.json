@@ -3,7 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "type": "String"
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
         },
         "subnetId": {
             "type": "String"
