@@ -29,10 +29,9 @@ sudo apt install ansible
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 # create a service principle and perform az login
 
-# Install DevOps Agent
-wget https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz
-mkdir devopsagent && cd devopsagent
-tar zxvf ~/vsts-agent-linux-x64-2.184.2.tar.gz
+# Install DevOps Agent in the home directory of the adminuser
+su - $@ -c 'wget https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz'
+su - $@ -c 'mkdir devopsagent && cd devopsagent ; tar zxvf ~/vsts-agent-linux-x64-2.184.2.tar.gz'
 
 echo "##################################################################################"
 echo "#########   Complete the DevOps Deployment Agent Setup with 3 manual steps   #####"
@@ -49,6 +48,5 @@ echo "##########################################################################
 echo "To Do 3."
 echo "put your private ssh-key in ~.ssh/id_rsa with 600 file permissions"
 echo "##################################################################################"
-
 
 exit

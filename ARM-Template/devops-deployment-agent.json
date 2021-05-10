@@ -15,9 +15,6 @@
         "virtualMachineComputerName": {
             "type": "String"
         },
-        "virtualMachineRG": {
-            "type": "String"
-        },
         "osDiskType": {
             "type": "String",
             "defaultValue": "Premium_LRS"
@@ -57,7 +54,7 @@
             "Name": "CustomScript",
             "Version": "2.0",
             "script": "[parameters('Script_URL')]",
-            "scriptCall": "sh setup-deployment-agent.sh"
+            "scriptCall": "sh setup-deployment-agent.sh parameters('adminUsername')"
             }
         }
     },
