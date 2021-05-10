@@ -131,7 +131,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
 5. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
 6. Download the SAP Binaries IMDB_SERVER*, HCMT* & SAPCAR* and store them in a storage container. Get the new URLs from for the files and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml` 
-7. Place [diskConfig.sh](https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh) in the container and adapt variables `url-disk-cfg` in the Pipeline
+7. Upload [diskConfig.sh](https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh) in the container and adapt variables `url-disk-cfg` in the Pipeline
 8. Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
 9. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
 10. Setup the [Azure Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure) in [project settings](./Documentation/Images/azure-service-connection.jpg)
