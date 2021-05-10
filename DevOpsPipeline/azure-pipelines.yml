@@ -56,9 +56,9 @@ parameters:
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "bae_tooling/subnets/bae_tooling-vnet"
+  default: "bae_tooling-vnet/subnets/default"
   values:
-  - "bae_tooling/subnets/bae_tooling-vnet"
+  - "bae_tooling-vnet/subnets/default"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
