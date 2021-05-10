@@ -7,13 +7,16 @@
             "defaultValue": "[resourceGroup().location]"
         },
         "subnetId": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/HUBWEU/subnets/admin-subnet"
         },
         "virtualMachineName": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "deployagent"
         },
         "virtualMachineComputerName": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "deployagent"
         },
         "osDiskType": {
             "type": "String",
@@ -24,23 +27,25 @@
             "defaultValue": "B1s"
         },
         "adminUsername": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "mimergel"
         },
         "adminPublicKey": {
             "type": "SecureString"
         },
         "diagnosticsStorageAccountName": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "saponazuretrialdiag"
         },
         "Script_URL": {
-          "type": "string",
-          "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
         },
         "Owner": {
             "type": "string",
             "defaultValue": "Contact"
         },
-            "CostCenter": {
+        "CostCenter": {
             "type": "string",
             "defaultValue": "123456"
         }
@@ -54,7 +59,7 @@
             "Name": "CustomScript",
             "Version": "2.0",
             "script": "[parameters('Script_URL')]",
-            "scriptCall": "sh setup-deployment-agent.sh parameters('adminUsername')"
+            "scriptCall": "[concat('sh setup-deployment-agent.sh ', parameters('adminUsername'))]"
             }
         }
     },
