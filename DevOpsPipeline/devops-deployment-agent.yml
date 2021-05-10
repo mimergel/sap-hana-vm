@@ -56,7 +56,7 @@ steps:
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: "${{ parameters.rg }}"
-        location: ${{ parameters.location }}
+        location: "${{ parameters.location }}"
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/devops-deployment-agent.json'
         overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -virtualMachineName "${{ parameters.vmname }}" -virtualMachineComputerName "${{ parameters.hostname }}" -virtualMachineRG "${{ parameters.rg }}" -subnetId "/subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}" -Script_URL "$(url-agent-cfg)" -diagnosticsStorageAccountName "$(diagnosticsStorageAccountName)" '
