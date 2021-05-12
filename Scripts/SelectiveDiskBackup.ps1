@@ -32,8 +32,6 @@ param(
     [Parameter(Mandatory = $true)][string]$POL
 )
 
-$VMID = ""
-$LUNS = ""
 $CONTAINER = "IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
 Write-Host "Expected Backup Container Name is: $CONTAINER"
 
