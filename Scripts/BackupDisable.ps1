@@ -97,8 +97,10 @@ Write-Host $CONTDIS1
     }
     else {
         Write-Host "-------Container found, backup will be removed-------"
-        Write-Host "az backup protection disable -c "$CONTAINER1" -g $RGV -v $RSV --item-name $VM"
+        Write-Host "az backup protection disable -c '$CONTAINER1' -g $RGV -v $RSV --item-name $VM"
         az backup protection disable -c "$CONTAINER1" -g $RGV -v $RSV --item-name $VM --yes
+        Write-Host "az backup container unregister -c '$CONTAINER1' -g $RGV -v $RSV --backup-management-type AzureIaasVM --yes"
+        az backup container unregister -c "$CONTAINER1" -g $RGV -v $RSV --backup-management-type AzureIaasVM --yes
     }   
 
 Write-Host "-----------------------------------------------------"
