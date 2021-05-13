@@ -16,7 +16,7 @@
     $ITEMTEN="saphanadatabase;mm6;mm6"
     $CONTAINER="VMAppContainer;Compute;$VMRG;$VM"
 
-    ./hanaBackupEnable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
+    ./Scripts/BackupEnable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table

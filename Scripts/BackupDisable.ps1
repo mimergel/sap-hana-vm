@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    This script disables the SAP HANA Backups
+    Disable OS & HANA Backups
 .DESCRIPTION
-	This script disables the SAP HANA Backups including all required cleanup activities
+	This script disables the OS & HANA Backups for a specific VM and HANA DB when relavant configuration can be found
 .EXAMPLE
     Test the script:
     $RGV="HANABackups"
@@ -14,7 +14,7 @@
     $ITEMTEN="saphanadatabase;mm6;mm6"
     $CONTAINER="VMAppContainer;Compute;$VMRG;$VM"
 
-    ./Scripts/hanaBackupDisable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
+    ./Scripts/BackupDisable.ps1 -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL -ITEMSYS $ITEMSYS -ITEMTEN $ITEMTEN -CONTAINER $CONTAINER
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
