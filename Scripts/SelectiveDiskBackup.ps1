@@ -32,8 +32,8 @@ param(
     [Parameter(Mandatory = $true)][string]$POL
 )
 
-$CONTAINER = "IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
-Write-Host "Expected Backup Container Name is: $CONTAINER"
+$CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
+Write-Host "Expected Backup Container Name is: $CONTAINER1"
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
@@ -49,7 +49,8 @@ Write-Host "-----------Create Container if not yet existing------"
 # as below command is not yet working as expected
 # az backup container show -g $RGV -v $RSV --backup-management-type AzureIaasVM --name '$CONTAINER'
 
-$PROTECT = az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query [].properties.friendlyName | grep $VM | wc -l
+# $PROTECT = az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query [].properties.friendlyName | grep $VM | wc -l
+$PROTECT = az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query "[?name=='$CONTAINER1']"  --output tsv
 
 if ([string]::IsNullOrEmpty($PROTECT)) {
     Write-Host "--------Container will be registered-----------------" 
