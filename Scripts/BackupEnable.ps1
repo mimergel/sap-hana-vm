@@ -66,12 +66,12 @@ Write-Host ""
     }
     else {
         Write-Host ""
-        Write-Host "--------Container is already in place----------------" 
+        Write-Host "--------VM Backup is already enabled-------------" 
         Write-Host ""
     }
 
 Write-Host "-----------------------------------------------------" 
-Write-Host "---------------List protectable items----------------" 
+Write-Host "---------------List protectable HANA items-----------" 
 Write-Host "az backup protectable-item  list -c '$CONTAINER2' -g $RGV -v $RSV --workload-type SAPHANA --output tsv" 
 $PROTECT2=az backup protectable-item  list -c "$CONTAINER2" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
 Write-Host $PROTECT2
@@ -82,11 +82,11 @@ Write-Host "-----------------------------------------------------"
 Write-Host "-----Register the container if not yet in place -----" 
 
     if ([string]::IsNullOrEmpty($PROTECT2)) {
-        Write-Host "--------Container will be registered-----------------" 
+        Write-Host "---HANA Backup Container will be registered----------" 
         Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" 
         az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
         Write-Host "-----------------------------------------------------"
-        Write-Host "-------------------Discovery-------------------------" 
+        Write-Host "------------------DB-Discovery-----------------------" 
         Write-Host "az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c '$CONTAINER2'" 
         az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c "$CONTAINER2"
         Write-Host "-----------------------------------------------------"
@@ -102,19 +102,19 @@ Write-Host "-----Register the container if not yet in place -----"
     }
     else {
         Write-Host ""
-        Write-Host "--------Container is already in place----------------" 
+        Write-Host "--------HANA Backup Container is already in place----" 
         Write-Host ""
     }
 
 Write-Host "Uncomment following lines to activate immediate initial OS & HANA backups"
-# Write-Host "-----------------------------------------------------"
-# Write-Host "-------------------Run OS Backups------------------" 
+Write-Host "-----------------------------------------------------"
+Write-Host "-------------------Run OS Backups------------------" 
 # az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM
-# Write-Host ""
-# Write-Host "-----------------------------------------------------"
-# Write-Host "-------------------Run HANA Backups------------------" 
-# Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
+Write-Host ""
+Write-Host "-----------------------------------------------------"
+Write-Host "-------------------Run HANA Backups------------------" 
+Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMSYS" --container-name "$CONTAINER" --backup-type full
-# Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
+Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
-# Write-Host ""
+Write-Host ""
