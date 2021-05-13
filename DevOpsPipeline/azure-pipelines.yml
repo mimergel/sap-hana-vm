@@ -278,14 +278,12 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
         arguments: >
+          -SID "${{ parameters.sid }}"
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -POL "HANA-${{ parameters.hanabackupsetup }}"
-          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
-          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER "$(containersuffix)"
+          -POL "${{ parameters.hanabackupsetup }}"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -344,14 +342,12 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupDisable.ps1'
         arguments: >
-          -RGV "$(RSV_RG)"
+          -SID "${{ parameters.sid }}"
           -RSV "$(RSV)"
+          -RGV "$(RSV_RG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
           -POL "NA"
-          -ITEMSYS "saphanadatabase;${{ parameters.sid }};systemdb"
-          -ITEMTEN "saphanadatabase;${{ parameters.sid }};${{ parameters.sid }}"
-          -CONTAINER "$(containersuffix)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
