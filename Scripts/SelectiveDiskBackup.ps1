@@ -44,42 +44,32 @@ Write-Host "-----------------------------------------------------"
 Write-Host ""
 
 Write-Host "-----------------------------------------------------"
-Write-Host "-----------Create Container if not yet existing------"
-Write-Host "az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query ""[?name=='$CONTAINER1']""  --output tsv"
-$PROTECT = az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query "[?name=='$CONTAINER1']"  --output tsv
+Write-Host "-----------Check if the VM is protected--------------"
+Write-Host "az backup protection check-vm --vm $VMID"
+$PROTECT = az backup protection check-vm --vm $VMID
 
-if ([string]::IsNullOrEmpty($PROTECT)) {
-    Write-Host "--------Container will be registered-----------------" 
-    Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureIaasVM --resource-id $VMID" 
-    az backup container register -g $RGV -v $RSV --backup-management-type AzureIaasVM --resource-id $VMID
-}
-else {
-    Write-Host "--------Container is already in place----------------"
-}
+    if ([string]::IsNullOrEmpty($PROTECT)) {
+        Write-Host "---VM is not protected, no selectve disk backup can be enabled---"
+    }
+    else {
+        Write-Host "-----------------------------------------------------"
+        Write-Host "---------------Select Luns for exclusion-------------"
+        [int[]] $DATALUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'data')].lun" --output tsv
+        Write-Host " DATA Luns for exclusion:   $DATALUNS"
 
-Write-Host "-----------------------------------------------------"
-Write-Host ""
+        [int[]] $LOGLUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'log')].lun" --output tsv
+        Write-Host " LOG Luns for exclusion:    $LOGLUNS"
 
+        [int[]] $EX = $DATALUNS + $LOGLUNS
 
-Write-Host "-----------------------------------------------------"
-Write-Host "---------------Select Luns for exclusion-------------"
-[int[]] $DATALUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'data')].lun" --output tsv
-Write-Host " DATA Luns for exclusion:   $DATALUNS"
+        Write-Host "These LUNs will be excluded from OS Backups: $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]"
+       
+        Write-Host "-----------------------------------------------------"
+        Write-Host "---------------Exclude relevant LUNs-----------------"
+        Write-Host "az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c '$CONTAINER1' -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9] "
+        az backup protection update-for-vm -g $RGV -v $RSV -c "$CONTAINER1" -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]
+        Write-Host "-----------------------------------------------------"
+        Write-Host ""
+    }
 
-[int[]] $LOGLUNS=az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name,'log')].lun" --output tsv
-Write-Host " LOG Luns for exclusion:    $LOGLUNS"
-
-[int[]] $EX = $DATALUNS + $LOGLUNS
-
-Write-Host "These LUNs will be excluded from OS Backups: $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]"
-
-Write-Host "-----------------------------------------------------"
-Write-Host ""
-
-Write-Host "-----------------------------------------------------"
-Write-Host "---------------Exclude relevant LUNs-----------------"
-Write-Host "az backup protection update-for-vm --resource-group $RGV --vault-name $RSV -c '$CONTAINER1' -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9] "
-az backup protection update-for-vm -g $RGV -v $RSV -c "$CONTAINER1" -i $VM --disk-list-setting exclude --diskslist $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]
-Write-Host "-----------------------------------------------------"
-Write-Host ""
 
