@@ -280,8 +280,8 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
         arguments: >
           -SID "${{ parameters.sid }}"
-          -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
+          -RGV "$(RSV_RG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
           -POL "${{ parameters.hanabackupsetup }}"
