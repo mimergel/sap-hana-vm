@@ -275,7 +275,7 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupEnable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
         arguments: >
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
@@ -341,7 +341,7 @@ stages:
       displayName: 'HANA Backup Removal (PWSH)'
       inputs:
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/hanaBackupDisable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupDisable.ps1'
         arguments: >
           -RGV "$(RSV_RG)"
           -RSV "$(RSV)"
