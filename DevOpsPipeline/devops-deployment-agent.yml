@@ -65,3 +65,4 @@ steps:
         overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -virtualMachineName "${{ parameters.vmname }}" -virtualMachineComputerName "${{ parameters.hostname }}" -subnetId "$(subnetid)" -Script_URL "$(url-agent-cfg)" -diagnosticsStorageAccountName "$(diagnosticsStorageAccountName)" '
         deploymentMode: 'Complete'
         deploymentName: 'devops-deployment-agent-$(Build.BuildId)'
+        
