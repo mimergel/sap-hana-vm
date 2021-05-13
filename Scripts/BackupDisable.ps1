@@ -62,7 +62,7 @@ Write-Host $PROTECT
 
 Write-Host "-----------------------------------------------------"
 Write-Host "----------------Unregister Container-----------------"
-$CONTDIS2=az backup container show  -g $RGV -v $RSV --name "$CONTAINER2"
+$CONTDIS2=az backup container list -g $RGV -v $RSV --backup-management-type AzureWorkload --query "[?name=='$CONTAINER2']" --output tsv
 Write-Host $CONTDIS2
 
     if([string]::IsNullOrEmpty($CONTDIS2)){
@@ -79,8 +79,8 @@ Write-Host ""
 
 Write-Host "-----------------------------------------------------"
 Write-Host "---------------Checking results----------------------"
-Write-Host "az backup protectable-item  list -c '$CONTAINER2' -g $RGV -v $RSV --workload-type SAPHANA --output tsv"
-az backup protectable-item  list -c "$CONTAINER2" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
+Write-Host "az backup container list -g $RGV -v $RSV --backup-management-type AzureWorkload --query '[?name=='$CONTAINER2']' --output tsv"
+az backup container list -g $RGV -v $RSV --backup-management-type AzureWorkload --query "[?name=='$CONTAINER2']" --output tsv
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
@@ -89,7 +89,7 @@ Write-Host "-----------------------------------------------------"
 Write-Host "----------------Delete IaaS Backups -----------------"
 
 
-$CONTDIS1=az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query "[?name=='$CONTAINER1']"
+$CONTDIS1=az backup container list -g $RGV -v $RSV --backup-management-type AzureIaasVM --query "[?name=='$CONTAINER1']"  --output tsv
 Write-Host $CONTDIS1
 
     if([string]::IsNullOrEmpty($CONTDIS1)){
