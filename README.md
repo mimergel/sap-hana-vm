@@ -93,7 +93,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Private DNS Zone (Makes everything easier)
 	* For green field deployments and especially production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
-	* Manually
+	* Option A) Manually
     	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key
 		* Store you private ssh-key in ~.ssh/id_rsa. Ensure correct file permission. This step is required for Ansible remote ssh to deployed HANA VMs
 		* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
@@ -103,7 +103,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 		* Add your private ssh key to the os user on the agent (.ssh/id_rsa)
 		* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 		* User a puplic ssh-key 
-	* With this ARM-Template
+	* Option B) With this ARM-Template
 	
 		[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
