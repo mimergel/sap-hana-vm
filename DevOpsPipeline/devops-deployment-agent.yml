@@ -1,7 +1,39 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Pipeline to deploy an Azure DevopsDeployment Agent
+
+parameters:
+- name: vmname
+  displayName: DevOps Deployment Agent VM Name
+  type: string
+  default: "devopsagent"
+
+- name: hostname
+  displayName: DevOps Deployment Agent Hostname
+  type: string
+  default: "devopsagent"
+
+- name: rg
+  displayName: Target Resource Group
+  type: string
+  default: "rg-devopsagent"
+
+- name: location
+  displayName: Target Region
+  type: string
+  default: "West Europe"
+  values:
+  - "West Europe"
+  - "North Europe"
+  - "Germany West Central"
+
+- name: vnet_subnet
+  displayName: Target VNET & Subnet
+  type: string
+  default: "HUBWEU/subnets/admin-subnet"
+  values:
+  - "HUBWEU/subnets/admin-subnet"
+  - "HUBNEU/subnets/admin-subnet"
+  # Adapt according to your target landing zone
+  # "<VNET>/subnets/<subnet>"
 
 trigger:
 - none
@@ -9,11 +41,28 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  subnetid: /subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact'
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)'
+        artifact: agent
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Deploy an Agent'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(azureconnectionname)'
+        subscriptionId: '$(subscription)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: ${{ parameters.rg }}
+        location: ${{ parameters.location }}
+        templateLocation: 'URL of the file'
+        csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/devops-deployment-agent.json'
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -virtualMachineName "${{ parameters.vmname }}" -virtualMachineComputerName "${{ parameters.hostname }}" -subnetId "$(subnetid)" -Script_URL "$(url-agent-cfg)" -diagnosticsStorageAccountName "$(diagnosticsStorageAccountName)" '
+        deploymentMode: 'Complete'
+        deploymentName: 'devops-deployment-agent-$(Build.BuildId)'
+        

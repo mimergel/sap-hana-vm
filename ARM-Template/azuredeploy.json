@@ -65,7 +65,7 @@
     },
     "adminUsername": {
       "type": "string",
-      "defaultValue": "mimergel",
+      "defaultValue": "azureuser",
       "metadata": {
         "description": "Username for the Virtual Machine."
       }
@@ -81,7 +81,7 @@
         "description": "Type of authentication to use on the Virtual Machine."
       }
     },
- "adminPasswordOrKey": {
+    "adminPasswordOrKey": {
       "type": "securestring",
       "metadata": {
         "description": "Password or ssh key for the Virtual Machine."
