@@ -300,7 +300,6 @@ stages:
           -RGV "$(RSV_RG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -POL "${{ parameters.hanabackupsetup }}"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
