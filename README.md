@@ -1,4 +1,4 @@
-# SAP HANA VM deployments using Azure Marketplace Images
+# SAP HANA VM deployments
 This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
 
 * SLES 12 & 15
@@ -6,7 +6,8 @@ This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with t
 * VM sizes from 128GB to 12TB
 * OS Preparation with required patches and configurations according to relevant SAP notes
 * HANA 2.0 DB Installation 
-* Backup Integration into an Azure Recovery Service Vault including execution of initial backups
+* Backup Integration into an Azure Recovery Service Vault including execution of initial OS & HANA backups
+* Selective disk backup (removing hana log & data from OS backups) 
 * Execution of HANA Clound Measurement Tool (HCMT)
 * Removal of the complete deployment 
 
@@ -146,4 +147,10 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 * ARM deployment fails because the URL to the diskConfig.sh Script is not reachable from the deployed VM. In this case login to the VM and try with wget to download the script. Use your own container in your storage account and ensure it's reachable from VMs in the target subnet
 * During Stage "Prepare_OS" ssh connection must work from the deployment agent to the HANA VM. In case of troubles try to connect from the agent maually via ssh and solve the issue. Connection must work without interactive ssh prompts. You might need to set `StrictHostKeyChecking no` in `~/.ssh/config` when deploying VMs with different names to the same IP 
 * HANA Installation fails when using forbidden SID: ADD, ALL, AMD, AND, ANY, ARE, ASC, AUX, AVG, BIT, CDC, COM, CON, DBA, END, EPS, FOR, GET, GID, IBM, INT, KEY, LOG, LPT, MAP, MAX, MIN, MON, NIX, NOT, NUL, OFF, OLD, OMS, OUT, PAD, PRN, RAW, REF, ROW, SAP, SET, SGA, SHG, SID, SQL, SUM, SYS, TMP, TOP, UID, USE, USR, VAR
-* more to come
+* ...
+
+
+### FAQ
+* Where is the HCMT result?
+	=> <hanavm>:/hana/shared/install/setup/hcmtresult-<timestamp>.zip
+* ...

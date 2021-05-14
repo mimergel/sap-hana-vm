@@ -86,18 +86,6 @@ Write-Host "-----Register the container if not yet in place -----"
         Write-Host "az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID" 
         az backup container register -g $RGV -v $RSV --backup-management-type AzureWorkload --workload-type SAPHanaDatabase --resource-id $VMID
         Write-Host "-----------------------------------------------------"
-        Write-Host "------------------DB-Discovery-----------------------" 
-        Write-Host "az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c '$CONTAINER2'" 
-        az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c "$CONTAINER2"
-        Write-Host "-----------------------------------------------------"
-        Write-Host "-----------------------------------------------------"
-        Write-Host "------------Enable SYSTEM DB Backups-----------------"  
-        Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
-        az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
-        Write-Host ""
-        Write-Host "------------Enable TENANT DB Backups-----------------"  
-        Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
-        az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
         Write-Host ""
     }
     else {
@@ -106,9 +94,24 @@ Write-Host "-----Register the container if not yet in place -----"
         Write-Host ""
     }
 
+Write-Host "------------------DB-Discovery-----------------------" 
+Write-Host "az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c '$CONTAINER2'" 
+az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDatabase -c "$CONTAINER2"
+Write-Host "-----------------------------------------------------"
+Write-Host "-----------------------------------------------------"
+Write-Host "------------Enable SYSTEM DB Backups-----------------"  
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host ""
+Write-Host "------------Enable TENANT DB Backups-----------------"  
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host ""
+
 Write-Host "Uncomment following lines to activate immediate initial OS & HANA backups"
 Write-Host "-----------------------------------------------------"
 Write-Host "-------------------Run OS Backups------------------" 
+Write-Host "az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM"
 # az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM
 Write-Host ""
 Write-Host "-----------------------------------------------------"
@@ -118,3 +121,7 @@ Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSY
 Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
 Write-Host ""
+
+# az backup protection enable-for-azurewl command can return error when running twice over the same ITEM. 
+# As errors in this step do not harm at all exit with 0 to avoid failure of step and stage. 
+exit 0

@@ -300,15 +300,9 @@ stages:
           -RGV "$(RSV_RG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -POL "OS-${{ parameters.hanabackupsetup }}"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
-
-    - task: CmdLine@2
-      displayName: 'Dummy command for successful stage run'
-      inputs:
-        script: 'echo Backup Integration not selected'
 
 - stage: Testing
   condition: eq(${{ parameters.hcmt }}, true)
