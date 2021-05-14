@@ -1,4 +1,4 @@
-# SAP HANA VM deployments using Azure Marketplace Images
+# SAP HANA VM deployments
 This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
 
 * SLES 12 & 15
