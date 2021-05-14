@@ -9,9 +9,8 @@
     $RSV="hanabackupvault"
     $VM="hanatest"
     $VMRG="rg-HANA-HDB"
-    $POL="OS-Non-PRD"
 
-    ./Scripts/SelectiveDiskBackup.ps1 -RSV $RSV -RGV $RGV -VM $VM -VMRG $VMRG -POL $POL 
+    ./Scripts/SelectiveDiskBackup.ps1 -RSV $RSV -RGV $RGV -VM $VM -VMRG $VMRG
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -28,8 +27,7 @@ param(
     [Parameter(Mandatory = $true)][string]$RSV,
     [Parameter(Mandatory = $true)][string]$RGV, 
     [Parameter(Mandatory = $true)][string]$VM,
-    [Parameter(Mandatory = $true)][string]$VMRG,
-    [Parameter(Mandatory = $true)][string]$POL
+    [Parameter(Mandatory = $true)][string]$VMRG
 )
 
 $CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
