@@ -1219,10 +1219,6 @@
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('nicName')]",
         "apiVersion": "2018-10-01",
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
-          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
-        ],
         "location": "[parameters('location')]",
         "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "properties": {
