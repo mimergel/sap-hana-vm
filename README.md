@@ -113,8 +113,8 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 		* Complete the DevOps Deployment Agent Setup with
 			1. login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat) and [in this picture see the script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 			2. `sudo ./svc.sh install ; sudo ./svc.sh start`
-			3. `az login`
-			4. put your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission)
+			3. `az login`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
+			4. put your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). With this the login from deployment agent to HANA VM will be possible for the Ansible activities.
 
 
 ## Deployment via Azure DevOps
@@ -154,5 +154,5 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 ### FAQ
 * Where is the HCMT result?
-	- hanavm:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
+	- [hanavm]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * ...
