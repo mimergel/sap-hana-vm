@@ -1194,7 +1194,6 @@
       },
       "vmName": "[toLower(parameters('vmNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
-      "publicIpName": "[concat(variables('vmName'), '-pib')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
       "linuxConfiguration": {
@@ -1227,7 +1226,6 @@
               "name": "ipconfig1",
               "properties": {
                 "privateIPAllocationMethod": "Dynamic",
-                "publicIPAddress": "[if(equals(length(parameters('subnetId')), 0), json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName')) ,'\"}')), json('null'))]",
                 "subnet": {
                   "id": "[variables('selectedSubnetId')]"
                 }
