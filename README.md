@@ -158,5 +158,5 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 ### FAQ
 * Where is the HCMT result?
-	- [hanavm]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
+	- \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * ...
