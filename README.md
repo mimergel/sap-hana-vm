@@ -159,4 +159,6 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 ### FAQ
 * Where is the HCMT result?
 	- \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
-* ...
+* How do I create the service principle?
+	- Via CLI: https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli 
+	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
