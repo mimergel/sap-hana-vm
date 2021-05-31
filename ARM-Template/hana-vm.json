@@ -44,7 +44,7 @@
       "hanaSystemSize": {
         "type": "string",
         "allowedValues": [
-          "128_GB-Non-PRD",
+          "E16ds_v4_128_GB-Non-PRD",
           "160_GB-Non-PRD",
           "192_GB",
           "256_GB",
@@ -189,7 +189,7 @@
         }
       },
       "sizes": {
-        "128_GB-Non-PRD": {
+        "E16ds_v4_128_GB-Non-PRD": {
           "HANA": {
             "vmSize": "Standard_E16ds_v4",
             "disks": [
