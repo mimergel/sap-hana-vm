@@ -58,7 +58,7 @@
           "5.700_GB",
           "11.400_GB"
         ],
-        "defaultValue": "192_GB",
+        "defaultValue": "M32ts_192_GB",
         "metadata": {
           "description": "The size of the HANA System you want to deploy."
         }
