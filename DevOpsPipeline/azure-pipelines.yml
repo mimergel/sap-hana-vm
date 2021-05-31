@@ -7,10 +7,10 @@ parameters:
   default: 192_GB
   values:
   - E16ds_v4_128_GB-Non-PRD
-  - 160_GB-Non-PRD
-  - 192_GB
-  - 256_GB
-  - 512_GB
+  - E20ds_v4_160_GB-Non-PRD
+  - M32ts_192_GB
+  - M32ls_256_GB
+  - M64ls_512_GB
   - 1.000_GB
   - 1.792_GB
   - 2.000_GB
