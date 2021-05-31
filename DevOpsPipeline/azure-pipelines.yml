@@ -6,7 +6,7 @@ parameters:
   type: string
   default: 192_GB
   values:
-  - 128_GB-Non-PRD
+  - E16ds_v4_128_GB-Non-PRD
   - 160_GB-Non-PRD
   - 192_GB
   - 256_GB
