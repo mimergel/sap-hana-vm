@@ -89,8 +89,14 @@ parameters:
   - "PRD"
   - "None"
 
-- name: qualitychecks
-  displayName: HANA quality checks
+# will be added soon
+# - name: qualitychecks
+#   displayName: HANA quality checks
+#   type: boolean
+#   default: False
+
+- name: xsasetup
+  displayName: Install XSA components
   type: boolean
   default: False
 
