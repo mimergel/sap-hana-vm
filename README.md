@@ -18,14 +18,6 @@ For just Infrastructure deployments (VM+Storage) without any additional steps yo
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
 
 
-VM SKU	RAM	Max. VM I/O Throughput	/usr/sap	/hana/data	/hana/log	/hana/shared	/root volume	Provisioned Throughput	Maximum burst throughput
-E16ds_v4	128 GiB	384 MBps	1 x P6	3 x P6	3 x P10	1 x P15	1 x P6	300 MBps	510 MBps
-E20ds_v4	160 GiB	480 MBps	1 x P6	3 x P10	3 x P10	1 x P15	1 x P6	300 MBps	510 MBps
-E48ds_v4	384 GiB	1,152 MBps	1 x P6	3 x P15	3 x P10	1 x P20	1 x P6	375 MBps	510 MBps
-M32ts	192 GiB	500 MBps	1 x P6	4 x P6	3 x P10	1 x P15	1 x P6	200 MBps	680 MBps
-M32ls	256 GiB	500 MBps	1 x P6	4 x P6	3 x P10	1 x P15	1 x P6	200 MBps	680 MBps
-
-
 <table>
 	<tr>
 		<th>Size</th>
