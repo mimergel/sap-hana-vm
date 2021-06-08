@@ -237,6 +237,24 @@ stages:
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
+- stage: Install_XSA
+  condition: eq(${{ parameters.xsasetup }}, true)
+  jobs:
+  - job: Install_XSA
+    steps:
+    - checkout: none
+    - task: Ansible@0
+      displayName: 'XSA Setup (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/xsa-setup_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(hanavmfqdn)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+        failOnStdErr: false
+
 - stage: Backup_Prerequesite
   condition: eq(variables.backuptodo, true)
   jobs:
