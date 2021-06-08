@@ -1,0 +1,7 @@
+---
+- hosts: hana
+  become: true
+  vars_files:
+    - vars/default.yml
+  roles:
+    - xsa-setup
