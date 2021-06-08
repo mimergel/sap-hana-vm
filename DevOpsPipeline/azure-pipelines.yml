@@ -12,14 +12,14 @@ parameters:
   - M32ls_256_GB
   - E48ds_v4_384_GB-Non-PRD
   - M64ls_512_GB
-  - M64s_1.000_GB
-  - 1.792_GB
-  - 2.000_GB
-  - 2.850_GB
-  - 3.892_GB
-  - 5.700_GB
-  - 11.400_GB
-  - 22.000_GB
+  - M32dms_v2_875_GB
+  - M64ds_v2_1.000_GB
+  - M64dms_v2_1.792_GB
+  - M128ds_v2_2.000_GB
+  - M208s_v2_2.850_GB
+  - M128dms_v2_3.892_GB
+  - M208ms_v2_5.700_GB
+  - M416ms_v2_11.400_GB
 
 - name: os
   displayName: Operating System
