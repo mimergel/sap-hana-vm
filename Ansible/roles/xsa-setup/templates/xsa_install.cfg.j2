@@ -54,7 +54,7 @@ checkmnt=
 sapmnt=/hana/shared
 
 # Local Host Name ( Default: hdb3 )
-hostname={{ ansible_hostname }}
+hostname={{ sap_hostname }}
 
 # Install SSH Key ( Default: y )
 install_ssh_key=y
@@ -78,10 +78,10 @@ listen_interface=
 internal_network=
 
 # SAP HANA System ID
-sid=${sid}
+sid={{ sap_sid|upper }}
 
 # Instance Number
-number={{ hana_database.instance.instance_number }}
+number={{ sap_instancenum }}
 
 # Local Host Worker Group ( Default: default )
 workergroup=default
@@ -123,16 +123,16 @@ home=/usr/sap/${sid}/home
 shell=/bin/sh
 
 # System Administrator User ID
-userid=
+userid=1000
 
 # ID of User Group (sapsys)
-groupid=
+groupid=2000
 
 # Database User (SYSTEM) Password
 system_user_password=
 
 # Restart system after machine reboot? ( Default: n )
-autostart=n
+autostart=y
 
 # Enable HANA repository ( Default: y )
 repository=y
@@ -183,7 +183,7 @@ org_manager_password=
 prod_space_name=PROD
 
 # Routing Mode ( Default: ports; Valid values: ports | hostnames )
-xs_routing_mode={{ hana_database.xsa.routing }}
+xs_routing_mode=hostnames
 
 # XS Advanced Domain Name (see SAP Note 2245631)
 xs_domain_name=
@@ -195,13 +195,14 @@ xs_sap_space_isolation=y
 xs_customer_space_isolation=y
 
 # XS Advanced SAP Space OS User ID
-xs_sap_space_user_id=
+xs_sap_space_user_id=1010
 
 # XS Advanced Customer Space OS User ID
-xs_customer_space_user_id=
+xs_customer_space_user_id=1011
 
 # XS Advanced Components
-xs_components={{ hana_database.components.xs|join(',') }}
+# [all, none, xsac_alm_pi_ui, xsac_file_proc, xsac_hana_ea_d, xsac_hrtt, xsac_mess_srv, xsac_portal_serv, xsac_sap_web_ide, xsac_services, xsac_ui5_fesv6, xsac_ui5_sb, xsac_xsa_cockpit]
+xs_components=xsac_hrtt,xsac_sap_web_ide,xsac_services,xsac_monitoring,xsac_ui5_fesv6,xsac_xsa_cockpit
 
 # Do not start the selected XS Advanced components after installation ( Default: none )
 xs_components_nostart=none

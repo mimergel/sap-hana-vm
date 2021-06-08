@@ -19,8 +19,8 @@ url_cockpit:
 url_di_core:
 url_portal_services:
 url_shine_xsa:
-url_xs_services:
-url_xsa_runtime:
+url_xs_services: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACSERVICES07_12-70002361.ZIP
+url_xsa_runtime: 
 url_xsa_hrtt:
 url_xsa_webide:
 url_xsa_mta:
