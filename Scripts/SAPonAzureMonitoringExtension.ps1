@@ -33,8 +33,18 @@ $rgId=az group show -g $VMRG --query id --out tsv
 Write-Host "az role assignment create --assignee $spID --role 'Reader' --scope $rgId"
 az role assignment create --assignee $spID --role 'Reader' --scope $rgId
 
-Write-Host "-------Install the Azure Extension for SAP-----------" 
-Write-Host "az vm extension set --publisher Microsoft.AzureCAT.AzureEnhancedMonitoring --name MonitorX64Linux --version 1.0 -g $VMRG --vm-name $VM --settings '{\"system\":\"SAP\"}'"
-az vm extension set --publisher Microsoft.AzureCAT.AzureEnhancedMonitoring --name MonitorX64Linux --version 1.0 -g $VMRG --vm-name $VM --settings '{\"system\":\"SAP\"}'
+$EXT=az vm extension list -g $VMRG --vm-name $VM --query [].name --out tsv | grep MonitorX64Linux
+
+if ([string]::IsNullOrEmpty($EXT)) {
+    Write-Host "-------Install the Azure Extension for SAP-----------" 
+    Write-Host "az vm extension set --publisher Microsoft.AzureCAT.AzureEnhancedMonitoring --name MonitorX64Linux --version 1.0 -g $VMRG --vm-name $VM --settings '{\"system\":\"SAP\"}'"
+    az vm extension set --publisher Microsoft.AzureCAT.AzureEnhancedMonitoring --name MonitorX64Linux --version 1.0 -g $VMRG --vm-name $VM --settings '{\"system\":\"SAP\"}' 
+    Write-Host "-----------------------------------------------------"
+}
+else {
+    Write-Host ""
+    Write-Host "------Azure Extension for SAP already installed------" 
+    Write-Host ""
+}
 
 exit 0
