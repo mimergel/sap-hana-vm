@@ -24,10 +24,10 @@ Write-Host "----Assign the Managed Identity access to the RG-----"
 Write-Host "az vm identity assign -g $VMRG -n $VM"
 az vm identity assign -g $VMRG -n $VM
 
-Write-Host "$spID=az resource show -g $VMRG -n $VM --query identity.principalId --out tsv --resource-type Microsoft.Compute/virtualMachines"
+Write-Host "spID=az resource show -g $VMRG -n $VM --query identity.principalId --out tsv --resource-type Microsoft.Compute/virtualMachines"
 $spID=az resource show -g $VMRG -n $VM --query identity.principalId --out tsv --resource-type Microsoft.Compute/virtualMachines
 
-Write-Host "$rgId=az group show -g $VMRG --query id --out tsv"
+Write-Host "rgId=az group show -g $VMRG --query id --out tsv"
 $rgId=az group show -g $VMRG --query id --out tsv
 
 Write-Host "az role assignment create --assignee $spID --role 'Reader' --scope $rgId"
