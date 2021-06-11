@@ -153,31 +153,36 @@
           "sku": "77sapha-gen2",
           "offer": "RHEL-SAP-HA",
           "publisher": "RedHat",
-          "OSType": "Linux"
+          "OSType": "Linux",
+          "version": "latest"
         },
         "RHEL 8.1": {
           "sku": "81sapha-gen2",
           "offer": "RHEL-SAP-HA",
           "publisher": "RedHat",
-          "OSType": "Linux"
+          "OSType": "Linux",
+          "version": "8.1.2021040902"
         },
         "SLES 12 SP4": {
           "sku": "12-sp4-gen2",
           "offer": "SLES-SAP",
           "publisher": "SUSE",
-          "OSType": "Linux"
+          "OSType": "Linux",
+          "version": "latest"
         },
         "SLES 12 SP5": {
           "sku": "gen2",
           "offer": "sles-sap-12-sp5",
           "publisher": "SUSE",
-          "OSType": "Linux"
+          "OSType": "Linux",
+          "version": "latest"
         },
         "SLES 15 SP2": {
           "sku": "gen2",
           "offer": "sles-sap-15-sp2",
           "publisher": "SUSE",
-          "OSType": "Linux"
+          "OSType": "Linux",
+          "version": "latest"
         }
       },
       "internalOSType": "[variables('images')[parameters('osType')].OSType]",
@@ -1416,7 +1421,7 @@
               "publisher": "[variables('images')[parameters('osType')].publisher]",
               "offer": "[variables('images')[parameters('osType')].offer]",
               "sku": "[variables('images')[parameters('osType')].sku]",
-              "version": "latest"
+              "version": "[variables('images')[parameters('osType')].version]"
             },
             "osDisk": {
               "name": "[concat(variables('vmName'), '-os-disk')]",
