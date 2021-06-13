@@ -116,12 +116,11 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
 	* Option A) Manually
     	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key
-		* Store you private ssh-key in ~.ssh/id_rsa. Ensure correct file permission. This step is required for Ansible remote ssh to deployed HANA VMs
+		* Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This step ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 		* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 		* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
 		* Setup an [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops) in your landing zone
 			* Use this [tested agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz) as the latest version doesn't handel SLES 15 SP2 correctly
-		* Add your private ssh key to the os user on the agent (.ssh/id_rsa)
 		* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 		
 	* Option B) With this ARM-Template
@@ -134,7 +133,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 			1. login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat) and [in this picture see the script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 			2. `sudo ./svc.sh install ; sudo ./svc.sh start`
 			3. `az login`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
-			4. put your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). With this the login from deployment agent to HANA VM will be possible for the Ansible activities.
+			4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This step ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
 ## Deployment via Azure DevOps
