@@ -136,7 +136,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 			4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This step ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
-## Deployment the HANA VM including all subsequent steps via Azure DevOps
+## Deploy the HANA VM including all subsequent steps via Azure DevOps
 1. Fork this repository in Github or create your own new Repository based on this template
 2. Create a Project in Azure DevOps
 3. In the DevOps Pipeline Area
