@@ -18,20 +18,6 @@
     regexp: '\*\*\*'
     replace: "{{ pw_db_system }}"
 
-- name: download zip
-  get_url:
-    url: "{{ url_sapcar }}"
-    dest: /hana/shared/install/SAPCAR_LINUX.EXE
-    mode: 0755
-    timeout: "{{ url_timeout }}"
-    tmp_dest: /usr/sap
-  register: result
-  until: result is succeeded
-  retries: "{{ url_retries_cnt }}"
-  delay: "{{ url_retries_delay }}"
-
-
-
 - name: Install XSA components
   shell: "pwd=$(<../xsa_passwords.xml); rm ../xsa_passwords.xml; echo $pwd | ./hdblcm --batch --action=update --configfile=xsa_install.cfg --sid={{ sap_sid }} --read_password_from_stdin=xml"
   args:
