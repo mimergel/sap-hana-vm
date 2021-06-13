@@ -329,6 +329,19 @@ stages:
         showWarnings: true
         failOnStderr: false
 
+    - task: PowerShell@2
+      displayName: 'Azure Monitoring Extension for SAP (PWSH)'
+      # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/deployment-guide#bb61ce92-8c5c-461f-8c53-39f5e5ed91f2
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
+        arguments: >
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(hanavmrg)"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
 - stage: Testing
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
