@@ -65,6 +65,15 @@ parameters:
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
 
+- name: availzone
+  displayName: Availability Zone
+  type: number
+  default: 0
+  values:
+  - 1
+  - 2
+  - 3
+
 - name: hanavmdeployment
   displayName: HANA VM Deployment
   type: boolean
@@ -170,7 +179,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
