@@ -1,11 +1,10 @@
-# SAP HANA VM deployments
-This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with the following features:
+# SAP HANA VM Deployments
+This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps including the following options: 
 
 * SLES 12 & 15
 * RHEL 7 & 8 
 * VM sizes from 128GB to 12TB
 * OS Preparation with required patches and configurations according to relevant SAP notes
-* HANA 2.0 DB Installation 
 * Backup Integration into an Azure Recovery Service Vault including execution of initial OS & HANA backups
 * Selective disk backup (removing hana log & data from OS backups) 
 * Setup Azure Enhanced Monitoring for SAP
