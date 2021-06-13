@@ -12,6 +12,9 @@ This Repository can be used with Azure DevOps to deploy a SAP HANA DB 2.0 with t
 * Execution of HANA Clound Measurement Tool (HCMT)
 * Removal of the complete deployment 
 
+# Deployment Framework
+![Deployment Architecture](Documentation/Images/deployment-architecture.jpg)
+
 ## VM Sizes and Storage Configurations
 
 For just Infrastructure deployments (VM+Storage) without any additional steps you can use this button:
