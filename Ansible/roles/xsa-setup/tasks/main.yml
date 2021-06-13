@@ -19,6 +19,6 @@
     replace: "{{ pw_db_system }}"
 
 - name: Install XSA components
-  shell: "pwd=$(<../xsa_passwords.xml); rm ../xsa_passwords.xml; echo $pwd | ./hdblcm --batch --action=update --configfile=xsa_install.cfg --sid={{ sap_sid }} --read_password_from_stdin=xml"
+  shell: "pwd=$(<../xsa_passwords.xml); rm ../xsa_passwords.xml; echo $pwd | ./hdblcm --batch --action=update --configfile=../xsa_install.cfg --sid={{ sap_sid }} --read_password_from_stdin=xml"
   args:
     chdir: /hana/shared/install/SAP_HANA_DATABASE
