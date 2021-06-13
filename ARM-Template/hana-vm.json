@@ -101,15 +101,6 @@
         "metadata": {
           "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
       },
-      "availabilityZone": {
-        "type": "int",
-        "defaultValue": 0,
-        "minValue": 0,
-        "maxValue": 3,
-        "metadata": {
-          "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
-        }
-      },
       "location": {
         "type": "string",
         "defaultValue": "[resourceGroup().location]",
