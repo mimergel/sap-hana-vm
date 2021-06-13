@@ -160,7 +160,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 11. Run the pipeline
 
 
-### Todo in future releases
+### Todo
 * SAP Installation
 * HA Cluster Setup 
 * HANA Scale-Out Deployments
