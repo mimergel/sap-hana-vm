@@ -46,43 +46,53 @@ For just Infrastructure deployments (VM+Storage) without any additional steps yo
 		<td>1xP6(64GB) + 4xP6(64GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
+		<th>384_GB</th>
+		<td>E48ds_v4</td>
+		<td>1xP6(64GB) + 3xP15(256GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
+	</tr>
+	<tr>
 		<th>512_GB</th>
 		<td>M64ls</td>
 		<td>1xP6(64GB) + 4xP10(128GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
 	</tr>
 	<tr>
+		<th>875_GB</th>
+		<td>M64ls</td>
+		<td>1xP6(64GB) + 4xP15(256GB) + 3xP10(128GB) + 1xP20(512GB) + 1xP20(512GB)</td>
+	</tr>
+	<tr>
 		<th>1.000_GB</th>
-		<td>M64s</td>
+		<td>M64ds_v2</td>
 		<td>1xP6(64GB) + 4xP15(256GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>1.792_GB</th>
-		<td>M64ms</td>
+		<td>M64dms_v2</td>
 		<td>1xP6(64GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>2.000_GB</th>
-		<td>M128s</td>
+		<td>M128ds_v2</td>
 		<td>1xP10(128GB) + 4xP20(512GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>2.850_GB</th>
-		<td>M208sv2</td>
+		<td>M208s_v2</td>
 		<td>1xP10(128GB) + 4xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>3.892_GB</th>
-		<td>M128ms</td>
+		<td>M128dms_v2</td>
 		<td>1xP10(128GB) + 5xP30(1024GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>5.700_GB</th>
-		<td>M416sv2</td>
+		<td>M208ms_v2</td>
 		<td>1xP10(128GB) + 4xP40(2048GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 	<tr>
 		<th>11.400_GB</th>
-		<td>M416msv2</td>
+		<td>M416ms_v2</td>
 		<td>1xP10(128GB) + 4xP50(4096GB) + 3xP15(256GB) + 1xP30(1TB) + 1xP30(1TB)</td>
 	</tr>
 </table>
