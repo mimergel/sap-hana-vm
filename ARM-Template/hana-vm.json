@@ -92,7 +92,8 @@
         "type": "string",
         "metadata": {
           "description": "The id of the subnet you want to use."
-        },
+        }
+      },
       "availabilityZone": {
         "type": "int",
         "defaultValue": 0,
@@ -100,6 +101,7 @@
         "maxValue": 3,
         "metadata": {
           "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
+        }
       },
       "location": {
         "type": "string",
