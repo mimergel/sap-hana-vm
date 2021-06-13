@@ -43,7 +43,7 @@ parameters:
   default: "20"
 
 - name: vmname
-  displayName: HANA Server Name
+  displayName: HANA VM Name
   type: string
   default: "hanatest"
 
@@ -89,11 +89,16 @@ parameters:
   - "PRD"
   - "None"
 
-# will be added soon
-# - name: qualitychecks
-#   displayName: HANA quality checks
-#   type: boolean
-#   default: False
+- name: monitoringextsap
+  displayName: Azure Monitoring Extension for SAP
+  type: boolean
+  default: True
+
+#will be added soon
+#- name: qualitychecks
+#  displayName: HANA quality checks
+#  type: boolean
+#  default: False
 
 - name: xsasetup
   displayName: Install XSA components
@@ -329,6 +334,12 @@ stages:
         showWarnings: true
         failOnStderr: false
 
+- stage: Monitoring_EXT_SAP
+  condition: eq(${{ parameters.monitoringextsap }}, true)
+  jobs:
+  - job: Monitoring_EXT_SAP
+    steps:
+    - checkout: none
     - task: PowerShell@2
       displayName: 'Azure Monitoring Extension for SAP (PWSH)'
       # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/deployment-guide#bb61ce92-8c5c-461f-8c53-39f5e5ed91f2
