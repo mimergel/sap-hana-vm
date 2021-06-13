@@ -158,7 +158,7 @@ stages:
         artifact: hana
 
 - stage: Deploy_VM
-  condition: eq(${{ parameters.hanavmdeployment }}, true)
+  condition: and(succeeded('Deploy_VM'), eq(${{ parameters.osprep }}, true))
   jobs:
   - job: Deploy_VM
     steps:
