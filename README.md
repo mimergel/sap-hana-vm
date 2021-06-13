@@ -12,7 +12,7 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 * Removal of the complete deployment 
 
 # Deployment Framework
-![Deployment Architecture](Documentation/Images/deployment-architecture.jpg)
+![Deployment Architecture](./Documentation/Images/deployment-architecture.jpg)
 
 ## VM Sizes and Storage Configurations
 
@@ -101,9 +101,9 @@ For just Infrastructure deployments (VM+Storage) without any additional steps yo
 
 Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
-## Prerequesites
+## Prerequesites for the full deployment experience with Azure DevOps
 1. [Azure Subscription](https://portal.azure.com/) 
-2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account 
+2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
 3. S-User for SAP [Software Downloads](https://launchpad.support.sap.com/)
 4. Basic Resources
 	* VNET + Subnet
@@ -126,7 +126,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	
 		[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
-		You'll need to add the target Subnet ID which can be retrieve via `az network vnet subnet list -g ResourceGroup --vnet-name Name --query [].id`
+		You'll need to enter the target Subnet ID which can be retrieved in the cloudshell via `az network vnet subnet list -g ResourceGroup --vnet-name Name --query [].id`
 
 		* Complete the DevOps Deployment Agent Setup with
 			1. login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat) and [in this picture see the script prompts and required entries](./Documentation/Images/agent-setup.jpg)
@@ -148,7 +148,8 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
 	* In the process you will need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-4. Enter your required variables to the pipeline configuration, [example here](./Documentation/Images/variables.jpg)
+4. Enter your required variables to the pipeline configuration, 
+	![Variables](./Documentation/Images/variables.jpg)
 5. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
 6. Download the SAP Binaries IMDB_SERVER*, HCMT* & SAPCAR* and store them in a storage container. Get the new URLs from for the files and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml` 
 7. Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the container and adapt variables `url-disk-cfg` in the Pipeline
@@ -159,8 +160,9 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 
 ### Todo in future releases
-* ASCS & DI Installation
-* Cluster Setup 
+* SAP Installation
+* HA Cluster Setup 
+* HANA Scale-Out Deployments
 
 
 ### Troubleshooting
