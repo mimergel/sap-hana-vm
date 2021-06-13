@@ -4,29 +4,30 @@ parameters:
 - name: size
   displayName: HANA VM Size
   type: string
-  default: 192_GB
+  default: M32ts_192_GB
   values:
-  - 128_GB-Non-PRD
-  - 160_GB-Non-PRD
-  - 192_GB
-  - 256_GB
-  - 512_GB
-  - 1.000_GB
-  - 1.792_GB
-  - 2.000_GB
-  - 2.850_GB
-  - 3.892_GB
-  - 5.700_GB
-  - 11.400_GB
-  - 22.000_GB
+  - E16ds_v4_128_GB-Non-PRD
+  - E20ds_v4_160_GB-Non-PRD
+  - M32ts_192_GB
+  - M32ls_256_GB
+  - E48ds_v4_384_GB-Non-PRD
+  - M64ls_512_GB
+  - M32dms_v2_875_GB
+  - M64ds_v2_1.000_GB
+  - M64dms_v2_1.792_GB
+  - M128ds_v2_2.000_GB
+  - M208s_v2_2.850_GB
+  - M128dms_v2_3.892_GB
+  - M208ms_v2_5.700_GB
+  - M416ms_v2_11.400_GB
 
 - name: os
   displayName: Operating System
   type: string
   default: "SLES 12 SP4"
   values:
-  - "RHEL 7"
-  - "RHEL 8"
+  - "RHEL 7.7"
+  - "RHEL 8.1"
   - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
@@ -42,7 +43,7 @@ parameters:
   default: "20"
 
 - name: vmname
-  displayName: HANA Server Name
+  displayName: HANA VM Name
   type: string
   default: "hanatest"
 
@@ -63,6 +64,16 @@ parameters:
   - "SAPSpokeGWC/subnets/sapdevsubnet"
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
+
+- name: availzone
+  displayName: Availability Zone
+  type: number
+  default: 0
+  values:
+  - 0
+  - 1
+  - 2
+  - 3
 
 - name: hanavmdeployment
   displayName: HANA VM Deployment
@@ -88,8 +99,19 @@ parameters:
   - "PRD"
   - "None"
 
-- name: qualitychecks
-  displayName: HANA quality checks
+- name: monitoringextsap
+  displayName: Azure Monitoring Extension for SAP
+  type: boolean
+  default: True
+
+#will be added soon
+#- name: qualitychecks
+#  displayName: HANA quality checks
+#  type: boolean
+#  default: False
+
+- name: xsasetup
+  displayName: Install XSA components
   type: boolean
   default: False
 
@@ -157,8 +179,8 @@ stages:
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/azuredeploy.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(sshkey)" -subnetId "$(subnetid)" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -Boot_Diag_URL "$(boot_diag_url)" '
+        csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -223,6 +245,24 @@ stages:
       inputs:
         ansibleInterface: 'agentMachine'
         playbookPathOnAgentMachine: 'Ansible/saphana-install_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(hanavmfqdn)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+        failOnStdErr: false
+
+- stage: Install_XSA
+  condition: eq(${{ parameters.xsasetup }}, true)
+  jobs:
+  - job: Install_XSA
+    steps:
+    - checkout: none
+    - task: Ansible@0
+      displayName: 'XSA Setup (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/xsa-setup_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -298,6 +338,25 @@ stages:
         arguments: >
           -RSV "$(RSV)"
           -RGV "$(RSV_RG)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(hanavmrg)"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
+- stage: Monitoring_EXT_SAP
+  condition: eq(${{ parameters.monitoringextsap }}, true)
+  jobs:
+  - job: Monitoring_EXT_SAP
+    steps:
+    - checkout: none
+    - task: PowerShell@2
+      displayName: 'Azure Monitoring Extension for SAP (PWSH)'
+      # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/deployment-guide#bb61ce92-8c5c-461f-8c53-39f5e5ed91f2
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
+        arguments: >
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
         errorActionPreference: continue

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "vmNameInput": {
+      "value": "hanatest"
+    },
+    "hanaSystemSize": {
+      "value": "M32ls_256_GB"
+    },
+    "location": {
+      "value": "Europe West"
+    },
+    "osType": {
+      "value": "RHEL 8"
+    },
+    "adminPasswordOrKey": {
+      "value": "ssh-rsa xxx publickey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    "Owner": {
+      "value": "SAP Team Contact"
+    },
+    "CostCenter": {
+      "value": "28007510"
+    },
+    "subnetId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/[SubnetRG]/providers/Microsoft.Network/virtualNetworks/[VNET]/subnets/[subnet]"
+    }
+  }
+}

@@ -1,0 +1,1484 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmNameInput": {
+        "type": "string",
+        "metadata": {
+          "description": "The VM Name in Azure and OS level that you want to deploy"
+        }
+      },
+      "hanaSystemId": {
+        "type": "string",
+        "maxLength": 3,
+        "minLength": 3,
+        "defaultValue": "HDB",
+        "metadata": {
+          "description": "HANA System ID."
+        }
+      },
+      "osType": {
+        "type": "string",
+        "allowedValues": [
+          "RHEL 7.7",
+          "RHEL 8.1",
+          "SLES 12 SP4",
+          "SLES 12 SP5",
+          "SLES 15 SP2"
+        ],
+        "defaultValue": "SLES 12 SP4",
+        "metadata": {
+          "description": "The type of the operating system you want to deploy."
+        }
+      },
+      "dbType": {
+        "type": "string",
+        "allowedValues": [
+          "HANA"
+        ],
+        "defaultValue": "HANA",
+        "metadata": {
+          "description": "The type of the database"
+        }
+      },
+      "hanaSystemSize": {
+        "type": "string",
+        "allowedValues": [
+          "E16ds_v4_128_GB-Non-PRD",
+          "E20ds_v4_160_GB-Non-PRD",
+          "M32ts_192_GB",
+          "M32ls_256_GB",
+          "E48ds_v4_384_GB-Non-PRD",
+          "M64ls_512_GB",
+          "M32dms_v2_875_GB",
+          "M64ds_v2_1.000_GB",
+          "M64dms_v2_1.792_GB",
+          "M128ds_v2_2.000_GB",
+          "M208s_v2_2.850_GB",
+          "M128dms_v2_3.892_GB",
+          "M208ms_v2_5.700_GB",
+          "M416ms_v2_11.400_GB"
+        ],
+        "defaultValue": "M32ts_192_GB",
+        "metadata": {
+          "description": "The size of the HANA System you want to deploy."
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "azureuser",
+        "metadata": {
+          "description": "Username for the Virtual Machine."
+        }
+      },
+      "authenticationType": {
+        "type": "string",
+        "defaultValue": "sshPublicKey",
+        "allowedValues": [
+          "password",
+          "sshPublicKey"
+        ],
+        "metadata": {
+          "description": "Type of authentication to use on the Virtual Machine."
+        }
+      },
+      "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password or ssh key for the Virtual Machine."
+        }
+      },
+      "subnetId": {
+        "type": "string",
+        "metadata": {
+          "description": "The id of the subnet you want to use."
+        }
+      },
+      "availabilityZone": {
+        "type": "int",
+        "defaultValue": 0,
+        "minValue": 0,
+        "maxValue": 3,
+        "metadata": {
+          "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      },
+      "Owner": {
+        "type": "string",
+        "defaultValue": "SAP Team Contact",
+        "metadata": {
+          "description": "Provide mandatory Owner Name"
+        }
+      },
+      "CostCenter": {
+        "type": "string",
+        "defaultValue": "28007510",
+        "metadata": {
+          "description": "Provide mandatory Cost Center ID"
+        }
+      },
+      "Backup": {
+        "type": "string",
+        "defaultValue": "Non-PRD",
+        "metadata": {
+          "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
+        }
+      },
+      "diagnosticsStorageAccountName": {
+        "type": "string",
+        "defaultValue": "saponazuretrialdiag",
+        "metadata": {
+          "description": "Name of the storage account for boot diagnostics"
+        }
+      },
+      "Script_URL": {
+        "type": "string",
+        "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh",
+        "metadata": {
+          "description": "URL of the disk configuration script"
+        }
+      }
+    },
+    "variables": {
+      "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
+      "images": {
+        "RHEL 7.7": {
+          "sku": "77sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "RHEL 8.1": {
+          "sku": "81sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "8.1.2021040902"
+        },
+        "SLES 12 SP4": {
+          "sku": "12-sp4-gen2",
+          "offer": "SLES-SAP",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "SLES 12 SP5": {
+          "sku": "gen2",
+          "offer": "sles-sap-12-sp5",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "SLES 15 SP2": {
+          "sku": "gen2",
+          "offer": "sles-sap-15-sp2",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        }
+      },
+      "internalOSType": "[variables('images')[parameters('osType')].OSType]",
+      "csExtension": {
+        "Linux": {
+          "Publisher": "Microsoft.Azure.Extensions",
+          "Name": "CustomScript",
+          "Version": "2.0",
+          "script": "[parameters('Script_URL')]",
+          "scriptCall": "sh diskConfig.sh"
+        }
+      },
+      "sizes": {
+        "E16ds_v4_128_GB-Non-PRD": {
+          "HANA": {
+            "vmSize": "Standard_E16ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "E20ds_v4_160_GB-Non-PRD": {
+          "HANA": {
+            "vmSize": "Standard_E20ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32ts_192_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32ts",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32ls_256_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32ls",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "E48ds_v4_384_GB-Non-PRD": {
+          "HANA": {
+            "vmSize": "Standard_E48ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64ls_512_GB": {
+          "HANA": {
+            "vmSize": "Standard_M64ls",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32dms_v2_875_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32dms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64ds_v2_1.000_GB": {
+          "HANA": {
+            "vmSize": "Standard_M64ds_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64dms_v2_1.792_GB": {
+          "HANA": {
+            "vmSize": "Standard_M64dms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M128ds_v2_2.000_GB": {
+          "HANA": {
+            "vmSize": "Standard_M128ds_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M208s_v2_2.850_GB": {
+          "HANA": {
+            "vmSize": "Standard_M208s_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M128dms_v2_3.892_GB": {
+          "HANA": {
+            "vmSize": "Standard_M128dms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-data5-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 10,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4,5#6,7,8#9#10'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M208ms_v2_5.700_GB": {
+          "HANA": {
+            "vmSize": "Standard_M208ms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M416ms_v2_11.400_GB": {
+          "HANA": {
+            "vmSize": "Standard_M416ms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        }
+      },
+      "vmName": "[toLower(parameters('vmNameInput'))]",
+      "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "nicName": "[concat(variables('vmName'), '-nic')]",
+      "subnetName": "Subnet",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": true,
+        "ssh": {
+          "publicKeys": [
+            {
+              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "keyData": "[parameters('adminPasswordOrKey')]"
+            }
+          ]
+        }
+      },
+      "subnets": {
+        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
+        "false": "[parameters('subnetId')]"
+      },
+      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[variables('nicName')]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "subnet": {
+                  "id": "[variables('selectedSubnetId')]"
+                }
+              }
+            }
+          ],
+          "enableAcceleratedNetworking": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].useFastNetwork]"
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[variables('vmName')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        ],
+        "zones": "[variables('selectedZones')]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('Backup')]"},
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
+          },
+          "osProfile": {
+            "computerName": "[variables('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPasswordOrKey')]",
+            "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "[variables('images')[parameters('osType')].publisher]",
+              "offer": "[variables('images')[parameters('osType')].offer]",
+              "sku": "[variables('images')[parameters('osType')].sku]",
+              "version": "[variables('images')[parameters('osType')].version]"
+            },
+            "osDisk": {
+              "name": "[concat(variables('vmName'), '-os-disk')]",
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS"
+              }
+            },
+            "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+              "bootDiagnostics": {
+                  "enabled": true,
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+              }
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        ],
+        "properties": {
+          "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
+          "type": "[variables('csExtension')[variables('internalOSType')].Name]",
+          "typeHandlerVersion": "[variables('csExtension')[variables('internalOSType')].Version]",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "fileUris": [
+              "[variables('csExtension')[variables('internalOSType')].script]"
+            ],
+            "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].scriptArguments[variables('internalOSType')])]"
+          }
+        }
+      }
+    ],
+    "outputs": {
+       "HANAVMNAME": {
+        "type": "string",
+        "value": "[variables('vmName')]"
+      },
+      "HANADBID": {
+        "type": "string",
+        "value": "[parameters('hanaSystemId')]"
+      }
+    }
+  }

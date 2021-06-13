@@ -1,0 +1,24 @@
+---
+
+# Install XSA 
+
+- name: Deploy install template for XSA
+  template:
+    src: xsa_install.cfg.j2
+    dest: /hana/shared/install/xsa_install.cfg
+
+- name: Deploy password file for XSA
+  template:
+    src: xsa_passwords.j2
+    dest: /hana/shared/install/xsa_passwords.xml
+
+- name: Enter provided password into password file
+  replace:
+    path: /hana/shared/install/xsa_passwords.xml
+    regexp: '\*\*\*'
+    replace: "{{ pw_db_system }}"
+
+- name: Install XSA components
+  shell: "pwd=$(<../xsa_passwords.xml); rm ../xsa_passwords.xml; echo $pwd | ./hdblcm --batch --action=update --configfile=xsa_install.cfg --sid={{ sap_sid }} --read_password_from_stdin=xml"
+  args:
+    chdir: /hana/shared/install/SAP_HANA_DATABASE
