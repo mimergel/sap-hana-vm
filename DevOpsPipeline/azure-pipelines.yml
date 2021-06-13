@@ -185,7 +185,7 @@ stages:
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
 - stage: Prepare_OS
-  condition: eq(${{ parameters.osprep }}, true)
+  condition: and(succeeded('Deploy_VM'), eq(${{ parameters.osprep }}, true))
   jobs:
   - job: Prepare_OS
     steps:
