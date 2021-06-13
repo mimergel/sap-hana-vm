@@ -12,6 +12,8 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 * Removal of the complete deployment 
 
 # Deployment Framework
+The DevOps Pipeline is used as a GUI to simplify deployments. It fetches the pipeline from the GitHub Repository. The GitHub repository itself can be most easily adapted to your landing zone specifics with Visual Studio Code on your local PC. In the grey rectangle we see the Ubuntu VM and the Azure ressources like VNET, DNS, etc. that must exist before you can start the HANA Deployment. 
+
 ![Deployment Architecture](./Documentation/Images/deployment-architecture.jpg)
 
 ## VM Sizes and Storage Configurations
