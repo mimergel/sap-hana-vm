@@ -27,12 +27,10 @@ az vm identity assign -g $VMRG -n $VM
 Write-Host "spID=az resource show -g $VMRG -n $VM --query identity.principalId --out tsv --resource-type Microsoft.Compute/virtualMachines"
 $spID=az resource show -g $VMRG -n $VM --query identity.principalId --out tsv --resource-type Microsoft.Compute/virtualMachines
 
-Write-Host "BlobId=                    az group show -g $VMRG --query id --out tsv"
-$BlobId=az group show -g $VMRG --query id --out tsv
+Write-Host "BlobId= WIP"
+# $BlobId= /subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/  RG  /providers/Microsoft.Storage/storageAccounts/ Storage Accnt /blobServices/default/containers/   container
 
-Write-Host "az role assignment create --assignee $spID --role 'Reader' --scope $rgId"
-az role assignment create --role "Storage Blob Data Reader"  --assignee $spID --scope
-
-az role assignment create --assignee $spID --role 'Reader' --scope $rgId
+Write-Host "az role assignment create --role "Storage Blob Data Reader"  --assignee $spID --scope $BlobId"
+# az role assignment create --role "Storage Blob Data Reader"  --assignee $spID --scope $BlobId
 
 exit 0
