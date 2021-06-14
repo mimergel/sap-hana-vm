@@ -33,6 +33,7 @@
   unarchive: 
     src: /hana/shared/install/XSA.ZIP
     dest: /hana/shared/install/XSA
+    remote_src: yes
 
 - name: Install XSA components
   shell: "pwd=$(<../xsa_passwords.xml); rm ../xsa_passwords.xml; echo $pwd | ./hdblcm --batch --action=update --configfile=../xsa_install.cfg --sid={{ sap_sid }} --read_password_from_stdin=xml"
