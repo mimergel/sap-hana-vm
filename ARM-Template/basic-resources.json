@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "String"
+        },
+        "storageAccountName": {
+            "type": "String"
+        },
+        "accountType": {
+            "type": "String"
+        },
+        "kind": {
+            "type": "String"
+        },
+        "accessTier": {
+            "type": "String"
+        },
+        "minimumTlsVersion": {
+            "type": "String"
+        },
+        "supportsHttpsTrafficOnly": {
+            "type": "Bool"
+        },
+        "allowBlobPublicAccess": {
+            "type": "Bool"
+        },
+        "allowSharedKeyAccess": {
+            "type": "Bool"
+        },
+        "networkAclsBypass": {
+            "type": "String"
+        },
+        "networkAclsDefaultAction": {
+            "type": "String"
+        },
+        "networkAclsVirtualNetworkRules": {
+            "type": "Array"
+        },
+        "isContainerRestoreEnabled": {
+            "type": "Bool"
+        },
+        "isBlobSoftDeleteEnabled": {
+            "type": "Bool"
+        },
+        "isContainerSoftDeleteEnabled": {
+            "type": "Bool"
+        },
+        "changeFeed": {
+            "type": "Bool"
+        },
+        "isVersioningEnabled": {
+            "type": "Bool"
+        },
+        "isShareSoftDeleteEnabled": {
+            "type": "Bool"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "accessTier": "[parameters('accessTier')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                    "bypass": "[parameters('networkAclsBypass')]",
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]",
+                    "ipRules": [],
+                    "virtualNetworkRules": "[parameters('networkAclsVirtualNetworkRules')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+            ],
+            "properties": {
+                "restorePolicy": {
+                    "enabled": "[parameters('isContainerRestoreEnabled')]"
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": "[parameters('isBlobSoftDeleteEnabled')]"
+                },
+                "containerDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isContainerSoftDeleteEnabled')]"
+                },
+                "changeFeed": {
+                    "enabled": "[parameters('changeFeed')]"
+                },
+                "isVersioningEnabled": "[parameters('isVersioningEnabled')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileservices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+                "[concat(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '/blobServices/default')]"
+            ],
+            "properties": {
+                "shareDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isShareSoftDeleteEnabled')]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

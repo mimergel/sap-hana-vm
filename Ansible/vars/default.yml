@@ -11,20 +11,20 @@ sap_hostname:
 # url_hdbserver:
 # url_hcmt: https://softwaredownloads.sap.com/file/0020000000392012021
 # using own accessible storage account:
-url_sapcar: https://terraform2021.blob.core.windows.net/sapbits/archives/SAPCAR_1010-70006178.EXE
-url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_055_0-80002031.SAR
-url_hcmt: https://terraform2021.blob.core.windows.net/sapbits/archives/HCMT_055_0-80003261.SAR 
+url_sapcar: https://sapbitsweu.blob.core.windows.net/files/SAPCAR_1010-70006178.EXE
+url_hdbserver: https://sapbitsweu.blob.core.windows.net/files/IMDB_SERVER20_055_0-80002031.SAR
+url_hcmt: https://sapbitsweu.blob.core.windows.net/files/HCMT_055_0-80003261.SAR
 
-url_xsa_media: https://terraform2021.blob.core.windows.net/sapbits/archives/51054859.ZIP
+url_xsa_media: https://sapbitsweu.blob.core.windows.net/files/51054859.ZIP
 
 url_cockpit: 
 url_di_core: 
-url_portal_services: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACPORTALSERV05_4-80002098.ZIP
-url_shine_xsa: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACSHINE08_8-70002323.ZIP
-url_xs_services: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACSERVICES07_12-70002361.ZIP
-url_xsa_runtime: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACXSACOCKPIT01_18-80002644.ZIP
-url_xsa_hrtt: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACHRTT12_21051-70002322.ZIP
-url_xsa_webide: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACSAPWEBIDE05_6-80002257.ZIP
+url_portal_services: https://sapbitsweu.blob.core.windows.net/files/XSACPORTALSERV05_4-80002098.ZIP
+url_shine_xsa: https://sapbitsweu.blob.core.windows.net/files/XSACSHINE08_8-70002323.ZIP
+url_xs_services: https://sapbitsweu.blob.core.windows.net/files/XSACSERVICES07_12-70002361.ZIP
+url_xsa_runtime: https://sapbitsweu.blob.core.windows.net/files/XSACXSACOCKPIT01_18-80002644.ZIP
+url_xsa_hrtt: https://sapbitsweu.blob.core.windows.net/files/XSACHRTT12_21051-70002322.ZIP
+url_xsa_webide: https://sapbitsweu.blob.core.windows.net/files/XSACSAPWEBIDE05_6-80002257.ZIP
 url_xsa_mta:
 
 url_retries_delay: 10
