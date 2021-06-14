@@ -160,8 +160,8 @@
         }
       },
       "sizes": {
-        "Small": {
-            "vmSize": "Standard_E4ds_v4",
+        "E2ds_v4_(16GB)": {
+            "vmSize": "Standard_E2ds_v4",
             "disks": [
               {
                 "lun": 0,
@@ -175,8 +175,8 @@
             },
             "useFastNetwork": true
         },
-        "Medium": {
-            "vmSize": "Standard_E8ds_v4",
+        "E4ds_v4_(16GB)": {
+            "vmSize": "Standard_E4ds_v4",
             "disks": [
               {
                 "lun": 0,
@@ -190,8 +190,8 @@
             },
             "useFastNetwork": true
         },
-        "Large": {
-            "vmSize": "Standard_E16ds_v4",
+        "E8ds_v4_(16GB)": {
+            "vmSize": "Standard_E8ds_v4",
             "disks": [
               {
                 "lun": 0,
