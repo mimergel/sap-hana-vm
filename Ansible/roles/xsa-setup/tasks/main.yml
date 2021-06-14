@@ -21,7 +21,7 @@
 - name: download xsa media
   get_url:
     url: "{{ url_xsa_media }}"
-    dest: /hana/shared/install/51054859.ZIP
+    dest: /hana/shared/install/XSA.ZIP
     timeout: "{{ url_timeout }}"
     tmp_dest: /usr/sap
   register: result
@@ -30,10 +30,9 @@
   delay: "{{ url_retries_delay }}"
 
 - name: extract xsa media
-  command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf IMDB_SERVER_LINUX.SAR
-  args:
-    chdir: /hana/shared/install
-    creates: /hana/shared/install/SAP_HANA_DATABASE/hdblcm
+  unarchive: 
+    src: /hana/shared/install/XSA.ZIP
+    dest: /hana/shared/install/XSA
 
 - name: Install XSA components
   shell: "pwd=$(<../xsa_passwords.xml); rm ../xsa_passwords.xml; echo $pwd | ./hdblcm --batch --action=update --configfile=../xsa_install.cfg --sid={{ sap_sid }} --read_password_from_stdin=xml"
