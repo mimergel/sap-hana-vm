@@ -15,6 +15,8 @@ url_sapcar: https://terraform2021.blob.core.windows.net/sapbits/archives/SAPCAR_
 url_hdbserver: https://terraform2021.blob.core.windows.net/sapbits/archives/IMDB_SERVER20_055_0-80002031.SAR
 url_hcmt: https://terraform2021.blob.core.windows.net/sapbits/archives/HCMT_055_0-80003261.SAR 
 
+url_xsa_media: https://terraform2021.blob.core.windows.net/sapbits/archives/51054859.ZIP
+
 url_cockpit: 
 url_di_core: 
 url_portal_services: https://terraform2021.blob.core.windows.net/sapbits/archives/XSACPORTALSERV05_4-80002098.ZIP

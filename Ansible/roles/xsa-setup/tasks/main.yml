@@ -18,10 +18,10 @@
     regexp: '\*\*\*'
     replace: "{{ pw_db_system }}"
 
-- name: download hdbserver
+- name: download xsa media
   get_url:
-    url: "{{ url_hdbserver }}"
-    dest: /hana/shared/install/IMDB_SERVER_LINUX.SAR
+    url: "{{ url_xsa_media }}"
+    dest: /hana/shared/install/51054859.ZIP
     timeout: "{{ url_timeout }}"
     tmp_dest: /usr/sap
   register: result
@@ -29,7 +29,7 @@
   retries: "{{ url_retries_cnt }}"
   delay: "{{ url_retries_delay }}"
 
-- name: extract hdbserver
+- name: extract xsa media
   command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf IMDB_SERVER_LINUX.SAR
   args:
     chdir: /hana/shared/install
