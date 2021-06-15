@@ -120,7 +120,8 @@
         }
     },
     "variables": {
-         "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+         "Do-networkAclsVirtualNetworkRules": "[concat('/subscriptions/',resourceGroup().subscription,'/resourceGroups/',resourceGroup(),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'),'/subnets/',parameters('subnet0_name'))]"
+         
     },
     "resources": [
         {
@@ -144,7 +145,7 @@
                     "bypass": "[parameters('networkAclsBypass')]",
                     "defaultAction": "[parameters('networkAclsDefaultAction')]",
                     "ipRules": [],
-                    "virtualNetworkRules": "[parameters('networkAclsVirtualNetworkRules')]"
+                    "virtualNetworkRules": "[variables('Do-networkAclsVirtualNetworkRules')]"
                 }
             }
         },
