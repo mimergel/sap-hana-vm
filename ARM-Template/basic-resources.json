@@ -130,7 +130,7 @@
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/VirtualNetworks/', parameters('virtualNetworkName'))]"
+                "[concat('Microsoft.Network/VirtualNetworks', parameters('virtualNetworkName'))]"
             ],
             "tags": {},
             "sku": {
