@@ -1,0 +1,418 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "sapSystemId": {
+        "type": "string",
+        "maxLength": 3,
+        "minLength": 3,
+        "defaultValue": "SID",
+        "metadata": {
+          "description": "SAP System ID."
+        }
+      },
+      "vmNameInput": {
+        "type": "string",
+        "metadata": {
+          "description": "The VM Name in Azure and OS level that you want to deploy"
+        }
+      },
+      "osType": {
+        "type": "string",
+        "allowedValues": [
+          "RHEL 7.7",
+          "RHEL 8.1",
+          "SLES 12 SP4",
+          "SLES 12 SP5",
+          "SLES 15 SP2"
+        ],
+        "defaultValue": "SLES 12 SP4",
+        "metadata": {
+          "description": "The type of the operating system you want to deploy."
+        }
+      },
+      "sapSystemSize": {
+        "type": "string",
+        "allowedValues": [
+          "E2ds_v4_(16GB)",
+          "E4ds_v4_(32GB)",
+          "E8ds_v4_(64GB)",
+          "E16ds_v4_(128GB)",
+          "E20ds_v4_(160GB)",
+          "E32ds_v4_(256GB)",
+          "E48ds_v4_(384GB)",
+          "E64ds_v4_(504GB)",
+          "E80ids_v4_(504GB)"
+        ],
+        "defaultValue": "E8ds_v4_(64GB)",
+        "metadata": {
+          "description": "The size of the SAP System you want to deploy."
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "azureuser",
+        "metadata": {
+          "description": "Username for the Virtual Machine."
+        }
+      },
+      "authenticationType": {
+        "type": "string",
+        "defaultValue": "sshPublicKey",
+        "allowedValues": [
+          "password",
+          "sshPublicKey"
+        ],
+        "metadata": {
+          "description": "Type of authentication to use on the Virtual Machine."
+        }
+      },
+   "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password or ssh key for the Virtual Machine."
+        }
+      },
+      "subnetId": {
+        "type": "string",
+        "metadata": {
+          "description": "The id of the subnet you want to use."
+        }
+      },
+      "availabilityZone": {
+        "type": "int",
+        "defaultValue": 0,
+        "minValue": 0,
+        "maxValue": 3,
+        "metadata": {
+          "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      },
+      "Owner": {
+        "type": "string",
+        "defaultValue": "SAP Team Contact",
+        "metadata": {
+          "description": "Provide mandatory Owner Name"
+        }
+      },
+      "CostCenter": {
+        "type": "string",
+        "defaultValue": "28007510",
+        "metadata": {
+          "description": "Provide mandatory Cost Center ID"
+        }
+      }
+    },
+    "variables": {
+      "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
+      "images": {
+        "RHEL 7.7": {
+          "sku": "77sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "RHEL 8.1": {
+          "sku": "81sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "8.1.2021040902"
+        },
+        "SLES 12 SP4": {
+          "sku": "12-sp4-gen2",
+          "offer": "SLES-SAP",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "SLES 12 SP5": {
+          "sku": "gen2",
+          "offer": "sles-sap-12-sp5",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "SLES 15 SP2": {
+          "sku": "gen2",
+          "offer": "sles-sap-15-sp2",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        }
+      },
+      "internalOSType": "[variables('images')[parameters('osType')].OSType]",
+      "csExtension": {
+        "Linux": {
+          "Publisher": "Microsoft.Azure.Extensions",
+          "Name": "CustomScript",
+          "Version": "2.0",
+          "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.sh",
+          "scriptCall": "sh diskConfig.sh"
+        }
+      },
+      "sizes": {
+        "E2ds_v4_(16GB)": {
+            "vmSize": "Standard_E2ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 128
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
+            },
+            "useFastNetwork": true
+        },
+        "E4ds_v4_(16GB)": {
+            "vmSize": "Standard_E4ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 256
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
+            },
+            "useFastNetwork": true
+        },
+        "E8ds_v4_(16GB)": {
+            "vmSize": "Standard_E8ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
+            },
+            "useFastNetwork": true
+        }
+      },
+      "sidlower": "[toLower(parameters('sapSystemId'))]",
+      "vmName": "[toLower(parameters('vmNameInput'))]",
+      "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "publicIpName": "[concat(variables('vmName'), '-pib')]",
+      "nicName": "[concat(variables('vmName'), '-nic')]",
+      "nsgName": "[concat(variables('vmName'), '-nsg-cs')]",
+      "subnetName": "Subnet",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": true,
+        "ssh": {
+          "publicKeys": [
+            {
+              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "keyData": "[parameters('adminPasswordOrKey')]"
+            }
+          ]
+        }
+      },
+      "osSecurityRules": {
+        "Windows": [
+          {
+            "name": "RDP",
+            "properties": {
+              "description": "Allow RDP Subnet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+        ],
+        "Linux": [
+          {
+            "name": "SSH",
+            "properties": {
+              "description": "Allow SSH Subnet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      },
+      "selectedSecurityRules": "[variables('osSecurityRules')[variables('internalOSType')]]",
+      "subnets": {
+        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
+        "false": "[parameters('subnetId')]"
+      },
+      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "name": "[concat(variables('nsgName'))]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "condition": "[equals(length(parameters('subnetId')), 0)]",
+        "properties": {
+          "securityRules": "[variables('selectedSecurityRules')]"
+        }
+      },
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "name": "[variables('vnetName')]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+        ],
+        "condition": "[equals(length(parameters('subnetId')), 0)]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.0.0.0/16"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "[variables('subnetName')]",
+              "properties": {
+                "addressPrefix": "10.0.0.0/24",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[variables('publicIpName')]",
+        "apiVersion": "2018-10-01",
+        "condition": "[equals(length(parameters('subnetId')), 0)]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+        ],
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "properties": {
+          "publicIPAllocationMethod": "Dynamic"
+        }
+      },
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[variables('nicName')]",
+        "apiVersion": "2018-10-01",
+        "dependsOn": [
+          "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
+        ],
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "publicIPAddress": "[if(equals(length(parameters('subnetId')), 0), json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName')) ,'\"}')), json('null'))]",
+                "subnet": {
+                  "id": "[variables('selectedSubnetId')]"
+                }
+              }
+            }
+          ],
+          "enableAcceleratedNetworking": "[variables('sizes')[parameters('sapSystemSize')].useFastNetwork]"
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[variables('vmName')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        ],
+        "zones": "[variables('selectedZones')]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[variables('sizes')[parameters('sapSystemSize')].vmSize]"
+          },
+          "osProfile": {
+            "computerName": "[variables('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPasswordOrKey')]",
+            "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "[variables('images')[parameters('osType')].publisher]",
+              "offer": "[variables('images')[parameters('osType')].offer]",
+              "sku": "[variables('images')[parameters('osType')].sku]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "name": "[concat(variables('vmName'), '-osdisk')]",
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS"
+              }
+            },
+            "dataDisks": "[variables('sizes')[parameters('sapSystemSize')].disks]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        ],
+        "properties": {
+          "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
+          "type": "[variables('csExtension')[variables('internalOSType')].Name]",
+          "typeHandlerVersion": "[variables('csExtension')[variables('internalOSType')].Version]",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "fileUris": [
+              "[variables('csExtension')[variables('internalOSType')].script]"
+            ],
+            "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes')[parameters('sapSystemSize')].scriptArguments[variables('internalOSType')])]"
+          }
+        }
+      }
+    ]
+  }

@@ -1,0 +1,217 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String"
+        },
+        "storageAccountName": {
+            "defaultValue": "stsapbitsfrance",
+            "type": "String"
+        },
+        "accountType": {
+            "defaultValue": "Standard_LRS",
+            "type": "String"
+        },
+        "kind": {
+            "defaultValue": "StorageV2",
+            "type": "String"
+        },
+        "accessTier": {
+            "defaultValue": "Cool",
+            "type": "String"
+        },
+        "minimumTlsVersion": {
+            "defaultValue": "TLS1_2",
+            "type": "String"
+        },
+        "supportsHttpsTrafficOnly": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "allowBlobPublicAccess": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "allowSharedKeyAccess": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "networkAclsBypass": {
+            "defaultValue": "AzureServices",
+            "type": "String"
+        },
+        "networkAclsDefaultAction": {
+            "defaultValue": "Deny",
+            "type": "String"
+        },
+        "networkAclsVirtualNetworkRules": {
+            "defaultValue": [
+                "[resourceGroup().id]/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
+            ],    
+            "type": "Array"
+        },
+        "isContainerRestoreEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isBlobSoftDeleteEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isContainerSoftDeleteEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "changeFeed": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isVersioningEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isShareSoftDeleteEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+            "virtualNetworkName": {
+            "defaultValue": "vnet-sap-prod-france-001",
+            "type": "String"
+        },
+        "addressSpaces": {
+            "defaultValue": [
+                "10.10.0.0/16"
+            ],
+            "type": "Array"
+        },
+        "ipv6Enabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "subnetCount": {
+            "defaultValue": 1,
+            "type": "Int"
+        },
+        "subnet0_name": {
+            "defaultValue": "snet-sap-prod-france-001",
+            "type": "String"
+        },
+        "subnet0_addressRange": {
+            "defaultValue": "10.10.1.0/24",
+            "type": "String"
+        },
+        "ddosProtectionPlanEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "firewallEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "bastionEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        }
+    },
+    "variables": {
+        "resourcegroupId": "[resourceGroup().id]",
+        "Do-networkAclsVirtualNetworkRules": {
+            "value": [
+                {
+                    "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]"
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
+            ],
+            "tags": {},
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "accessTier": "[parameters('accessTier')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                    "bypass": "[parameters('networkAclsBypass')]",
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]",
+                    "ipRules": [],
+                    "virtualNetworkRules": "[variables('Do-networkAclsVirtualNetworkRules')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+            ],
+            "properties": {
+                "restorePolicy": {
+                    "enabled": "[parameters('isContainerRestoreEnabled')]"
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": "[parameters('isBlobSoftDeleteEnabled')]"
+                },
+                "containerDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isContainerSoftDeleteEnabled')]"
+                },
+                "changeFeed": {
+                    "enabled": "[parameters('changeFeed')]"
+                },
+                "isVersioningEnabled": "[parameters('isVersioningEnabled')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileservices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+                "[concat(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '/blobServices/default')]"
+            ],
+            "properties": {
+                "shareDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isShareSoftDeleteEnabled')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/VirtualNetworks",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('virtualNetworkName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('addressSpaces')]"
+                },
+                "subnets": [
+                    {
+                        "name": "snet-sap-prod-france-001",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet0_addressRange')]"
+                        }
+                    }
+                ],
+                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
