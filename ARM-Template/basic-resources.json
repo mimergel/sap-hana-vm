@@ -57,6 +57,7 @@
             "type": "Array"
         },
         "isContainerRestoreEnabled": {
+            "defaultValue": false,
             "type": "Bool"
         },
         "isBlobSoftDeleteEnabled": {
