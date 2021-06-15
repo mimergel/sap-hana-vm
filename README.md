@@ -148,7 +148,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Select a repository => "<git-user>/sap-hana-vm" 
 	* Configure your pipeline => "Existing Azure Pipeline YAML file"
 	* Branch "Main" 
-	* Path "/DevOpsPipeline/azure-pipelines.yml" 
+	* Path "/DevOpsPipeline/hana-vm.yml" 
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
 	* In the process you will need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
