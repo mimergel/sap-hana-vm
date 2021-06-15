@@ -52,9 +52,7 @@
         },
         "networkAclsVirtualNetworkRules": {
             "defaultValue": [
-                {
-                    "id": "/subscriptions/[resourceGroup().subscription]/resourceGroups/[resourceGroup()]/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
-                }
+                "/subscriptions/[resourceGroup().subscription]/resourceGroups/[resourceGroup()]/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
             ],    
             "type": "Array"
         },
