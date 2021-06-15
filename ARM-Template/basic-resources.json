@@ -10,33 +10,42 @@
             "type": "Object"
         },
         "storageAccountName": {
+            "defaultValue": "stsapbitsfrance",
             "type": "String"
         },
         "accountType": {
             "type": "String"
         },
         "kind": {
+            "defaultValue": "StorageV2",
             "type": "String"
         },
         "accessTier": {
+            "defaultValue": "Cool",
             "type": "String"
         },
         "minimumTlsVersion": {
+            "defaultValue": "TLS1_2",
             "type": "String"
         },
         "supportsHttpsTrafficOnly": {
+            "defaultValue": true,
             "type": "Bool"
         },
         "allowBlobPublicAccess": {
+            "defaultValue": true,
             "type": "Bool"
         },
         "allowSharedKeyAccess": {
+            "defaultValue": true,
             "type": "Bool"
         },
         "networkAclsBypass": {
+            "defaultValue": "AzureServices",
             "type": "String"
         },
         "networkAclsDefaultAction": {
+            "defaultValue": "Deny",
             "type": "String"
         },
         "networkAclsVirtualNetworkRules": {
@@ -46,18 +55,22 @@
             "type": "Bool"
         },
         "isBlobSoftDeleteEnabled": {
+            "defaultValue": false,
             "type": "Bool"
         },
         "isContainerSoftDeleteEnabled": {
+            "defaultValue": false,
             "type": "Bool"
         },
         "changeFeed": {
             "type": "Bool"
         },
         "isVersioningEnabled": {
+            "defaultValue": false,
             "type": "Bool"
         },
         "isShareSoftDeleteEnabled": {
+            "defaultValue": false,
             "type": "Bool"
         },
             "virtualNetworkName": {
@@ -87,15 +100,15 @@
             "type": "String"
         },
         "ddosProtectionPlanEnabled": {
-            "value": false,
+            "defaultValue": false,
             "type": "Bool"
         },
         "firewallEnabled": {
-            "value": false,
+            "defaultValue": false,
             "type": "Bool"
         },
         "bastionEnabled": {
-            "value": false,
+            "defaultValue": false,
             "type": "Bool"
         }
     },
