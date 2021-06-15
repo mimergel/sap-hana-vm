@@ -120,8 +120,7 @@
         }
     },
     "variables": {
-         "Do-networkAclsVirtualNetworkRules": "[concat('/subscriptions/',resourceGroup().subscription,'/resourceGroups/',resourceGroup(),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'),'/subnets/',parameters('subnet0_name'))]"
-         
+         "Do-networkAclsVirtualNetworkRules": "[concat('/subscriptions/',subscription(),'/resourceGroups/',resourceGroup(),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'),'/subnets/',parameters('subnet0_name'))]"
     },
     "resources": [
         {
