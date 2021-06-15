@@ -29,6 +29,12 @@
   retries: "{{ url_retries_cnt }}"
   delay: "{{ url_retries_delay }}"
 
+- name: create xsa directory 
+  file:
+    path: /hana/shared/install/XSA
+    state: directory
+    mode: '0755'
+
 - name: extract xsa media
   unarchive: 
     src: /hana/shared/install/XSA.ZIP
