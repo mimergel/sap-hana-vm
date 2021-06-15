@@ -5,6 +5,10 @@
         "location": {
             "type": "String"
         },
+        "extendedLocation": {
+            "defaultValue": {},
+            "type": "Object"
+        },
         "storageAccountName": {
             "type": "String"
         },
@@ -54,6 +58,44 @@
             "type": "Bool"
         },
         "isShareSoftDeleteEnabled": {
+            "type": "Bool"
+        },
+            "virtualNetworkName": {
+            "defaultValue": "snet-sap-prod-france-001",
+            "type": "String"
+        },
+        "addressSpaces": {
+            "defaultValue": [
+                "10.10.0.0/16"
+            ],
+            "type": "Array"
+        },
+        "ipv6Enabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "subnetCount": {
+            "defaultValue": 1,
+            "type": "Int"
+        },
+        "subnet0_name": {
+            "defaultValue": "snet-sap-prod-france-001",
+            "type": "String"
+        },
+        "subnet0_addressRange": {
+            "defaultValue": "10.10.1.0/24",
+            "type": "String"
+        },
+        "ddosProtectionPlanEnabled": {
+            "value": false,
+            "type": "Bool"
+        },
+        "firewallEnabled": {
+            "value": false,
+            "type": "Bool"
+        },
+        "bastionEnabled": {
+            "value": false,
             "type": "Bool"
         }
     },
@@ -119,6 +161,31 @@
                 "shareDeleteRetentionPolicy": {
                     "enabled": "[parameters('isShareSoftDeleteEnabled')]"
                 }
+            }
+        },
+        {
+            "type": "Microsoft.Network/VirtualNetworks",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('virtualNetworkName')]",
+            "location": "[parameters('location')]",
+            "extendedLocation": "[if(empty(parameters('extendedLocation')), json('null'), parameters('extendedLocation'))]",
+            "dependsOn": [],
+            "tags": {},
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('addressSpaces')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnet0_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet0_addressRange')]"
+                        }
+                    }
+                ],
+                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
             }
         }
     ],
