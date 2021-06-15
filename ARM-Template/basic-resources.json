@@ -129,7 +129,9 @@
             "apiVersion": "2019-06-01",
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
-            "dependsOn": [],
+            "dependsOn": [
+                "[concat('Microsoft.Storage/VirtualNetworks/', parameters('virtualNetworkName'))]"
+            ],
             "tags": {},
             "sku": {
                 "name": "[parameters('accountType')]"
