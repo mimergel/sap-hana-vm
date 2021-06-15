@@ -186,20 +186,19 @@
         },
         {
             "type": "Microsoft.Network/VirtualNetworks",
-            "apiVersion": "2019-06-01",
+            "apiVersion": "2020-06-01",
             "name": "[parameters('virtualNetworkName')]",
             "location": "[parameters('location')]",
+            "extendedLocation": "[if(empty(parameters('extendedLocation')), json('null'), parameters('extendedLocation'))]",
             "dependsOn": [],
             "tags": {},
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('addressSpaces')]"
-                    ]
+                    "addressPrefixes": "[parameters('addressSpaces')]"
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('subnet0_name')]",
+                        "name": "snet-sap-prod-france-001",
                         "properties": {
                             "addressPrefix": "[parameters('subnet0_addressRange')]"
                         }
