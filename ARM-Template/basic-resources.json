@@ -3,6 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
+            "defaultValue": "[resourceGroup().location]",
             "type": "String"
         },
         "extendedLocation": {
@@ -50,6 +51,11 @@
             "type": "String"
         },
         "networkAclsVirtualNetworkRules": {
+            "defaultValue": [
+                {
+                    "id": "/subscriptions/[resourceGroup().subscription]/resourceGroups/[resourceGroup()]/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
+                }
+            ],    
             "type": "Array"
         },
         "isContainerRestoreEnabled": {
@@ -76,7 +82,7 @@
             "type": "Bool"
         },
             "virtualNetworkName": {
-            "defaultValue": "snet-sap-prod-france-001",
+            "defaultValue": "vnet-sap-prod-france-001",
             "type": "String"
         },
         "addressSpaces": {
