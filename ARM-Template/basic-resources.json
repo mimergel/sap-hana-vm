@@ -118,7 +118,11 @@
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
         "Do-networkAclsVirtualNetworkRules": {
-            "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]"
+            "value": [
+                {
+                    "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]"
+                }
+            ]
         }
     },
     "resources": [
