@@ -149,7 +149,11 @@
                     "bypass": "[parameters('networkAclsBypass')]",
                     "defaultAction": "[parameters('networkAclsDefaultAction')]",
                     "ipRules": [],
-                    "virtualNetworkRules": "[variables('Do-networkAclsVirtualNetworkRules')]"
+                    "virtualNetworkRules": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnet0_name'))]"
+                        }
+                    ]
                 }
             }
         },
