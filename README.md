@@ -118,8 +118,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
 	* Option A) Manually
-    	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key
-		* Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This step ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
+    	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key.
 		* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 		* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
 		* Setup an [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops) in your landing zone
@@ -132,11 +131,12 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 		You'll need to enter the target Subnet ID which can be retrieved in the cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
-		* Complete the DevOps Deployment Agent Setup with
-			1. login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat) and [in this picture see the script prompts and required entries](./Documentation/Images/agent-setup.jpg)
-			2. `sudo ./svc.sh install ; sudo ./svc.sh start`
-			3. `az login`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
-			4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This step ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
+	* Complete the DevOps Deployment Agent Setup (to do after both options)
+		1. login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat) 
+		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
+		2. `sudo ./svc.sh install ; sudo ./svc.sh start`
+		3. `az login`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
+		4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This step ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
 ## Deploy the HANA VM including all subsequent steps via Azure DevOps
@@ -157,7 +157,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 5. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
 6. Download the SAP Binaries IMDB_SERVER*, HCMT* & SAPCAR* and store them in a storage container. Get the new URLs from for the files and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml` 
 7. In case the target networks don't have access to the internet
-	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the container and adapt variables `url-disk-cfg` in the Pipeline
+	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the Pipeline
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
 8. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
 9. Setup the [Azure Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure) in [project settings](./Documentation/Images/azure-service-connection.jpg)
