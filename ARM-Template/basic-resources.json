@@ -119,7 +119,7 @@
         "resourcegroupId": "[resourceGroup().id]",
         "VAR-networkAclsVirtualNetworkRules": [
             {
-                "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureFrance/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001"
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name'))]"
             }
         ]
     },
@@ -150,7 +150,6 @@
                                 "subnets": [
                                     {
                                         "name": "[parameters('virtualNetworkName')]",
-                                        "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]",
                                         "properties": {
                                             "addressPrefix": "[parameters('subnet0_addressRange')]",
                                             "delegations": [],
