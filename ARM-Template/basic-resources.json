@@ -219,7 +219,7 @@
     ],
     "outputs": {
         "networkAclsVirtualNetworkRules": {
-        "type": "string",
+        "type": "array",
         "value": "[variables('VAR-networkAclsVirtualNetworkRules')]"
         }
     }
