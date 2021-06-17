@@ -48,7 +48,7 @@
         },
         "networkAclsVirtualNetworkRules": {
             "defaultValue": [
-                "\"id\": \"/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureFrance/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001\""
+                "[resourceGroup().id]/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
             ],    
             "type": "Array"
         },
@@ -116,58 +116,44 @@
         }
     },
     "variables": {
-        "resourcegroupId": "[resourceGroup().id]"
+        "resourcegroupId": "[resourceGroup().id]",
+        "subnetId": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureFrance/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001",
+        "VAR-networkAclsVirtualNetworkRules": [
+            {
+                "id": "[variables('subnetId')]"
+            }
+        ]
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-06-01",
-            "name": "virtualNetworks_nested_deployment",
-            "dependsOn": [],
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('virtualNetworkName')]",
+            "location": "[parameters('location')]",
             "properties": {
-                "mode": "Incremental",
-                "parameters": {},
-                "template": {
-                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "apiVersion": "2020-11-01",
-                            "name": "[parameters('virtualNetworkName')]",
-                            "type": "Microsoft.Network/virtualNetworks",
-                            "location": "[parameters('location')]",
-                            "properties": {
-                                "addressSpace": {
-                                    "addressPrefixes": "[parameters('addressSpaces')]"
-                                },
-                                "subnets": [
-                                    {
-                                        "name": "[parameters('virtualNetworkName')]",
-                                        "properties": {
-                                            "addressPrefix": "[parameters('subnet0_addressRange')]",
-                                            "delegations": [],
-                                            "privateEndpointNetworkPolicies": "Enabled",
-                                            "privateLinkServiceNetworkPolicies": "Enabled",
-                                            "serviceEndpoints": [
-                                                {
-                                                    "service": "Microsoft.Storage"
-                                                }
-                                            ]
-                                        },
-                                        "type": "Microsoft.Network/virtualNetworks/subnets"
-                                    }
-                                ],
-                                "virtualNetworkPeerings": [],
-                                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
-                            },
-                            "tags": {}
-                        }
-                    ],
-                    "outputs": {}
-                }
-            }
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('addressSpaces')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('virtualNetworkName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet0_addressRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ]
+                        },                       
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
+                },
+            "tags": {}
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -175,7 +161,7 @@
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/', 'virtualNetworks_nested_deployment')]"
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
             ],
             "tags": {},
             "sku": {
@@ -192,7 +178,7 @@
                     "bypass": "[parameters('networkAclsBypass')]",
                     "defaultAction": "[parameters('networkAclsDefaultAction')]",
                     "ipRules": [],
-                    "virtualNetworkRules": "[parameters('networkAclsVirtualNetworkRules')]"
+                    "virtualNetworkRules": "[variables('VAR-networkAclsVirtualNetworkRules')]"
                 }
             }
         },
