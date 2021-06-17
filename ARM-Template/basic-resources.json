@@ -130,7 +130,6 @@
             "name": "[parameters('virtualNetworkName')]",
             "location": "[parameters('location')]",
             "properties": {
-                "mode": "Incremental",
                 "addressSpace": {
                     "addressPrefixes": "[parameters('addressSpaces')]"
                 },
@@ -138,7 +137,6 @@
                     {
                         "name": "[parameters('virtualNetworkName')]",
                         "properties": {
-                            "mode": "Incremental",
                             "addressPrefix": "[parameters('subnet0_addressRange')]",
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled",
@@ -170,7 +168,6 @@
             },
             "kind": "[parameters('kind')]",
             "properties": {
-                "mode": "Incremental",
                 "accessTier": "[parameters('accessTier')]",
                 "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
                 "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
@@ -192,7 +189,6 @@
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
             ],
             "properties": {
-                "mode": "Incremental",
                 "restorePolicy": {
                     "enabled": "[parameters('isContainerRestoreEnabled')]"
                 },
@@ -217,7 +213,6 @@
                 "[concat(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '/blobServices/default')]"
             ],
             "properties": {
-                "mode": "Incremental",
                 "shareDeleteRetentionPolicy": {
                     "enabled": "[parameters('isShareSoftDeleteEnabled')]"
                 }
