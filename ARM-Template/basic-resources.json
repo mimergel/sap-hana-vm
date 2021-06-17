@@ -117,7 +117,7 @@
     },
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
-        "VAR-networkAclsVirtualNetworkRules": [
+        "VARnetworkAclsVirtualNetworkRules": [
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name'))]"
             }
@@ -175,7 +175,9 @@
                 "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
                 "networkAcls": {
                     "bypass": "[parameters('networkAclsBypass')]",
-                    "defaultAction": "[parameters('networkAclsDefaultAction')]"
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]",
+                    "ipRules": [],
+                    "virtualNetworkRules": "[variables('VARnetworkAclsVirtualNetworkRules')]"
                 }
             }
         },
@@ -220,7 +222,7 @@
     "outputs": {
         "networkAclsVirtualNetworkRules": {
         "type": "Array",
-        "value": "[variables('VAR-networkAclsVirtualNetworkRules')]"
+        "value": "[variables('VARnetworkAclsVirtualNetworkRules')]"
         }
     }
 }
