@@ -112,7 +112,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Recovery Service Vault with Policies for HANA & OS Backups, "HANA-Non-PRD", "HANA-PRD", "OS-Non-PRD", "OS-PRD"
 	* Storage Account (For SAP binaries, Scripts & Boot Diagnostics)
 	* Private DNS Zone (Makes everything easier)
-	* For green field deployments and especially production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
+	* For production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 
 
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 
