@@ -195,7 +195,7 @@
                     "ipRules": [],
                     "virtualNetworkRules": [
                         {
-                            "\"id\": \"[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]\""
+                            "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]"
                         }
                     ]
                 }
