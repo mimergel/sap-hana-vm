@@ -48,7 +48,7 @@
         },
         "networkAclsVirtualNetworkRules": {
             "defaultValue": [
-                "[resourceGroup().id]/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
+                "\"id\": \"/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureFrance/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001\""
             ],    
             "type": "Array"
         },
@@ -116,12 +116,7 @@
         }
     },
     "variables": {
-        "resourcegroupId": "[resourceGroup().id]",
-        "VAR-networkAclsVirtualNetworkRules": [
-            {
-                "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureFrance/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001"
-            }
-        ]
+        "resourcegroupId": "[resourceGroup().id]"
     },
     "resources": [
         {
@@ -197,7 +192,7 @@
                     "bypass": "[parameters('networkAclsBypass')]",
                     "defaultAction": "[parameters('networkAclsDefaultAction')]",
                     "ipRules": [],
-                    "virtualNetworkRules": "[variables('VAR-networkAclsVirtualNetworkRules')]"
+                    "virtualNetworkRules": "[parameters('networkAclsVirtualNetworkRules')]"
                 }
             }
         },
