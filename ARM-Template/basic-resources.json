@@ -120,6 +120,57 @@
     },
     "resources": [
         {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-06-01",
+            "name": "virtualNetworks_nested_deployment",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2020-11-01",
+                            "name": "[parameters('virtualNetworkName')]",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": "[parameters('addressSpaces')]"
+                                },
+                                "subnets": [
+                                    {
+                                        "name": "[parameters('virtualNetworkName')]",
+                                        "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]",
+                                        "properties": {
+                                            "addressPrefix": "[parameters('subnet0_addressRange')]",
+                                            "delegations": [],
+                                            "privateEndpointNetworkPolicies": "Enabled",
+                                            "privateLinkServiceNetworkPolicies": "Enabled",
+                                            "serviceEndpoints": [
+                                                {
+                                                    "service": "Microsoft.Storage"
+                                                }
+                                            ]
+                                        },
+                                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                                    }
+                                ],
+                                "virtualNetworkPeerings": [],
+                                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
+                            },
+                            "tags": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            }
+        },
+        {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
             "name": "[parameters('storageAccountName')]",
@@ -144,7 +195,7 @@
                     "ipRules": [],
                     "virtualNetworkRules": [
                         {
-                            "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]"
+                            "\"id\": \"[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name')) ]\""
                         }
                     ]
                 }
@@ -185,28 +236,6 @@
                 "shareDeleteRetentionPolicy": {
                     "enabled": "[parameters('isShareSoftDeleteEnabled')]"
                 }
-            }
-        },
-        {
-            "type": "Microsoft.Network/VirtualNetworks",
-            "apiVersion": "2020-06-01",
-            "name": "[parameters('virtualNetworkName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [],
-            "tags": {},
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": "[parameters('addressSpaces')]"
-                },
-                "subnets": [
-                    {
-                        "name": "snet-sap-prod-france-001",
-                        "properties": {
-                            "addressPrefix": "[parameters('subnet0_addressRange')]"
-                        }
-                    }
-                ],
-                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
             }
         }
     ],
