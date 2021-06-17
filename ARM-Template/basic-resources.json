@@ -115,7 +115,14 @@
             "type": "Bool"
         }
     },
-    "variables": {},
+    "variables": {
+        "resourcegroupId": "[resourceGroup().id]",
+        "VAR-networkAclsVirtualNetworkRules": [
+            {
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name'))]"
+            }
+        ]
+    },
     "resources": [
         {
             "type": "Microsoft.Network/virtualNetworks",
@@ -210,5 +217,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "networkAclsVirtualNetworkRules": {
+        "type": "string",
+        "value": "[variables('VAR-networkAclsVirtualNetworkRules')]"
+        }
+    }
 }
