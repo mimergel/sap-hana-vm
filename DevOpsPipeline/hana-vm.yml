@@ -50,16 +50,18 @@ parameters:
 - name: location
   displayName: Target Region
   type: string
-  default: "West Europe"
+  default: "France Central"
   values:
+  - "France Central"
   - "West Europe"
   - "Germany West Central"
 
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
+  default: "vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001"
   values:
+  - "vnet-sap-prod-france-001/subnets/snet-sap-prod-france-001"
   - "SAPDemoEnvironmentNetwork/subnets/sapdevsubnet"
   - "SAPSpokeGWC/subnets/sapdevsubnet"
   # Adapt according to your target landing zone
