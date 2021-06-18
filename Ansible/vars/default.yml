@@ -12,7 +12,7 @@ sap_hostname:
 # url_hcmt: https://softwaredownloads.sap.com/file/0020000000392012021
 # using own accessible storage account:
 url_sapcar: https://sapbitsweu.blob.core.windows.net/files/SAPCAR_1010-70006178.EXE
-url_hdbserver: https://sapbitsweu.blob.core.windows.net/files/IMDB_SERVER20_055_0-80002031.SAR
+url_hdbserver: https://sapbitsweu.blob.core.windows.net/files/IMDB_SERVER20_055_0-80002031.SAR 
 url_hcmt: https://sapbitsweu.blob.core.windows.net/files/HCMT_055_0-80003261.SAR
 
 url_xsa_media: https://sapbitsweu.blob.core.windows.net/files/51054859.ZIP
