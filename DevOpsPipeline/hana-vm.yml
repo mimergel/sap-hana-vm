@@ -138,7 +138,7 @@ variables:
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanadbinst: ${{ parameters.hanadbinstallation }}
   hanavmrg: rg-HANA-${{ parameters.sid }}
-  hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
+  hanavmfqdn: ${{ parameters.vmname }}.$(PRIVATEDNSZONE)
   containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
   hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
@@ -175,14 +175,14 @@ stages:
       displayName: 'SAP HANA VM Deployment via ARM'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
+        azureResourceManagerConnection: '$(AZURECONNECTIONNAME)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
+        overrideParameters: '-adminUsername "$(ADMIN)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(PUBSSHKEY)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(DIAGSTORAGENAME)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -206,7 +206,7 @@ stages:
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
 
-    - script: until ping -c1 "${{ parameters.vmname }}".$(privatednszone) >/dev/null 2>&1; do :; done
+    - script: until ping -c1 "${{ parameters.vmname }}".$(PRIVATEDNSZONE) >/dev/null 2>&1; do :; done
       displayName: Wait until DNS resolves "${{ parameters.vmname }}"
       failOnStderr: false
 
@@ -303,14 +303,14 @@ stages:
       displayName: 'Setup HANA Backup Container (ARM)'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
+        azureResourceManagerConnection: '$(AZURECONNECTIONNAME)'
         subscriptionId: '$(subscription)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(RSV_RG)'
+        resourceGroupName: '$(RSVRG)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSV_RG)" -vaultSubID "$(subscription)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSVRG)" -vaultSubID "$(subscription)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -323,7 +323,7 @@ stages:
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(RSV)"
-          -RGV "$(RSV_RG)"
+          -RGV "$(RSVRG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
           -POL "${{ parameters.hanabackupsetup }}"
@@ -339,7 +339,7 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
         arguments: >
           -RSV "$(RSV)"
-          -RGV "$(RSV_RG)"
+          -RGV "$(RSVRG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
         errorActionPreference: continue
@@ -400,7 +400,7 @@ stages:
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(RSV)"
-          -RGV "$(RSV_RG)"
+          -RGV "$(RSVRG)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
           -POL "NA"
@@ -414,7 +414,7 @@ stages:
       displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
+        azureResourceManagerConnection: '$(AZURECONNECTIONNAME)'
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
