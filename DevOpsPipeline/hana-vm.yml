@@ -409,7 +409,7 @@ stages:
         showWarnings: true
         failOnStderr: false
 
-  - job: Remove-RG
+  - job: Remove_RG
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Remove Resource Group'
