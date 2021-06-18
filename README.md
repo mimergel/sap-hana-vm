@@ -164,6 +164,11 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 10. Run the pipeline
 
 
+# SAP VM Deployment
+This is work in progress. 
+Right empty VM can be deployed hereby: 
+[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-vm.json) 
+
 ### Todo
 * SAP Installation
 * HA Cluster Setup 
