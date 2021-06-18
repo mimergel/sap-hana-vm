@@ -48,7 +48,7 @@
         },
         "networkAclsVirtualNetworkRules": {
             "defaultValue": [
-                "resourceGroup().id/providers/Microsoft.Network/virtualNetworks/[parameters('virtualNetworkName')]/subnets/[parameters('subnet0_name')"
+                "This value will be derived from other parameters - leave it as-is"
             ],    
             "type": "Array"
         },
