@@ -141,8 +141,8 @@ variables:
   hanavmfqdn: ${{ parameters.vmname }}.$(PRIVATEDNSZONE)
   containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
   hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
-  hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
-  subnetid: /subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+  hanavmid: /subscriptions/$(SUBSCRIPTION)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  subnetid: /subscriptions/$(SUBSCRIPTION)/resourceGroups/$(VNETRG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
   osvar: ${{ parameters.os }}
   usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
 
@@ -176,13 +176,13 @@ stages:
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(AZURECONNECTIONNAME)'
-        subscriptionId: '$(subscription)'
+        subscriptionId: '$(SUBSCRIPTION)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
-        overrideParameters: '-adminUsername "$(ADMIN)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(PUBSSHKEY)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(DIAGSTORAGENAME)" '
+        overrideParameters: '-adminUsername "$(ADMIN)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(PUBSSHKEY)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(URLDISKCFG)" -diagnosticsStorageAccountName "$(DIAGSTORAGENAME)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -304,13 +304,13 @@ stages:
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(AZURECONNECTIONNAME)'
-        subscriptionId: '$(subscription)'
+        subscriptionId: '$(SUBSCRIPTION)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(RSVRG)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSVRG)" -vaultSubID "$(subscription)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        overrideParameters: '-vaultName "$(RSV)" -vaultRG "$(RSVRG)" -vaultSubID "$(SUBSCRIPTION)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -415,6 +415,6 @@ stages:
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(AZURECONNECTIONNAME)'
-        subscriptionId: '$(subscription)'
+        subscriptionId: '$(SUBSCRIPTION)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
