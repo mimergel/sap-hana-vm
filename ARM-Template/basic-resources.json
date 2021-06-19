@@ -41,7 +41,7 @@
             "type": "String"
         },
         "bastionHostName": {
-            "defaultValue": "[concat('snet-bastion-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('bastion-host-',resourceGroup().location,'-001')]",
             "type": "string"
         },
         "networkSecurityGroupName": {
@@ -515,7 +515,7 @@
                     {
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPSubnetName'),parameters('BastionSubnetName'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('BastionSubnetName'))]"
                             },
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionPublicIPName'))]"
