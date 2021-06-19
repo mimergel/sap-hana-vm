@@ -32,7 +32,7 @@
             "defaultValue": "stsapbitsfrance",
             "type": "String"
         },
-        "storageAccountNameDiag": {
+        "storageAccountNameDiagnostics": {
             "defaultValue": "stdiagnosticsfrance",
             "type": "String"
         },
@@ -137,7 +137,39 @@
             "apiVersion": "2019-02-01",
             "name": "[parameters('networkSecurityGroupName')]",
             "location": "[parameters('location')]",
-            "tags": {}
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "RDP",
+                        "properties": {
+                        "description": "Allow RDP",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "3389",
+                        "sourceAddressPrefix": "Internet",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 100,
+                        "direction": "Inbound"
+                    }
+                    },
+                    {
+                        "name": "SSH",
+                        "properties": {
+                        "description": "Allow SSH",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "22",
+                        "sourceAddressPrefix": "Internet",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 200,
+                        "direction": "Inbound"
+                       }
+                    }
+                ]
+            }
         },
         {
             "type": "Microsoft.Network/virtualNetworks",
@@ -199,6 +231,29 @@
                     "defaultAction": "[parameters('networkAclsDefaultAction')]",
                     "ipRules": [],
                     "virtualNetworkRules": "[variables('VARnetworkAclsVirtualNetworkRules')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('storageAccountNameDiagnostics')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "accessTier": "[parameters('accessTier')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                    "bypass": "[parameters('networkAclsBypass')]",
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]"
                 }
             }
         },
