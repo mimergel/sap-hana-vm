@@ -6,21 +6,21 @@
             "defaultValue": "[resourceGroup().location]",
             "type": "String"
         },
-        "target_vnet_name": {
+        "TargetVNETName": {
             "defaultValue": "vnet-sap-prod-france-001",
             "type": "String"
         },
-        "target_vnet_name_address_space": {
+        "TargetVNETNameAddressSpace": {
             "defaultValue": [
                 "10.10.0.0/16"
             ],
             "type": "Array"
         },
-        "target_subnet_name": {
+        "TargetSubnetName": {
             "defaultValue": "snet-sap-prod-france-001",
             "type": "String"
         },
-        "target_subnet_address_range": {
+        "TargetSubnetAddressRange": {
             "defaultValue": "10.10.1.0/24",
             "type": "String"
         },
@@ -127,7 +127,7 @@
         "resourcegroupId": "[resourceGroup().id]",
         "VARnetworkAclsVirtualNetworkRules": [
             {
-                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('target_vnet_name'), '/subnets/', parameters('target_subnet_name'))]"
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('TargetVNETName'), '/subnets/', parameters('TargetSubnetName'))]"
             }
         ]
     },
@@ -142,20 +142,20 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-11-01",
-            "name": "[parameters('target_vnet_name')]",
+            "name": "[parameters('TargetVNETName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
             ],
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('target_vnet_name_address_space')]"
+                    "addressPrefixes": "[parameters('TargetVNETNameAddressSpace')]"
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('target_subnet_name')]",
+                        "name": "[parameters('TargetSubnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('target_subnet_address_range')]",
+                            "addressPrefix": "[parameters('TargetSubnetAddressRange')]",
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled",
                             "serviceEndpoints": [
@@ -181,7 +181,7 @@
             "name": "[parameters('storageAccountNameSAPBits')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', parameters('target_vnet_name'))]"
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('TargetVNETName'))]"
             ],
             "tags": {},
             "sku": {
