@@ -155,11 +155,10 @@
                 "fileUris": [
                     "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].script]"
                 ],
-          "commandToExecute": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].scriptCall]"
+                    "commandToExecute": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].scriptCall]"
+                }
+            }
         }
-      }
-    }
-
     ],
     "outputs": {
         "adminUsername": {

@@ -84,6 +84,33 @@
             "type": "string",
             "defaultValue": "daftpunk.net"
         },
+        "DevOpsDeployerVMName": {
+            "type": "String",
+            "defaultValue": "devopsdeployer"
+        },
+        "DevOpsDeployerComputerName": {
+            "type": "String",
+            "defaultValue": "devopsdeployer"
+        },
+        "DevOpsDeployerosDiskType": {
+            "type": "String",
+            "defaultValue": "Premium_LRS"
+        },
+        "DevOpsDeployerosvirtualMachineSize": {
+            "type": "String",
+            "defaultValue": "Standard_B1s"
+        },
+        "adminUsername": {
+            "type": "String",
+            "defaultValue": "azureuser"
+        },
+        "adminPublicKey": {
+            "type": "SecureString"
+        },
+        "Script_URL": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
+        },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbits",
             "type": "String"
@@ -190,6 +217,17 @@
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
             }
         ],
+        "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
+        "DevOpsDeployerOS": "Linux",
+        "DevOpsDeployerCSExtension": {
+            "Linux": {
+            "Publisher": "Microsoft.Azure.Extensions",
+            "Name": "CustomScript",
+            "Version": "2.0",
+            "script": "[parameters('Script_URL')]",
+            "scriptCall": "[concat('sh setup-deployment-agent.sh ', parameters('adminUsername'))]"
+            }
+        },
         "OSPRODSchedule": {
                 "schedulePolicyType": "SimpleSchedulePolicy",
                 "scheduleRunFrequency": "Daily",
@@ -802,6 +840,105 @@
             "properties": {
                 "shareDeleteRetentionPolicy": {
                     "enabled": "[parameters('isShareSoftDeleteEnabled')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "name": "[variables('DevOpsDeployerNWInterfaceName')]",
+            "location": "[parameters('location')]",
+            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+            "dependsOn": [],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[parameters('subnetId')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-10-01",
+            "name": "[parameters('DevOpsDeployerVMName')]",
+            "location": "[parameters('location')]",
+            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('DevOpsDeployerNWInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('DevOpsDeployerosvirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('DevOpsDeployerosDiskType')]"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('DevOpsDeployerNWInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('DevOpsDeployerComputerName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('adminPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": false
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('DevOpsDeployerVMName'), '/', variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name)]",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('DevOpsDeployerVMName'))]"
+            ],
+            "properties": {
+                "publisher": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Publisher]",
+                "type": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name]",
+                "typeHandlerVersion": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Version]",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                "fileUris": [
+                    "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].script]"
+                ],
+                    "commandToExecute": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].scriptCall]"
                 }
             }
         }
