@@ -36,6 +36,22 @@
             "defaultValue": "stdiagnosticsfrance",
             "type": "String"
         },
+        "RecoveryServiceVaultName": {
+            "defaultValue": "rsv-sap-prod-france-001",
+            "type": "string"
+        },
+        "VaultStorageType": {
+            "type": "string",
+            "defaultValue": "GeoRedundant",
+            "allowedValues": [
+                "LocallyRedundant",
+                "GeoRedundant"
+            ]
+        },
+        "VaultEnableCRR": {
+            "type": "bool",
+            "defaultValue": true
+        },
         "accountType": {
             "defaultValue": "Standard_LRS",
             "type": "String"
@@ -169,6 +185,29 @@
                        }
                     }
                 ]
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults",
+            "apiVersion": "2020-02-02",
+            "name": "[parameters('RecoveryServiceVaultName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "RS0",
+                "tier": "Standard"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupstorageconfig",
+            "apiVersion": "2020-02-02",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/vaultstorageconfig')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "StorageModelType": "[parameters('VaultStorageType')]",
+                "CrossRegionRestoreFlag": "[parameters('VaultEnableCRR')]"
             }
         },
         {
