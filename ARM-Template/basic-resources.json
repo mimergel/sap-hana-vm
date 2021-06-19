@@ -44,8 +44,12 @@
             "defaultValue": "[concat('bastion-host-',resourceGroup().location,'-001')]",
             "type": "string"
         },
-        "networkSecurityGroupName": {
+        "SAPNSGName": {
             "defaultValue": "[concat('nsg-sap-prod-',resourceGroup().location,'-001')]",
+            "type": "String"
+        },
+        "SAPAdminNSGName": {
+            "defaultValue": "[concat('nsg-sap-admin-',resourceGroup().location,'-001')]",
             "type": "String"
         },
         "RecoveryServiceVaultName": {
@@ -480,7 +484,75 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-02-01",
-            "name": "[parameters('networkSecurityGroupName')]",
+            "name": "[parameters('SAPNSGName')]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "RDP",
+                        "properties": {
+                        "description": "Allow RDP",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "3389",
+                        "sourceAddressPrefix": "Internet",
+                        "destinationAddressPrefix": "*",
+                        "access": "Deny",
+                        "priority": 100,
+                        "direction": "Inbound"
+                    }
+                    },
+                    {
+                        "name": "SSH",
+                        "properties": {
+                        "description": "Allow SSH",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "22",
+                        "sourceAddressPrefix": "Internet",
+                        "destinationAddressPrefix": "*",
+                        "access": "Deny",
+                        "priority": 200,
+                        "direction": "Inbound"
+                       }
+                    },
+                    {
+                        "name": "Allow-Inbound-HTTPS",
+                        "properties": {
+                            "description": "Allows inbound traffic for HTTPS",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "Allow-SAP",
+                        "properties": {
+                            "description": "Allows inbound traffic for SAP",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3200",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 400,
+                            "direction": "Inbound"
+                        }
+                    }
+
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('SAPAdminNSGName')]",
             "location": "[parameters('location')]",
             "tags": {},
             "properties": {
@@ -512,20 +584,6 @@
                         "priority": 200,
                         "direction": "Inbound"
                        }
-                    },
-                    {
-                        "name": "Allow-Inbound-HTTPS",
-                        "properties": {
-                            "description": "Allows inbound traffic for HTTPS",
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "443",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 300,
-                            "direction": "Inbound"
-                        }
                     }
                 ]
             }
@@ -702,7 +760,7 @@
             "name": "[parameters('SAPVNETName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('SAPNSGName'))]"
             ],
             "properties": {
                 "addressSpace": {
@@ -721,7 +779,7 @@
                                 }
                             ],
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('SAPNSGName'))]"
                             }
                         },
                         "type": "Microsoft.Network/virtualNetworks/subnets"
@@ -738,7 +796,7 @@
                                 }
                             ],
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('SAPNSGName'))]"
                             }
                         },
                         "type": "Microsoft.Network/virtualNetworks/subnets"
