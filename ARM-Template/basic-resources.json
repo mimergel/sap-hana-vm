@@ -28,15 +28,15 @@
             "defaultValue": "[concat('snet-sap-admin-',resourceGroup().location,'-001')]",
             "type": "String"
         },
-        "SAPAdminSubnetRange": {
+        "SAPAdminSubnetAddressRange": {
             "defaultValue": "10.10.3.0/24",
             "type": "String"
         },
-        "AzureBastionSubnetName": {
+        "BastionSubnetName": {
             "defaultValue": "AzureBastionSubnet",
             "type": "String"
         },
-        "BastianHostSubnetAddressRange": {
+        "BastianSubnetAddressRange": {
             "defaultValue": "10.10.2.0/24",
             "type": "String"
         },
@@ -515,7 +515,7 @@
                     {
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPSubnetName'),parameters('AzureBastionSubnetName'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPSubnetName'),parameters('BastionSubnetName'))]"
                             },
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionPublicIPName'))]"
@@ -701,11 +701,11 @@
                             }
                         },                       
                         "type": "Microsoft.Network/virtualNetworks/subnets"
-                    }
+                    },
                     {
-                        "name": "[parameters('AzureBastionSubnetName')]",
+                        "name": "[parameters('BastionSubnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('AzureBastionSubnetNameRange')]",
+                            "addressPrefix": "[parameters('BastianSubnetAddressRange')]",
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled",
                             "networkSecurityGroup": {
