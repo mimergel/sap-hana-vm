@@ -509,7 +509,10 @@
             "type": "Microsoft.Network/bastionHosts",
             "apiVersion": "2020-05-01",
             "location": "[parameters('location')]",
-            "dependsOn": [ "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionPublicIPName'))]" ],
+            "dependsOn": [
+                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionPublicIPName'))]" ,
+                 "[resourceId('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
             "properties": {
                 "ipConfigurations": [
                     {
