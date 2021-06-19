@@ -182,7 +182,7 @@
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
         "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
-        "shortlocation": "[take(resourceGroup().location,7)]",
+        "shortlocation": "[take(resourceGroup().location,10)]",
         "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
         "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
         "VARnetworkAclsVirtualNetworkRules": [
@@ -744,7 +744,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('storageAccountNameSAPBits'), '/default')]",
+            "name": "[concat(variables('storageAccountNameSAPBits'), '/default')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits'))]"
             ],
