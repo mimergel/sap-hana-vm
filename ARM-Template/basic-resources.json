@@ -175,7 +175,6 @@
                 ]
         },
         "OSNonPRODSchedule": {
-            "value": {
                 "schedulePolicyType": "SimpleSchedulePolicy",
                 "scheduleRunFrequency": "Weekly",
                 "scheduleRunDays": [
@@ -184,7 +183,6 @@
                 "scheduleRunTimes": [
                     "2021-06-19T20:00:00.000Z"
                 ]
-            }
         },
         "TimeZone": {
             "value": "W. Europe Standard Time"
