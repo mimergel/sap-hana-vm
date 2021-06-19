@@ -42,7 +42,7 @@
         },
         "VaultEnableCRR": {
             "type": "bool",
-            "defaultValue": true
+            "defaultValue": false
         },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbitsfrance",
