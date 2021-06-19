@@ -44,6 +44,10 @@
             "type": "bool",
             "defaultValue": false
         },
+        "PrivateDNSName": {
+            "type": "string",
+            "defaultValue": "daftpunk.net"
+        },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbitsfrance",
             "type": "String"
@@ -196,6 +200,15 @@
                 "name": "RS0",
                 "tier": "Standard"
             },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[parameters('PrivateDNSName')]",
+            "location": "global",
+            "dependsOn": [],
+            "tags": {},
             "properties": {}
         },
         {
