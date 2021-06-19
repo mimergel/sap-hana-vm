@@ -484,6 +484,46 @@
         {
             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
             "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/TestPolicy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureIaasVM",
+                "instantRpRetentionRangeInDays": 3,
+                    "schedulePolicy": {
+                    "schedulePolicyType": "SimpleSchedulePolicy",
+                    "scheduleRunFrequency": "Daily",
+                    "scheduleRunDays": null,
+                    "scheduleRunTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ]
+                },
+                "timeZone": "[variables('timeZone')]",
+                "retentionPolicy": {
+                    "retentionPolicyType": "LongTermRetentionPolicy",
+                    "dailySchedule": null,
+                    "weeklySchedule": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                    ],
+                    "retentionTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ],
+                    "retentionDuration": {
+                    "count": 2,
+                    "durationType": "Weeks"
+                }
+                },
+                    "monthlySchedule": null,
+                    "yearlySchedule": null
+                },
+                    "instantRPDetails": {}
+            }
+        },
+            {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
             "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
