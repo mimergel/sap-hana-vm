@@ -8,34 +8,30 @@
         },
         "subnetId": {
             "type": "String",
-            "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureTrial/providers/Microsoft.Network/virtualNetworks/HUBWEU/subnets/admin-subnet"
+            "defaultValue": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VNETRG/providers/Microsoft.Network/virtualNetworks/VNETNAME/subnets/SUBNETNAME"
         },
-        "virtualMachineName": {
+        "DevOpsDeployerVMName": {
             "type": "String",
-            "defaultValue": "deployagent"
+            "defaultValue": "devopsdeployer"
         },
-        "virtualMachineComputerName": {
+        "DevOpsDeployerComputerName": {
             "type": "String",
-            "defaultValue": "deployagent"
+            "defaultValue": "devopsdeployer"
         },
-        "osDiskType": {
+        "DevOpsDeployerosDiskType": {
             "type": "String",
             "defaultValue": "Premium_LRS"
         },
-        "virtualMachineSize": {
+        "DevOpsDeployerosvirtualMachineSize": {
             "type": "String",
             "defaultValue": "Standard_B1s"
         },
         "adminUsername": {
             "type": "String",
-            "defaultValue": "mimergel"
+            "defaultValue": "azureuser"
         },
         "adminPublicKey": {
             "type": "SecureString"
-        },
-        "diagnosticsStorageAccountName": {
-            "type": "String",
-            "defaultValue": "saponazuretrialdiag"
         },
         "Script_URL": {
             "type": "string",
@@ -51,9 +47,9 @@
         }
     },
     "variables": {
-        "networkInterfaceName": "[concat(parameters('virtualMachineName'), '-nic')]",
-        "internalOSType": "Linux",
-        "csExtension": {
+        "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
+        "DevOpsDeployerOS": "Linux",
+        "DevOpsDeployerCSExtension": {
             "Linux": {
             "Publisher": "Microsoft.Azure.Extensions",
             "Name": "CustomScript",
@@ -67,7 +63,7 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2018-10-01",
-            "name": "[variables('networkInterfaceName')]",
+            "name": "[variables('DevOpsDeployerNWInterfaceName')]",
             "location": "[parameters('location')]",
             "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
             "dependsOn": [],
@@ -88,21 +84,21 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-10-01",
-            "name": "[parameters('virtualMachineName')]",
+            "name": "[parameters('DevOpsDeployerVMName')]",
             "location": "[parameters('location')]",
             "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
+                "[concat('Microsoft.Network/networkInterfaces/', variables('DevOpsDeployerNWInterfaceName'))]"
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('virtualMachineSize')]"
+                    "vmSize": "[parameters('DevOpsDeployerosvirtualMachineSize')]"
                 },
                 "storageProfile": {
                     "osDisk": {
                         "createOption": "fromImage",
                         "managedDisk": {
-                            "storageAccountType": "[parameters('osDiskType')]"
+                            "storageAccountType": "[parameters('DevOpsDeployerosDiskType')]"
                         }
                     },
                     "imageReference": {
@@ -115,12 +111,12 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('DevOpsDeployerNWInterfaceName'))]"
                         }
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualMachineComputerName')]",
+                    "computerName": "[parameters('DevOpsDeployerComputerName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": true,
@@ -136,31 +132,30 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                        "enabled": false
                     }
                 }
             }
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualMachineName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+            "name": "[concat(parameters('DevOpsDeployerVMName'), '/', variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name)]",
             "apiVersion": "2018-10-01",
             "location": "[parameters('location')]",
             "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('DevOpsDeployerVMName'))]"
             ],
             "properties": {
-                "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
-                "type": "[variables('csExtension')[variables('internalOSType')].Name]",
-                "typeHandlerVersion": "[variables('csExtension')[variables('internalOSType')].Version]",
+                "publisher": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Publisher]",
+                "type": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name]",
+                "typeHandlerVersion": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Version]",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                 "fileUris": [
-                    "[variables('csExtension')[variables('internalOSType')].script]"
+                    "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].script]"
                 ],
-          "commandToExecute": "[variables('csExtension')[variables('internalOSType')].scriptCall]"
+          "commandToExecute": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].scriptCall]"
         }
       }
     }
