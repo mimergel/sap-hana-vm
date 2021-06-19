@@ -6,30 +6,50 @@
             "defaultValue": "[resourceGroup().location]",
             "type": "String"
         },
-        "TargetVNETName": {
-            "defaultValue": "vnet-sap-prod-france-001",
+        "SAPVNETName": {
+            "defaultValue": "vnet-sap-prod-location-001",
             "type": "String"
         },
-        "TargetVNETNameAddressSpace": {
+        "SAPVNETNameAddressSpace": {
             "defaultValue": [
                 "10.10.0.0/16"
             ],
             "type": "Array"
         },
-        "TargetSubnetName": {
-            "defaultValue": "snet-sap-prod-france-001",
+        "SAPSubnetName": {
+            "defaultValue": "snet-sap-prod-location-001",
             "type": "String"
         },
-        "TargetSubnetAddressRange": {
-            "defaultValue": "10.10.1.0/24",
+        "SAPSubnetAddressRange": {
+            "defaultValue": "10.10.10.0/24",
+            "type": "String"
+        },
+        "SAPAdminSubnetName": {
+            "defaultValue": "snet-sap-admin-location-001",
+            "type": "String"
+        },
+        "SAPAdminSubnetRange": {
+            "defaultValue": "10.10.3.0/24",
+            "type": "String"
+        },
+        "AzureBastionSubnetName": {
+            "defaultValue": "AzureBastionSubnet",
+            "type": "String"
+        },
+        "BastianHostSubnetAddressRange": {
+            "defaultValue": "10.10.2.0/24",
             "type": "String"
         },
         "networkSecurityGroupName": {
-            "defaultValue": "nsg-sap-prod-france-001",
+            "defaultValue": "nsg-sap-prod-location-001",
             "type": "String"
         },
+        "bastionHostName": {
+            "defaultValue": "bastian-sap-admin-location",
+            "type": "string"
+        },
         "RecoveryServiceVaultName": {
-            "defaultValue": "rsv-sap-prod-france-001",
+            "defaultValue": "rsv-sap-prod-location-001",
             "type": "string"
         },
         "VaultStorageType": {
@@ -161,9 +181,10 @@
     },
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
+        "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
         "VARnetworkAclsVirtualNetworkRules": [
             {
-                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('TargetVNETName'), '/subnets/', parameters('TargetSubnetName'))]"
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
             }
         ],
         "OSPRODSchedule": {
@@ -450,6 +471,55 @@
                         "priority": 200,
                         "direction": "Inbound"
                        }
+                    },
+                    {
+                        "name": "Allow-Inbound-HTTPS",
+                        "properties": {
+                            "description": "Allows inbound traffic for HTTPS",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('bastionPublicIPName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            },
+            "sku": {
+                "name": "Standard"
+            }
+        },
+        {
+            "name": "[parameters('bastionHostName')]",
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [ "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionPublicIPName'))]" ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPSubnetName'),parameters('AzureBastionSubnetName'))]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionPublicIPName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        },
+                        "name": "ipconfig1"
                     }
                 ]
             }
@@ -585,20 +655,20 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-11-01",
-            "name": "[parameters('TargetVNETName')]",
+            "name": "[parameters('SAPVNETName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
             ],
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('TargetVNETNameAddressSpace')]"
+                    "addressPrefixes": "[parameters('SAPVNETNameAddressSpace')]"
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('TargetSubnetName')]",
+                        "name": "[parameters('SAPSubnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('TargetSubnetAddressRange')]",
+                            "addressPrefix": "[parameters('SAPSubnetAddressRange')]",
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled",
                             "serviceEndpoints": [
@@ -624,7 +694,7 @@
             "name": "[parameters('storageAccountNameSAPBits')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', parameters('TargetVNETName'))]"
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
             ],
             "tags": {},
             "sku": {
