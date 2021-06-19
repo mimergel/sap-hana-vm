@@ -6,8 +6,30 @@
             "defaultValue": "[resourceGroup().location]",
             "type": "String"
         },
-        "storageAccountName": {
+        "target_vnet_name": {
+            "defaultValue": "vnet-sap-prod-france-001",
+            "type": "String"
+        },
+        "target_vnet_name_address_space": {
+            "defaultValue": [
+                "10.10.0.0/16"
+            ],
+            "type": "Array"
+        },
+        "target_subnet_name": {
+            "defaultValue": "snet-sap-prod-france-001",
+            "type": "String"
+        },
+        "target_subnet_address_range": {
+            "defaultValue": "10.10.1.0/24",
+            "type": "String"
+        },
+        "storageAccountNameSAPBits": {
             "defaultValue": "stsapbitsfrance",
+            "type": "String"
+        },
+        "storageAccountNameDiag": {
+            "defaultValue": "stdiagnosticsfrance",
             "type": "String"
         },
         "accountType": {
@@ -76,16 +98,6 @@
             "defaultValue": false,
             "type": "Bool"
         },
-        "virtualNetworkName": {
-            "defaultValue": "vnet-sap-prod-france-001",
-            "type": "String"
-        },
-        "addressSpaces": {
-            "defaultValue": [
-                "10.10.0.0/16"
-            ],
-            "type": "Array"
-        },
         "ipv6Enabled": {
             "defaultValue": false,
             "type": "Bool"
@@ -93,14 +105,6 @@
         "subnetCount": {
             "defaultValue": 1,
             "type": "Int"
-        },
-        "subnet0_name": {
-            "defaultValue": "snet-sap-prod-france-001",
-            "type": "String"
-        },
-        "subnet0_addressRange": {
-            "defaultValue": "10.10.1.0/24",
-            "type": "String"
         },
         "ddosProtectionPlanEnabled": {
             "defaultValue": false,
@@ -123,7 +127,7 @@
         "resourcegroupId": "[resourceGroup().id]",
         "VARnetworkAclsVirtualNetworkRules": [
             {
-                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'), '/subnets/', parameters('subnet0_name'))]"
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('target_vnet_name'), '/subnets/', parameters('target_subnet_name'))]"
             }
         ]
     },
@@ -138,20 +142,20 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-11-01",
-            "name": "[parameters('virtualNetworkName')]",
+            "name": "[parameters('target_vnet_name')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
             ],
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('addressSpaces')]"
+                    "addressPrefixes": "[parameters('target_vnet_name_address_space')]"
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('subnet0_name')]",
+                        "name": "[parameters('target_subnet_name')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnet0_addressRange')]",
+                            "addressPrefix": "[parameters('target_subnet_address_range')]",
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled",
                             "serviceEndpoints": [
@@ -174,10 +178,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('storageAccountName')]",
+            "name": "[parameters('storageAccountNameSAPBits')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('target_vnet_name'))]"
             ],
             "tags": {},
             "sku": {
@@ -201,9 +205,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "name": "[concat(parameters('storageAccountNameSAPBits'), '/default')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountNameSAPBits'))]"
             ],
             "properties": {
                 "restorePolicy": {
@@ -224,10 +228,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileservices",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "name": "[concat(parameters('storageAccountNameSAPBits'), '/default')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
-                "[concat(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '/blobServices/default')]"
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountNameSAPBits'))]",
+                "[concat(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountNameSAPBits')), '/blobServices/default')]"
             ],
             "properties": {
                 "shareDeleteRetentionPolicy": {
