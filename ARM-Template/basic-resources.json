@@ -796,7 +796,7 @@
                                 }
                             ],
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('SAPNSGName'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('SAPAdminNSGName'))]"
                             }
                         },
                         "type": "Microsoft.Network/virtualNetworks/subnets"
