@@ -44,6 +44,22 @@
             "type": "bool",
             "defaultValue": false
         },
+        "OSPolicyNamePRD": {
+            "defaultValue": "OS-PROD",
+            "type": "string"
+        },
+        "OSPolicyNameNonPRD": {
+            "defaultValue": "OS-Non-PROD",
+            "type": "string"
+        },
+        "HANAPolicyNamePRD": {
+            "defaultValue": "HANA-PROD",
+            "type": "string"
+        },
+        "HANAPolicyNameNonPRD": {
+            "defaultValue": "HANA-Non-PROD",
+            "type": "string"
+        },
         "PrivateDNSName": {
             "type": "string",
             "defaultValue": "daftpunk.net"
@@ -149,7 +165,216 @@
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('TargetVNETName'), '/subnets/', parameters('TargetSubnetName'))]"
             }
-        ]
+        ],
+        "OSPRODSchedule": {
+                "schedulePolicyType": "SimpleSchedulePolicy",
+                "scheduleRunFrequency": "Daily",
+                "scheduleRunDays": null,
+                "scheduleRunTimes": [
+                    "2021-06-19T20:30:00.000Z"
+                ]
+        },
+        "OSNonPRODSchedule": {
+            "value": {
+                "schedulePolicyType": "SimpleSchedulePolicy",
+                "scheduleRunFrequency": "Weekly",
+                "scheduleRunDays": [
+                    "Sunday"
+                ],
+                "scheduleRunTimes": [
+                    "2021-06-19T20:00:00.000Z"
+                ]
+            }
+        },
+        "TimeZone": {
+            "value": "W. Europe Standard Time"
+        },
+        "OSPRODRetention": {
+            "value": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": {
+                    "retentionTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                },
+                "weeklySchedule": {
+                    "daysOfTheWeek": [
+                        "Sunday"
+                    ],
+                    "retentionTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 4,
+                        "durationType": "Weeks"
+                    }
+                },
+                "monthlySchedule": {
+                    "retentionScheduleFormatType": "Weekly",
+                    "retentionScheduleDaily": null,
+                    "retentionScheduleWeekly": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "weeksOfTheMonth": [
+                            "First"
+                        ]
+                    },
+                    "retentionTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 3,
+                        "durationType": "Months"
+                    }
+                },
+                "yearlySchedule": {
+                    "retentionScheduleFormatType": "Weekly",
+                    "monthsOfYear": [
+                        "January"
+                    ],
+                    "retentionScheduleDaily": null,
+                    "retentionScheduleWeekly": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "weeksOfTheMonth": [
+                            "First"
+                        ]
+                    },
+                    "retentionTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 1,
+                        "durationType": "Years"
+                    }
+                }
+            }
+        },
+        "OSNonPRODRetention": {
+            "value": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": null,
+                "weeklySchedule": {
+                    "daysOfTheWeek": [
+                        "Sunday"
+                    ],
+                    "retentionTimes": [
+                        "2021-06-19T20:30:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 2,
+                        "durationType": "Weeks"
+                    }
+                },
+                "monthlySchedule": null,
+                "yearlySchedule": null
+            }
+        },
+        "hanabackupsettings": {
+            "timeZone": "W. Europe Standard Time",
+            "issqlcompression": false,
+            "isCompression": false
+        },
+        "HANAsubProtectionPolicyListPRD": {
+            "value": [
+                {
+                    "policyType": "Full",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "SimpleSchedulePolicy",
+                        "scheduleRunFrequency": "Daily",
+                        "scheduleRunDays": null,
+                        "scheduleRunTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ]
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "LongTermRetentionPolicy",
+                        "dailySchedule": {
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 14,
+                                "durationType": "Days"
+                            }
+                        },
+                        "weeklySchedule": {
+                            "daysOfTheWeek": [
+                                "Sunday"
+                            ],
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 4,
+                                "durationType": "Weeks"
+                            }
+                        },
+                        "monthlySchedule": {
+                            "retentionScheduleFormatType": "Weekly",
+                            "retentionScheduleDaily": null,
+                            "retentionScheduleWeekly": {
+                                "daysOfTheWeek": [
+                                    "Sunday"
+                                ],
+                                "weeksOfTheMonth": [
+                                    "First"
+                                ]
+                            },
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 3,
+                                "durationType": "Months"
+                            }
+                        },
+                        "yearlySchedule": {
+                            "retentionScheduleFormatType": "Weekly",
+                            "monthsOfYear": [
+                                "January"
+                            ],
+                            "retentionScheduleDaily": null,
+                            "retentionScheduleWeekly": {
+                                "daysOfTheWeek": [
+                                    "Sunday"
+                                ],
+                                "weeksOfTheMonth": [
+                                    "First"
+                                ]
+                            },
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 1,
+                                "durationType": "Years"
+                            }
+                        }
+                    }
+                },
+                {
+                    "policyType": "Log",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "LogSchedulePolicy",
+                        "scheduleFrequencyInMins": 15
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "SimpleRetentionPolicy",
+                        "retentionDuration": {
+                            "count": 14,
+                            "durationType": "Days"
+                        }
+                    }
+                }
+            ]
+        }
     },
     "resources": [
         {
@@ -201,6 +426,52 @@
                 "tier": "Standard"
             },
             "properties": {}
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNamePRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureIaasVM",
+                "instantRpRetentionRangeInDays": 3,
+                "schedulePolicy": "[variables('OSPRODSchedule')]",
+                "timeZone": "[variables('TimeZone')]",
+                "retentionPolicy": "[variables('OSPRODRetention')]",
+                "instantRPDetails": {}
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureIaasVM",
+                "instantRpRetentionRangeInDays": 5,
+                "schedulePolicy": "[variables('OSNonPRODSchedule')]",
+                "timeZone": "[variables('TimeZone')]",
+                "retentionPolicy": "[variables('OSNonPRODRetention')]",
+                "instantRPDetails": {}
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('HANAPolicyNamePRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureWorkload",
+                "workloadType": "SAPHanaDatabase",
+                "settings": "[variables('hanabackupsettings')]",
+                "subProtectionPolicy": "[variables('HANAsubProtectionPolicyListPRD')]"
+            }
         },
         {
             "type": "Microsoft.Network/privateDnsZones",
