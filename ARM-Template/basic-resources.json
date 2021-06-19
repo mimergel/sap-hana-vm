@@ -182,7 +182,7 @@
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
         "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
-        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),resourceGroup().location)]",
+        "storageAccountNameDiagnostics": "[concat('stdiagnostics',resourceGroup().location)]",
         "VARnetworkAclsVirtualNetworkRules": [
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
