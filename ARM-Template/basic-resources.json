@@ -40,13 +40,13 @@
             "defaultValue": "10.10.2.0/24",
             "type": "String"
         },
-        "networkSecurityGroupName": {
-            "defaultValue": "nsg-sap-prod-location-001",
-            "type": "String"
-        },
         "bastionHostName": {
             "defaultValue": "bastian-sap-admin-location",
             "type": "string"
+        },
+        "networkSecurityGroupName": {
+            "defaultValue": "nsg-sap-prod-location-001",
+            "type": "String"
         },
         "RecoveryServiceVaultName": {
             "defaultValue": "rsv-sap-prod-location-001",
