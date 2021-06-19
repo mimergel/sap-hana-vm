@@ -7,7 +7,7 @@
             "type": "String"
         },
         "SAPVNETName": {
-            "defaultValue": "vnet-sap-prod-location-001",
+            "defaultValue": "vnet-sap-prod-[location]-001",
             "type": "String"
         },
         "SAPVNETNameAddressSpace": {
@@ -17,7 +17,7 @@
             "type": "Array"
         },
         "SAPSubnetName": {
-            "defaultValue": "snet-sap-prod-location-001",
+            "defaultValue": "[concat('snet-sap-prod-',resourceGroup().location,'-001')]",
             "type": "String"
         },
         "SAPSubnetAddressRange": {
@@ -25,7 +25,7 @@
             "type": "String"
         },
         "SAPAdminSubnetName": {
-            "defaultValue": "snet-sap-admin-location-001",
+            "defaultValue": "snet-sap-admin-[location]-001",
             "type": "String"
         },
         "SAPAdminSubnetRange": {
@@ -41,15 +41,15 @@
             "type": "String"
         },
         "bastionHostName": {
-            "defaultValue": "bastian-sap-admin-location",
+            "defaultValue": "bastian-sap-admin-[location]",
             "type": "string"
         },
         "networkSecurityGroupName": {
-            "defaultValue": "nsg-sap-prod-location-001",
+            "defaultValue": "nsg-sap-prod-[location]-001",
             "type": "String"
         },
         "RecoveryServiceVaultName": {
-            "defaultValue": "rsv-sap-prod-location-001",
+            "defaultValue": "rsv-sap-prod-[location]-001",
             "type": "string"
         },
         "VaultStorageType": {
