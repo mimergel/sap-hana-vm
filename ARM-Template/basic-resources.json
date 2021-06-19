@@ -7,7 +7,7 @@
             "type": "String"
         },
         "SAPVNETName": {
-            "defaultValue": "vnet-sap-prod-[location]-001",
+            "defaultValue": "[concat('vnet-sap-prod-',resourceGroup().location,'-001')]",
             "type": "String"
         },
         "SAPVNETNameAddressSpace": {
@@ -25,7 +25,7 @@
             "type": "String"
         },
         "SAPAdminSubnetName": {
-            "defaultValue": "snet-sap-admin-[location]-001",
+            "defaultValue": "[concat('snet-sap-admin-',resourceGroup().location,'-001')]",
             "type": "String"
         },
         "SAPAdminSubnetRange": {
@@ -41,15 +41,15 @@
             "type": "String"
         },
         "bastionHostName": {
-            "defaultValue": "bastian-sap-admin-[location]",
+            "defaultValue": "[concat('snet-bastion-',resourceGroup().location,'-001')]",
             "type": "string"
         },
         "networkSecurityGroupName": {
-            "defaultValue": "nsg-sap-prod-[location]-001",
+            "defaultValue": "[concat('nsg-sap-prod-',resourceGroup().location,'-001')]",
             "type": "String"
         },
         "RecoveryServiceVaultName": {
-            "defaultValue": "rsv-sap-prod-[location]-001",
+            "defaultValue": "[concat('rsv-sap-',resourceGroup().location,'-001')]",
             "type": "string"
         },
         "VaultStorageType": {
@@ -85,11 +85,11 @@
             "defaultValue": "daftpunk.net"
         },
         "storageAccountNameSAPBits": {
-            "defaultValue": "stsapbitslocation",
+            "defaultValue": "stsapbits",
             "type": "String"
         },
         "storageAccountNameDiagnostics": {
-            "defaultValue": "stdiagnosticslocation",
+            "defaultValue": "stdiagnostics",
             "type": "String"
         },
         "accountType": {
@@ -182,7 +182,9 @@
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
         "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
-        "storageAccountNameDiagnostics": "[concat('stdiagnostics',resourceGroup().location)]",
+        "shortlocation": "[take(resourceGroup().location,7)]",
+        "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
+        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
         "VARnetworkAclsVirtualNetworkRules": [
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
@@ -692,7 +694,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('storageAccountNameSAPBits')]",
+            "name": "[variables('storageAccountNameSAPBits')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
@@ -744,7 +746,7 @@
             "apiVersion": "2019-06-01",
             "name": "[concat(parameters('storageAccountNameSAPBits'), '/default')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountNameSAPBits'))]"
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits'))]"
             ],
             "properties": {
                 "restorePolicy": {
@@ -765,10 +767,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileservices",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('storageAccountNameSAPBits'), '/default')]",
+            "name": "[concat(variables('storageAccountNameSAPBits'), '/default')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountNameSAPBits'))]",
-                "[concat(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountNameSAPBits')), '/blobServices/default')]"
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits'))]",
+                "[concat(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits')), '/blobServices/default')]"
             ],
             "properties": {
                 "shareDeleteRetentionPolicy": {
