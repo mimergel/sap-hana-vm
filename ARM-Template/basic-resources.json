@@ -24,6 +24,10 @@
             "defaultValue": "10.10.1.0/24",
             "type": "String"
         },
+        "networkSecurityGroupName": {
+            "defaultValue": "nsg-sap-prod-france-001",
+            "type": "String"
+        },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbitsfrance",
             "type": "String"
@@ -117,10 +121,6 @@
         "bastionEnabled": {
             "defaultValue": false,
             "type": "Bool"
-        },
-        "networkSecurityGroupName": {
-            "defaultValue": "nsg-sap-prod-france-001",
-            "type": "String"
         }
     },
     "variables": {
