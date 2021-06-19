@@ -554,6 +554,7 @@
             "properties": {
                 "ipConfigurations": [
                     {
+                        "name": "bastionipconfig",
                         "properties": {
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('BastionSubnetName'))]"
@@ -562,8 +563,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionPublicIPName'))]"
                             },
                             "privateIPAllocationMethod": "Dynamic"
-                        },
-                        "name": "ipconfig1"
+                        }
                     }
                 ]
             }
@@ -848,15 +848,16 @@
             "apiVersion": "2018-10-01",
             "name": "[variables('DevOpsDeployerNWInterfaceName')]",
             "location": "[parameters('location')]",
-            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
             "properties": {
                 "ipConfigurations": [
                     {
-                        "name": "ipconfig1",
+                        "name": "devopsdeployeripconfig",
                         "properties": {
                             "subnet": {
-                                "id": "[parameters('subnetId')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('SAPAdminSubnetName'))]"
                             },
                             "privateIPAllocationMethod": "Dynamic"
                         }
@@ -869,7 +870,6 @@
             "apiVersion": "2018-10-01",
             "name": "[parameters('DevOpsDeployerVMName')]",
             "location": "[parameters('location')]",
-            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('DevOpsDeployerNWInterfaceName'))]"
             ],
@@ -925,7 +925,6 @@
             "name": "[concat(parameters('DevOpsDeployerVMName'), '/', variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name)]",
             "apiVersion": "2018-10-01",
             "location": "[parameters('location')]",
-            "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('DevOpsDeployerVMName'))]"
             ],
