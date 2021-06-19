@@ -682,7 +682,7 @@
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
                             }
-                        },                       
+                        },
                         "type": "Microsoft.Network/virtualNetworks/subnets"
                     },
                     {
@@ -699,20 +699,15 @@
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
                             }
-                        },                       
+                        },
                         "type": "Microsoft.Network/virtualNetworks/subnets"
                     },
                     {
+                        "type": "Microsoft.Network/virtualNetworks/subnets",
                         "name": "[parameters('BastionSubnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('BastianSubnetAddressRange')]",
-                            "privateEndpointNetworkPolicies": "Enabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
-                            }
-                        },                       
-                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                            "addressPrefix": "[parameters('BastianSubnetAddressRange')]"
+                        }
                     }
                 ],
                 "virtualNetworkPeerings": [],
