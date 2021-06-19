@@ -743,6 +743,22 @@
             "properties": {}
         },
         {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-01-01",
+            "name": "[concat(parameters('PrivateDNSName'), '/', parameters('PrivateDNSName'), '-link')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
+            ],
+            "properties": {
+                "registrationEnabled": "[parameters('vmRegistration')]",
+                "virtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
+                }
+            }
+        },
+        {
             "type": "Microsoft.RecoveryServices/vaults/backupstorageconfig",
             "apiVersion": "2020-02-02",
             "name": "[concat(parameters('RecoveryServiceVaultName'), '/vaultstorageconfig')]",
