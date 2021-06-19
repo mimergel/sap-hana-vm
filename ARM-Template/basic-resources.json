@@ -374,6 +374,50 @@
                     }
                 }
             ]
+        },
+        "HANAsubProtectionPolicyListNonPRD": {
+            "value": [
+                {
+                    "policyType": "Full",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "SimpleSchedulePolicy",
+                        "scheduleRunFrequency": "Daily",
+                        "scheduleRunDays": null,
+                        "scheduleRunTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ]
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "LongTermRetentionPolicy",
+                        "dailySchedule": {
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 7,
+                                "durationType": "Days"
+                            }
+                        },
+                        "weeklySchedule": null,
+                        "monthlySchedule": null,
+                        "yearlySchedule": null
+                    }
+                },
+                {
+                    "policyType": "Log",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "LogSchedulePolicy",
+                        "scheduleFrequencyInMins": 120
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "SimpleRetentionPolicy",
+                        "retentionDuration": {
+                            "count": 7,
+                            "durationType": "Days"
+                        }
+                    }
+                }
+            ]
         }
     },
     "resources": [
@@ -471,6 +515,20 @@
                 "workloadType": "SAPHanaDatabase",
                 "settings": "[variables('hanabackupsettings')]",
                 "subProtectionPolicy": "[variables('HANAsubProtectionPolicyListPRD')]"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('HANAPolicyNameNonPRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureWorkload",
+                "workloadType": "SAPHanaDatabase",
+                "settings": "[variables('hanabackupsettings')]",
+                "subProtectionPolicy": "[variables('HANAsubProtectionPolicyListNonPRD')]"
             }
         },
         {
