@@ -190,91 +190,87 @@
             "value": "W. Europe Standard Time"
         },
         "OSPRODRetention": {
-            "value": {
-                "retentionPolicyType": "LongTermRetentionPolicy",
-                "dailySchedule": {
-                    "retentionTimes": [
-                        "2021-06-19T20:30:00.000Z"
-                    ],
-                    "retentionDuration": {
-                        "count": 14,
-                        "durationType": "Days"
-                    }
-                },
-                "weeklySchedule": {
+            "retentionPolicyType": "LongTermRetentionPolicy",
+            "dailySchedule": {
+                "retentionTimes": [
+                    "2021-06-19T20:30:00.000Z"
+                ],
+                "retentionDuration": {
+                    "count": 14,
+                    "durationType": "Days"
+                }
+            },
+            "weeklySchedule": {
+                "daysOfTheWeek": [
+                    "Sunday"
+                ],
+                "retentionTimes": [
+                    "2021-06-19T20:30:00.000Z"
+                ],
+                "retentionDuration": {
+                    "count": 4,
+                    "durationType": "Weeks"
+                }
+            },
+            "monthlySchedule": {
+                "retentionScheduleFormatType": "Weekly",
+                "retentionScheduleDaily": null,
+                "retentionScheduleWeekly": {
                     "daysOfTheWeek": [
                         "Sunday"
                     ],
-                    "retentionTimes": [
-                        "2021-06-19T20:30:00.000Z"
-                    ],
-                    "retentionDuration": {
-                        "count": 4,
-                        "durationType": "Weeks"
-                    }
+                    "weeksOfTheMonth": [
+                        "First"
+                    ]
                 },
-                "monthlySchedule": {
-                    "retentionScheduleFormatType": "Weekly",
-                    "retentionScheduleDaily": null,
-                    "retentionScheduleWeekly": {
-                        "daysOfTheWeek": [
-                            "Sunday"
-                        ],
-                        "weeksOfTheMonth": [
-                            "First"
-                        ]
-                    },
-                    "retentionTimes": [
-                        "2021-06-19T20:30:00.000Z"
+                "retentionTimes": [
+                    "2021-06-19T20:30:00.000Z"
+                ],
+                "retentionDuration": {
+                    "count": 3,
+                    "durationType": "Months"
+                }
+            },
+            "yearlySchedule": {
+                "retentionScheduleFormatType": "Weekly",
+                "monthsOfYear": [
+                    "January"
+                ],
+                "retentionScheduleDaily": null,
+                "retentionScheduleWeekly": {
+                    "daysOfTheWeek": [
+                        "Sunday"
                     ],
-                    "retentionDuration": {
-                        "count": 3,
-                        "durationType": "Months"
-                    }
+                    "weeksOfTheMonth": [
+                        "First"
+                    ]
                 },
-                "yearlySchedule": {
-                    "retentionScheduleFormatType": "Weekly",
-                    "monthsOfYear": [
-                        "January"
-                    ],
-                    "retentionScheduleDaily": null,
-                    "retentionScheduleWeekly": {
-                        "daysOfTheWeek": [
-                            "Sunday"
-                        ],
-                        "weeksOfTheMonth": [
-                            "First"
-                        ]
-                    },
-                    "retentionTimes": [
-                        "2021-06-19T20:30:00.000Z"
-                    ],
-                    "retentionDuration": {
-                        "count": 1,
-                        "durationType": "Years"
-                    }
+                "retentionTimes": [
+                    "2021-06-19T20:30:00.000Z"
+                ],
+                "retentionDuration": {
+                    "count": 1,
+                    "durationType": "Years"
                 }
             }
         },
         "OSNonPRODRetention": {
-            "value": {
-                "retentionPolicyType": "LongTermRetentionPolicy",
-                "dailySchedule": null,
-                "weeklySchedule": {
-                    "daysOfTheWeek": [
-                        "Sunday"
-                    ],
-                    "retentionTimes": [
-                        "2021-06-19T20:30:00.000Z"
-                    ],
-                    "retentionDuration": {
-                        "count": 2,
-                        "durationType": "Weeks"
-                    }
-                },
-                "monthlySchedule": null,
-                "yearlySchedule": null
-            }
+            "retentionPolicyType": "LongTermRetentionPolicy",
+            "dailySchedule": null,
+            "weeklySchedule": {
+                "daysOfTheWeek": [
+                    "Sunday"
+                ],
+                "retentionTimes": [
+                    "2021-06-19T20:30:00.000Z"
+                ],
+                "retentionDuration": {
+                    "count": 2,
+                    "durationType": "Weeks"
+                }
+            },
+            "monthlySchedule": null,
+            "yearlySchedule": null
         },
         "hanabackupsettings": {
             "timeZone": "W. Europe Standard Time",
@@ -282,142 +278,139 @@
             "isCompression": false
         },
         "HANAsubProtectionPolicyListPRD": {
-            "value": [
-                {
-                    "policyType": "Full",
-                    "schedulePolicy": {
-                        "schedulePolicyType": "SimpleSchedulePolicy",
-                        "scheduleRunFrequency": "Daily",
-                        "scheduleRunDays": null,
-                        "scheduleRunTimes": [
-                            "2021-06-19T21:00:00.000Z"
-                        ]
-                    },
-                    "retentionPolicy": {
-                        "retentionPolicyType": "LongTermRetentionPolicy",
-                        "dailySchedule": {
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 14,
-                                "durationType": "Days"
-                            }
-                        },
-                        "weeklySchedule": {
-                            "daysOfTheWeek": [
-                                "Sunday"
-                            ],
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 4,
-                                "durationType": "Weeks"
-                            }
-                        },
-                        "monthlySchedule": {
-                            "retentionScheduleFormatType": "Weekly",
-                            "retentionScheduleDaily": null,
-                            "retentionScheduleWeekly": {
-                                "daysOfTheWeek": [
-                                    "Sunday"
-                                ],
-                                "weeksOfTheMonth": [
-                                    "First"
-                                ]
-                            },
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 3,
-                                "durationType": "Months"
-                            }
-                        },
-                        "yearlySchedule": {
-                            "retentionScheduleFormatType": "Weekly",
-                            "monthsOfYear": [
-                                "January"
-                            ],
-                            "retentionScheduleDaily": null,
-                            "retentionScheduleWeekly": {
-                                "daysOfTheWeek": [
-                                    "Sunday"
-                                ],
-                                "weeksOfTheMonth": [
-                                    "First"
-                                ]
-                            },
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 1,
-                                "durationType": "Years"
-                            }
-                        }
-                    }
+            {
+                "policyType": "Full",
+                "schedulePolicy": {
+                    "schedulePolicyType": "SimpleSchedulePolicy",
+                    "scheduleRunFrequency": "Daily",
+                    "scheduleRunDays": null,
+                    "scheduleRunTimes": [
+                        "2021-06-19T21:00:00.000Z"
+                    ]
                 },
-                {
-                    "policyType": "Log",
-                    "schedulePolicy": {
-                        "schedulePolicyType": "LogSchedulePolicy",
-                        "scheduleFrequencyInMins": 15
-                    },
-                    "retentionPolicy": {
-                        "retentionPolicyType": "SimpleRetentionPolicy",
+                "retentionPolicy": {
+                    "retentionPolicyType": "LongTermRetentionPolicy",
+                    "dailySchedule": {
+                        "retentionTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ],
                         "retentionDuration": {
                             "count": 14,
                             "durationType": "Days"
                         }
+                    },
+                    "weeklySchedule": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "retentionTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ],
+                        "retentionDuration": {
+                            "count": 4,
+                            "durationType": "Weeks"
+                        }
+                    },
+                    "monthlySchedule": {
+                        "retentionScheduleFormatType": "Weekly",
+                        "retentionScheduleDaily": null,
+                        "retentionScheduleWeekly": {
+                            "daysOfTheWeek": [
+                                "Sunday"
+                            ],
+                            "weeksOfTheMonth": [
+                                "First"
+                            ]
+                        },
+                        "retentionTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ],
+                        "retentionDuration": {
+                            "count": 3,
+                            "durationType": "Months"
+                        }
+                    },
+                    "yearlySchedule": {
+                        "retentionScheduleFormatType": "Weekly",
+                        "monthsOfYear": [
+                            "January"
+                        ],
+                        "retentionScheduleDaily": null,
+                        "retentionScheduleWeekly": {
+                            "daysOfTheWeek": [
+                                "Sunday"
+                            ],
+                            "weeksOfTheMonth": [
+                                "First"
+                            ]
+                        },
+                        "retentionTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ],
+                        "retentionDuration": {
+                            "count": 1,
+                            "durationType": "Years"
+                        }
                     }
                 }
-            ]
+            },
+            {
+                "policyType": "Log",
+                "schedulePolicy": {
+                    "schedulePolicyType": "LogSchedulePolicy",
+                    "scheduleFrequencyInMins": 15
+                },
+                "retentionPolicy": {
+                    "retentionPolicyType": "SimpleRetentionPolicy",
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                }
+            }
+        }
         },
         "HANAsubProtectionPolicyListNonPRD": {
-            "value": [
-                {
-                    "policyType": "Full",
-                    "schedulePolicy": {
-                        "schedulePolicyType": "SimpleSchedulePolicy",
-                        "scheduleRunFrequency": "Daily",
-                        "scheduleRunDays": null,
-                        "scheduleRunTimes": [
-                            "2021-06-19T21:00:00.000Z"
-                        ]
-                    },
-                    "retentionPolicy": {
-                        "retentionPolicyType": "LongTermRetentionPolicy",
-                        "dailySchedule": {
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 7,
-                                "durationType": "Days"
-                            }
-                        },
-                        "weeklySchedule": null,
-                        "monthlySchedule": null,
-                        "yearlySchedule": null
-                    }
+            {
+                "policyType": "Full",
+                "schedulePolicy": {
+                    "schedulePolicyType": "SimpleSchedulePolicy",
+                    "scheduleRunFrequency": "Daily",
+                    "scheduleRunDays": null,
+                    "scheduleRunTimes": [
+                        "2021-06-19T21:00:00.000Z"
+                    ]
                 },
-                {
-                    "policyType": "Log",
-                    "schedulePolicy": {
-                        "schedulePolicyType": "LogSchedulePolicy",
-                        "scheduleFrequencyInMins": 120
-                    },
-                    "retentionPolicy": {
-                        "retentionPolicyType": "SimpleRetentionPolicy",
+                "retentionPolicy": {
+                    "retentionPolicyType": "LongTermRetentionPolicy",
+                    "dailySchedule": {
+                        "retentionTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ],
                         "retentionDuration": {
                             "count": 7,
                             "durationType": "Days"
                         }
+                    },
+                    "weeklySchedule": null,
+                    "monthlySchedule": null,
+                    "yearlySchedule": null
+                }
+            },
+            {
+                "policyType": "Log",
+                "schedulePolicy": {
+                    "schedulePolicyType": "LogSchedulePolicy",
+                    "scheduleFrequencyInMins": 120
+                },
+                "retentionPolicy": {
+                    "retentionPolicyType": "SimpleRetentionPolicy",
+                    "retentionDuration": {
+                        "count": 7,
+                        "durationType": "Days"
                     }
                 }
-            ]
+            }
         }
     },
     "resources": [
