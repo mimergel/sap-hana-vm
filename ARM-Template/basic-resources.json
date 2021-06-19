@@ -684,6 +684,35 @@
                             }
                         },                       
                         "type": "Microsoft.Network/virtualNetworks/subnets"
+                    },
+                    {
+                        "name": "[parameters('SAPAdminSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('SAPAdminSubnetAddressRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ],
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                            }
+                        },                       
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    }
+                    {
+                        "name": "[parameters('AzureBastionSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('AzureBastionSubnetNameRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                            }
+                        },                       
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
                     }
                 ],
                 "virtualNetworkPeerings": [],
