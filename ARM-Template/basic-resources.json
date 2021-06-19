@@ -515,7 +515,7 @@
                     {
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('BastionSubnetName'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('BastionSubnetName'))]"
                             },
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionPublicIPName'))]"
