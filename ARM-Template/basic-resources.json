@@ -28,14 +28,6 @@
             "defaultValue": "nsg-sap-prod-france-001",
             "type": "String"
         },
-        "storageAccountNameSAPBits": {
-            "defaultValue": "stsapbitsfrance",
-            "type": "String"
-        },
-        "storageAccountNameDiagnostics": {
-            "defaultValue": "stdiagnosticsfrance",
-            "type": "String"
-        },
         "RecoveryServiceVaultName": {
             "defaultValue": "rsv-sap-prod-france-001",
             "type": "string"
@@ -51,6 +43,14 @@
         "VaultEnableCRR": {
             "type": "bool",
             "defaultValue": true
+        },
+        "storageAccountNameSAPBits": {
+            "defaultValue": "stsapbitsfrance",
+            "type": "String"
+        },
+        "storageAccountNameDiagnostics": {
+            "defaultValue": "stdiagnosticsfrance",
+            "type": "String"
         },
         "accountType": {
             "defaultValue": "Standard_LRS",
