@@ -181,10 +181,10 @@
                     "Sunday"
                 ],
                 "scheduleRunTimes": [
-                    "2021-06-19T20:00:00.000Z"
+                    "2021-06-19T20:00:00Z"
                 ]
         },
-        "TimeZone": {
+        "timeZone": {
             "value": "W. Europe Standard Time"
         },
         "OSPRODRetention": {
@@ -476,7 +476,7 @@
                 "backupManagementType": "AzureIaasVM",
                 "instantRpRetentionRangeInDays": 3,
                 "schedulePolicy": "[variables('OSPRODSchedule')]",
-                "timeZone": "[variables('TimeZone')]",
+                "timeZone": "[variables('timeZone')]",
                 "retentionPolicy": "[variables('OSPRODRetention')]",
                 "instantRPDetails": {}
             }
@@ -492,7 +492,7 @@
                 "backupManagementType": "AzureIaasVM",
                 "instantRpRetentionRangeInDays": 5,
                 "schedulePolicy": "[variables('OSNonPRODSchedule')]",
-                "timeZone": "[variables('TimeZone')]",
+                "timeZone": "[variables('timeZone')]",
                 "retentionPolicy": "[variables('OSNonPRODRetention')]",
                 "instantRPDetails": {}
             }
