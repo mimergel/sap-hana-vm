@@ -16,15 +16,18 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 # Table of contents
 
 <!--ts-->
+- [SAP HANA VM Deployments](#sap-hana-vm-deployments)
+- [Table of contents](#table-of-contents)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
   * [Deploy only HANA VM and Storage](#deploy-only-hana-vm-and-storage)
 - [Prerequesites](#prerequesites)
-  * [Use this button to setup all of the above in case you need quickly a basic landing zone. Continue with 5.3](#use-this-button-to-setup-all-of-the-above-in-case-you-need-quickly-a-basic-landing-zone-continue-with-53)
+    + [Deploy Basic Resources](#deploy-basic-resources)
   * [5.1 Option A) With this ARM-Template](#51-option-a--with-this-arm-template)
   * [5.2 Option B) Manually](#52-option-b--manually)
-  * [5.3 Complete the DevOps Deployment Agent Setup](#53-complete-the-devops-deployment-agent-setup)
+  * [5.3 Finalize the Deployment Agent Setup](#53-finalize-the-deployment-agent-setup)
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
+- [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
 - [SAP VM Deployment](#sap-vm-deployment)
 - [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
@@ -141,13 +144,16 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* DevOps Deployment Agent 
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
-		## Use this button to setup all of the above in case you need quickly a basic landing zone. Continue with 5.3
+		### Deploy Basic Resources
+
+		Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.3
 		
 		[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
 
 		For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 
-5. In case of an existing landing zone setup only the DevOps Deployment Agent
+
+5. Setup the Deployment Agent in an existing landing zone
 
 	* ## 5.1 Option A) With this ARM-Template
 	
@@ -163,7 +169,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 			* Use this [tested agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz) as the latest version doesn't handel SLES 15 SP2 correctly
 		* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 
-	* ## 5.3 Complete the DevOps Deployment Agent Setup
+	* ## 5.3 Finalize the Deployment Agent Setup
 		1. Login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 		2. Ensure the deployment agent software is automatically started as a service after each reboot: `sudo ./svc.sh install ; sudo ./svc.sh start`
@@ -185,15 +191,18 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
 	* In the process you will need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-4. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
-	![Variables](./Documentation/Images/variables.jpg)
-5. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
-6. Download the SAP Binaries IMDB_SERVER*, HCMT* & SAPCAR* and store them in a storage container. Get the new URLs from for the files and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml` 
-7. In case the target networks don't have access to the internet
+4. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
+5. Download the SAP Binaries IMDB_SERVER*, HCMT* & SAPCAR* and store them in a storage container. Get the new URLs from for the files and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml` 
+6. In case the target networks don't have access to the internet
 	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the Pipeline
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
-8. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
-9. Setup the [Azure Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure) in [project settings](./Documentation/Images/azure-service-connection.jpg)
+7. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
+8. Setup the [Azure Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure) in [project settings](./Documentation/Images/azure-service-connection.jpg)
+9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
+	![Variables](./Documentation/Images/variables.jpg)
+
+# Run the Azure DevOps Pipeline
+
 10. Run the pipeline
 
 
@@ -202,7 +211,6 @@ This is work in progress.
 Right now just empty VMs including file systems can be deployed: 
 
 [![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-vm.json) 
-
 
 
 # Todo
