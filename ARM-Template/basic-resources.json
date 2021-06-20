@@ -18,6 +18,10 @@
             "defaultValue": "*************",
             "type": "SecureString"
         },
+        "PrivateDNSZoneName": {
+            "type": "string",
+            "defaultValue": "daftpunk.net"
+        },
         "Script_URL": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
@@ -100,10 +104,6 @@
             "defaultValue": "[concat('pol-saphana-nonprod-',resourceGroup().location)]",
             "type": "string"
         },
-        "PrivateDNSName": {
-            "type": "string",
-            "defaultValue": "daftpunk.net"
-        },
         "DevOpsDeployerVMName": {
             "type": "String",
             "defaultValue": "devopsdeployer"
@@ -120,7 +120,7 @@
             "type": "String",
             "defaultValue": "sapwinadmin"
         },
-        "DevOpsDeployerosDiskType": {
+        "DiskType": {
             "type": "String",
             "defaultValue": "Premium_LRS"
         },
@@ -128,21 +128,9 @@
             "type": "String",
             "defaultValue": "Standard_B1s"
         },
-        "SAPWinAdminDiskType": {
-            "type": "String",
-            "defaultValue": "Premium_LRS"
-        },
         "SAPWinAdminVirtualMachineSize": {
             "type": "String",
             "defaultValue": "Standard_B1s"
-        },
-        "SAPWinAdminPatchMode": {
-            "type": "String",
-            "defaultValue": "AutomaticByOS"
-        },
-        "SAPWinAdminEnableHotpatching": {
-            "type": "Bool",
-            "defaultValue": "false"
         },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbits",
@@ -218,23 +206,7 @@
             "defaultValue": false,
             "type": "Bool"
         },
-        "ipv6Enabled": {
-            "defaultValue": false,
-            "type": "Bool"
-        },
-        "subnetCount": {
-            "defaultValue": 1,
-            "type": "Int"
-        },
         "ddosProtectionPlanEnabled": {
-            "defaultValue": false,
-            "type": "Bool"
-        },
-        "firewallEnabled": {
-            "defaultValue": false,
-            "type": "Bool"
-        },
-        "bastionEnabled": {
             "defaultValue": false,
             "type": "Bool"
         },
@@ -746,7 +718,7 @@
         {
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2018-09-01",
-            "name": "[parameters('PrivateDNSName')]",
+            "name": "[parameters('PrivateDNSZoneName')]",
             "location": "global",
             "dependsOn": [],
             "tags": {},
@@ -755,10 +727,10 @@
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2020-01-01",
-            "name": "[concat(parameters('PrivateDNSName'), '/', parameters('PrivateDNSName'), '-link')]",
+            "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
             "location": "global",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSName'))]",
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
             ],
             "properties": {
@@ -965,7 +937,7 @@
                     "osDisk": {
                         "createOption": "fromImage",
                         "managedDisk": {
-                            "storageAccountType": "[parameters('DevOpsDeployerosDiskType')]"
+                            "storageAccountType": "[parameters('DiskType')]"
                         }
                     },
                     "imageReference": {
@@ -1063,7 +1035,7 @@
                     "osDisk": {
                         "createOption": "fromImage",
                         "managedDisk": {
-                            "storageAccountType": "[parameters('SAPWinAdminDiskType')]"
+                            "storageAccountType": "[parameters('DiskType')]"
                         }
                     },
                     "imageReference": {
@@ -1088,8 +1060,8 @@
                         "enableAutomaticUpdates": true,
                         "provisionVmAgent": true,
                         "patchSettings": {
-                            "enableHotpatching": "[parameters('SAPWinAdminPatchMode')]",
-                            "patchMode": "[parameters('SAPWinAdminEnableHotpatching')]"
+                            "enableHotpatching": false,
+                            "patchMode": "AutomaticByOS"
                         }
                     }
                 },
