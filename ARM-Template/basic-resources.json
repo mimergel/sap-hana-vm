@@ -212,6 +212,43 @@
         "instantRPDetails": {
             "defaultValue": {},
             "type": "Object"
+        },
+        "OSbackupManagementType": {
+            "defaultValue": "AzureIaasVM",
+            "type": "String"
+        },
+        "OSBackupSchedule": {
+            "defaultValue": {
+                "schedulePolicyType": "SimpleSchedulePolicy",
+                "scheduleRunFrequency": "Daily",
+                "scheduleRunDays": null,
+                "scheduleRunTimes": [
+                    "2021-06-20T18:00:00.000Z"
+                ]
+            },
+            "type": "Object"
+        },
+        "timeZone": {
+            "defaultValue": "W. Europe Standard Time",
+            "type": "String"
+        },
+        "OSretentionPolicyNonPRD": {
+            "defaultValue": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": {
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                },
+                "weeklySchedule": null,
+                "monthlySchedule": null,
+                "yearlySchedule": null
+            },
+            "type": "Object"
         }
     },
     "variables": {
@@ -655,7 +692,7 @@
                 "schedulePolicy": "[variables('OSPRODSchedule')]",
                 "timeZone": "[variables('timeZone')]",
                 "retentionPolicy": "[variables('OSPRODRetention')]",
-                "instantRPDetails": {}
+                "instantRPDetails": "[parameters('instantRPDetails')]"
             }
         },
         {
@@ -676,32 +713,11 @@
                             "apiVersion": "2016-06-01",
                             "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
                             "properties": {
-                                "backupManagementType": "AzureIaasVM",
+                                "backupManagementType": "[parameters('OSbackupManagementType')]",
                                 "instantRpRetentionRangeInDays": 3,
-                                "schedulePolicy": {
-                                    "schedulePolicyType": "SimpleSchedulePolicy",
-                                    "scheduleRunFrequency": "Daily",
-                                    "scheduleRunDays": null,
-                                    "scheduleRunTimes": [
-                                        "2021-06-19T20:00:00.000Z"
-                                    ]
-                                },
-                                "timeZone": "[variables('timeZone')]",
-                                "retentionPolicy": {
-                                    "retentionPolicyType": "LongTermRetentionPolicy",
-                                    "dailySchedule": {
-                                        "retentionTimes": [
-                                            "2021-06-19T20:00:00.000Z"
-                                        ],
-                                        "retentionDuration": {
-                                            "count": 14,
-                                            "durationType": "Days"
-                                        }
-                                    },
-                                    "weeklySchedule": null,
-                                    "monthlySchedule": null,
-                                    "yearlySchedule": null
-                                },
+                                "schedulePolicy": "[parameters('OSBackupSchedule')]",
+                                "timeZone": "[parameters('timeZone')]",
+                                "retentionPolicy": "[parameters('OSretentionPolicyNonPRD')]",
                                 "instantRPDetails": "[parameters('instantRPDetails')]"
                             }
                         }
