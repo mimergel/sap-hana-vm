@@ -201,7 +201,8 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 # Run the Azure DevOps Pipeline
 
-10. Run the pipeline
+* Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)
+* Provide inputs as required ![Pipeline Inputs](./Documentation/Images/pipeline-inputs.jpg)
 
 
 # SAP VM Deployment
