@@ -16,8 +16,6 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 # Table of contents
 
 <!--ts-->
-- [SAP HANA VM Deployments](#sap-hana-vm-deployments)
-- [Table of contents](#table-of-contents)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
   * [Deploy only HANA VM and Storage](#deploy-only-hana-vm-and-storage)
