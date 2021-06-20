@@ -176,12 +176,6 @@
             "defaultValue": "Deny",
             "type": "String"
         },
-        "networkAclsVirtualNetworkRules": {
-            "defaultValue": [
-                "This value will be derived from vnet / subnet names - leave it as-is"
-            ],    
-            "type": "Array"
-        },
         "isContainerRestoreEnabled": {
             "defaultValue": false,
             "type": "Bool"
