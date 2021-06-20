@@ -249,7 +249,10 @@
                 "yearlySchedule": null
             },
             "type": "Object"
-        }
+        },
+        "instantRpRetentionRangeInDays": {
+            "type": "Int"
+        },
     },
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
@@ -687,11 +690,11 @@
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
             ],
             "properties": {
-                "backupManagementType": "AzureIaasVM",
-                "instantRpRetentionRangeInDays": 3,
-                "schedulePolicy": "[variables('OSPRODSchedule')]",
-                "timeZone": "[variables('timeZone')]",
-                "retentionPolicy": "[variables('OSPRODRetention')]",
+                "backupManagementType": "[parameters('OSbackupManagementType')]",
+                "instantRpRetentionRangeInDays": "[parameters('instantRpRetentionRangeInDays')]",
+                "schedulePolicy": "[parameters('OSBackupSchedule')]",
+                "timeZone": "[parameters('timeZone')]",
+                "retentionPolicy": "[parameters('OSretentionPolicyNonPRD')]",
                 "instantRPDetails": "[parameters('instantRPDetails')]"
             }
         },
