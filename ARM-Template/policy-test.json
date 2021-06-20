@@ -60,7 +60,7 @@
             "type": "Object"
         },
         "instantRPDetails": {
-            "value": {},
+            "defaultValue": {},
             "type": "Object"
         }
     },

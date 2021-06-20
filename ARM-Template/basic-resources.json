@@ -210,7 +210,7 @@
             "type": "Bool"
         },
         "instantRPDetails": {
-            "value": {},
+            "defaultValue": {},
             "type": "Object"
         }
     },
