@@ -655,38 +655,52 @@
             }
         },
         {
-            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
-            "apiVersion": "2016-12-01",
-            "name": "[concat(parameters('RecoveryServiceVaultName'), '/TestPolicy')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
-            ],
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "TestPolicy",
             "properties": {
-                "backupManagementType": "AzureIaasVM",
-                "instantRpRetentionRangeInDays": 3,
-                "schedulePolicy": {
-                    "schedulePolicyType": "SimpleSchedulePolicy",
-                    "scheduleRunFrequency": "Daily",
-                    "scheduleRunDays": null,
-                    "scheduleRunTimes": [
-                        "2021-06-19T20:00:00.000Z"
-                    ]
-                },
-                "timeZone": "[variables('timeZone')]",
-                "retentionPolicy": {
-                    "retentionPolicyType": "LongTermRetentionPolicy",
-                    "dailySchedule": {
-                        "retentionTimes": [
-                            "2021-06-19T20:00:00.000Z"
-                        ],
-                        "retentionDuration": {
-                            "count": 14,
-                            "durationType": "Days"
+                "mode": "Incremental",
+                "template": {
+                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "resources": [
+                        {
+                            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+                            "apiVersion": "2016-06-01",
+                            "name": "[concat(parameters('RecoveryServiceVaultName'), '/TestPolicy')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+                            ],
+                            "properties": {
+                                "backupManagementType": "AzureIaasVM",
+                                "instantRpRetentionRangeInDays": 3,
+                                "schedulePolicy": {
+                                    "schedulePolicyType": "SimpleSchedulePolicy",
+                                    "scheduleRunFrequency": "Daily",
+                                    "scheduleRunDays": null,
+                                    "scheduleRunTimes": [
+                                        "2021-06-19T20:00:00.000Z"
+                                    ]
+                                },
+                                "timeZone": "[variables('timeZone')]",
+                                "retentionPolicy": {
+                                    "retentionPolicyType": "LongTermRetentionPolicy",
+                                    "dailySchedule": {
+                                        "retentionTimes": [
+                                            "2021-06-19T20:00:00.000Z"
+                                        ],
+                                        "retentionDuration": {
+                                            "count": 14,
+                                            "durationType": "Days"
+                                        }
+                                    },
+                                    "weeklySchedule": null,
+                                    "monthlySchedule": null,
+                                    "yearlySchedule": null
+                                }
+                            }
                         }
-                    },
-                    "weeklySchedule": null,
-                    "monthlySchedule": null,
-                    "yearlySchedule": null
+                    ]
                 }
             }
         },
