@@ -1,4 +1,5 @@
-# SAP HANA VM Deployments
+SAP HANA VM Deployments
+=======================
 This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps including the following options: 
 
 * SLES 12 & 15
@@ -10,6 +11,31 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 * Setup Azure Monitoring Extension for SAP
 * Execution of HANA Cloud Measurement Tool (HCMT)
 * Removal of the complete deployment 
+
+
+Table of contents
+=================
+
+<!--ts-->
+   * [Deployment Framework](#Deployment Framework)
+   * [Table of contents](#table-of-contents)
+   * [Installation](#installation)
+   * [Usage](#usage)
+      * [STDIN](#stdin)
+      * [Local files](#local-files)
+      * [Remote files](#remote-files)
+      * [Multiple files](#multiple-files)
+      * [Combo](#combo)
+      * [Auto insert and update TOC](#auto-insert-and-update-toc)
+      * [GitHub token](#github-token)
+      * [TOC generation with Github Actions](#toc-generation-with-github-actions)
+   * [Tests](#tests)
+   * [Dependency](#dependency)
+   * [Docker](#docker)
+     * [Local](#local)
+     * [Public](#public)
+<!--te-->
+
 
 # Deployment Framework
 The DevOps Pipeline is used as a GUI to simplify deployments. It fetches the pipeline from the GitHub Repository. The GitHub repository itself can be most easily adapted to your landing zone specifics with Visual Studio Code on your local PC. In the grey rectangle we see the Ubuntu VM and the Azure ressources like VNET, DNS, etc. that must exist before you can start the HANA Deployment. 
