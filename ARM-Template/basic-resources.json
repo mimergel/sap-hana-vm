@@ -4,27 +4,54 @@
     "parameters": {
         "location": {
             "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
             "type": "String"
         },
         "adminUsername": {
-            "defaultValue": "mimergel",
-            "type": "String"
+            "defaultValue": "azureuser",
+            "type": "String",
+            "metadata": {
+                "description": "Enter the admin user name for the Linux & Windows VM"
+            }
+        },
+        "authenticationType": {
+            "type": "string",
+            "defaultValue": "sshPublicKey",
+            "allowedValues": [
+            "sshPublicKey"
+            ],
+            "metadata": {
+                "description": "Only SSH login on Linux for this scenario"
+            }
         },
         "adminPublicKey": {
-            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
-            "type": "SecureString"
+            "type": "securestring",
+            "metadata": {
+                "description": "Enter SSH key for the Linux VM"
+            }
         },
         "WindowsPassword": {
             "defaultValue": "*************",
-            "type": "SecureString"
+            "type": "SecureString",
+            "metadata": {
+                "description": "Enter password for the Windows SAP Admin VM"
+            }
         },
         "PrivateDNSZoneName": {
             "type": "string",
-            "defaultValue": "daftpunk.net"
+            "defaultValue": "daftpunk.net",
+            "metadata": {
+                "description": "Enter your private DNS zone"
+            }
         },
         "SetupDeploymentAgentScriptURL": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh",
+            "metadata": {
+                "description": "Enter your own script location if required"
+            }
         },
         "SAPVNETName": {
             "defaultValue": "[concat('vnet-sap-prod-',resourceGroup().location,'-001')]",
