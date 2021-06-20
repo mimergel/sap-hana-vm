@@ -232,6 +232,74 @@
             "defaultValue": "W. Europe Standard Time",
             "type": "String"
         },
+        "OSretentionPolicyPRD": {
+            "defaultValue": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": {
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                },
+                "weeklySchedule": {
+                    "daysOfTheWeek": [
+                        "Sunday"
+                    ],
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 4,
+                        "durationType": "Weeks"
+                    }
+                },
+                "monthlySchedule": {
+                    "retentionScheduleFormatType": "Weekly",
+                    "retentionScheduleDaily": null,
+                    "retentionScheduleWeekly": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "weeksOfTheMonth": [
+                            "First"
+                        ]
+                    },
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 3,
+                        "durationType": "Months"
+                    }
+                },
+                "yearlySchedule": {
+                    "retentionScheduleFormatType": "Weekly",
+                    "monthsOfYear": [
+                        "January"
+                    ],
+                    "retentionScheduleDaily": null,
+                    "retentionScheduleWeekly": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "weeksOfTheMonth": [
+                            "First"
+                        ]
+                    },
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 1,
+                        "durationType": "Years"
+                    }
+                }
+            },
+            "type": "Object"
+        },
         "OSretentionPolicyNonPRD": {
             "defaultValue": {
                 "retentionPolicyType": "LongTermRetentionPolicy",
@@ -686,13 +754,29 @@
         {
             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
             "apiVersion": "2016-06-01",
-            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNamePRD'))]",
+            "name": "[parameters('OSPolicyNamePRD')]",
             "dependsOn": [
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
             ],
             "properties": {
                 "backupManagementType": "[parameters('OSbackupManagementType')]",
                 "instantRpRetentionRangeInDays": "[parameters('instantRpRetentionRangeInDays')]",
+                "schedulePolicy": "[parameters('OSBackupSchedule')]",
+                "timeZone": "[parameters('timeZone')]",
+                "retentionPolicy": "[parameters('OSretentionPolicyPRD')]",
+                "instantRPDetails": "[parameters('instantRPDetails')]"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('OSPolicyNameNonPRD')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "[parameters('OSbackupManagementType')]",
+                "instantRpRetentionRangeInDays": 3,
                 "schedulePolicy": "[parameters('OSBackupSchedule')]",
                 "timeZone": "[parameters('timeZone')]",
                 "retentionPolicy": "[parameters('OSretentionPolicyNonPRD')]",
@@ -712,19 +796,6 @@
                 "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                 "contentVersion": "1.0.0.0",
                 "resources": [
-                        {
-                            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
-                            "apiVersion": "2016-06-01",
-                            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
-                            "properties": {
-                                "backupManagementType": "[parameters('OSbackupManagementType')]",
-                                "instantRpRetentionRangeInDays": 3,
-                                "schedulePolicy": "[parameters('OSBackupSchedule')]",
-                                "timeZone": "[parameters('timeZone')]",
-                                "retentionPolicy": "[parameters('OSretentionPolicyNonPRD')]",
-                                "instantRPDetails": "[parameters('instantRPDetails')]"
-                            }
-                        }
                     ]
                 }
             }
