@@ -15,19 +15,19 @@
             "type": "String"
         },
         "backupManagementType": {
-            "value": "AzureIaasVM",
+            "defaultValue": "AzureIaasVM",
             "type": "String"
         },
         "policyName": {
-            "value": "pol-test-template-germanywestcentral",
+            "defaultValue": "pol-test-template-germanywestcentral",
             "type": "String"
         },
         "instantRpRetentionRangeInDays": {
-            "value": 3,
+            "defaultValue": 3,
             "type": "Int"
         },
         "schedule": {
-            "value": {
+            "defaultValue": {
                 "schedulePolicyType": "SimpleSchedulePolicy",
                 "scheduleRunFrequency": "Daily",
                 "scheduleRunDays": null,
@@ -38,11 +38,11 @@
             "type": "Object"
         },
         "timeZone": {
-            "value": "UTC",
+            "defaultValue": "UTC",
             "type": "String"
         },
         "retention": {
-            "value": {
+            "defaultValue": {
                 "retentionPolicyType": "LongTermRetentionPolicy",
                 "dailySchedule": {
                     "retentionTimes": [
