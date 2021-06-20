@@ -41,7 +41,7 @@
             "type": "String"
         },
         "bastionHostName": {
-            "defaultValue": "[concat('bastion-host-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('bastion-host-',resourceGroup().location)]",
             "type": "string"
         },
         "SAPNSGName": {
