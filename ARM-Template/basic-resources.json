@@ -252,7 +252,7 @@
         },
         "instantRpRetentionRangeInDays": {
             "type": "Int"
-        },
+        }
     },
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
