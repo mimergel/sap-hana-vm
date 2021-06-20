@@ -157,7 +157,7 @@
         },
         "SAPWinAdminVirtualMachineSize": {
             "type": "String",
-            "defaultValue": "Standard_B1s"
+            "defaultValue": "Standard_B2s"
         },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbits",
