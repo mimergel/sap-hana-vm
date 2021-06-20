@@ -1,5 +1,5 @@
-SAP HANA VM Deployments
-=======================
+# SAP HANA VM Deployments
+
 This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps including the following options: 
 
 * SLES 12 & 15
@@ -13,28 +13,33 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 * Removal of the complete deployment 
 
 
-Table of contents
-=================
+# Table of contents
 
 <!--ts-->
-   * [Deployment Framework](#Deployment-Framework)
-   * [HANA VM Sizes and Storage Configurations](#HANA-VM-Sizes-and-Storage-Configurations)
-      * [Deploy only HANA VM and Storage](#Deploy-only-HANA-VM-and-Storage)
-   * [Prerequesites](#Prerequesites)
-   * [Setup the Azure DevOps Pipeline](#Setup-the-Azure-DevOps-Pipeline)
-   * [Usage](#usage)
-      * [STDIN](#stdin)
+- [Deployment Framework](#deployment-framework)
+- [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
+  * [Deploy only HANA VM and Storage](#deploy-only-hana-vm-and-storage)
+- [Prerequesites](#prerequesites)
+  * [Use this button to setup all of the above in case you need quickly a basic landing zone. Continue with 5.3](#use-this-button-to-setup-all-of-the-above-in-case-you-need-quickly-a-basic-landing-zone-continue-with-53)
+  * [5.1 Option A) With this ARM-Template](#51-option-a--with-this-arm-template)
+  * [5.2 Option B) Manually](#52-option-b--manually)
+  * [5.3 Complete the DevOps Deployment Agent Setup](#53-complete-the-devops-deployment-agent-setup)
+- [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
+- [SAP VM Deployment](#sap-vm-deployment)
+- [Todo](#todo)
+- [Troubleshooting](#troubleshooting)
+- [FAQ](#faq)
+- [Disclaimer](#disclaimer)
 <!--te-->
 
 
-Deployment Framework
-====================
+# Deployment Framework
+
 The DevOps Pipeline is used as a GUI to simplify deployments. It fetches the pipeline from the GitHub Repository. The GitHub repository itself can be most easily adapted to your landing zone specifics with Visual Studio Code on your local PC. In the grey rectangle we see the Ubuntu VM and the Azure ressources like VNET, DNS, etc. that must exist before you can start the HANA Deployment. 
 
 ![Deployment Architecture](./Documentation/Images/deployment-architecture.jpg)
 
-HANA VM Sizes and Storage Configurations
-========================================
+# HANA VM Sizes and Storage Configurations
 
 
 <table>
@@ -117,14 +122,12 @@ HANA VM Sizes and Storage Configurations
 
 Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
-Deploy only HANA VM and Storage
--------------------------------
+## Deploy only HANA VM and Storage
 
 [![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
 
 
-Prerequesites
-=============
+# Prerequesites
 
 1. [Azure Subscription](https://portal.azure.com/) 
 2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
@@ -138,20 +141,21 @@ Prerequesites
 	* DevOps Deployment Agent 
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
-		Use this button to setup all of the above in case you need quickly a basic landing zone. Continue with 5.3
+		## Use this button to setup all of the above in case you need quickly a basic landing zone. Continue with 5.3
 		
 		[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
 
 		For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 
 5. In case of an existing landing zone setup only the DevOps Deployment Agent
-	5.1 Option A) With this ARM-Template
+
+	* ## 5.1 Option A) With this ARM-Template
 	
 		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
 		Required target Subnet ID can be retrieved in cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
-	5.2 Option B) Manually 
+	* ## 5.2 Option B) Manually 
     	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key.
 		* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 		* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
@@ -159,7 +163,7 @@ Prerequesites
 			* Use this [tested agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz) as the latest version doesn't handel SLES 15 SP2 correctly
 		* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 
-	5.3 Complete the DevOps Deployment Agent Setup
+	* ## 5.3 Complete the DevOps Deployment Agent Setup
 		1. Login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 		2. Ensure the deployment agent software is automatically started as a service after each reboot: `sudo ./svc.sh install ; sudo ./svc.sh start`
@@ -167,8 +171,7 @@ Prerequesites
 		4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
-Setup the Azure DevOps Pipeline
-===============================
+# Setup the Azure DevOps Pipeline
 
 1. Fork this repository in Github or create your own new Repository based on this template
 2. Create a Project in Azure DevOps
