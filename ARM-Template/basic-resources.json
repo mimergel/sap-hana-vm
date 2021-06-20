@@ -503,12 +503,15 @@
         "VARnetworkAclsVirtualNetworkRules": [
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
+            },
+            {
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPAdminSubnetName'))]"
             }
+
         ],
         "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
         "SAPWinAdminNWInterfaceName": "[concat(parameters('SAPWinAdminVMName'), '-nic')]",
         "DevOpsDeployerOS": "Linux",
-        "SAPWinAdminOS": "Windows",
         "DevOpsDeployerCSExtension": {
             "Linux": {
             "Publisher": "Microsoft.Azure.Extensions",
