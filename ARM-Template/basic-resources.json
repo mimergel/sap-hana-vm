@@ -163,6 +163,13 @@
             "defaultValue": "stsapbits",
             "type": "String"
         },
+        "storageContainerNameSAPBits": {
+            "type": "string",
+            "defaultValue": "sapbits",
+            "metadata": {
+                "description": "Specifies the name of the blob container."
+            }
+        },
         "storageAccountNameDiagnostics": {
             "defaultValue": "stdiagnostics",
             "type": "String"
@@ -860,7 +867,17 @@
                     "defaultAction": "[parameters('networkAclsDefaultAction')]",
                     "ipRules": [],
                     "virtualNetworkRules": "[variables('VARnetworkAclsVirtualNetworkRules')]"
+                },   
+            "resources": [
+                {
+                "type": "blobServices/containers",
+                "apiVersion": "2019-06-01",
+                "name": "[concat('default/', parameters('storageContainerNameSAPBits'))]",
+                "dependsOn": [
+                    "[variables('storageAccountNameSAPBits')]"
+                ]
                 }
+            ]
             }
         },
         {
