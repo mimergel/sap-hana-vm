@@ -108,15 +108,18 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
 3. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
 4. Basic Resources
-	* VNET + Subnet
+	* VNET + Subnets + NSGs
 	* Recovery Service Vault with Policies for HANA & OS Backups, "HANA-Non-PRD", "HANA-PRD", "OS-Non-PRD", "OS-PRD"
-	* Storage Account (For SAP binaries, Scripts & Boot Diagnostics)
-	* Private DNS Zone (Makes everything easier)
-	* For production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
+	* Storage Accounts (For SAP binaries, Scripts & Boot Diagnostics)
+	* Private DNS Zone
+	* Bastion Host
+	* DevOps Deployment Agent 
+
+	For production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 
 	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
 
-5. Setup your own DevOps Deployment Agent within the same or peered VNET 	
+5. In case an existing landing zone will be used setup only your own DevOps Deployment Agent within the same or peered VNET
 	* Option A) With this ARM-Template
 	
 		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
