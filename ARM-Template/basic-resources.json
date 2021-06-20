@@ -754,7 +754,7 @@
         {
             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
             "apiVersion": "2016-06-01",
-            "name": "[parameters('OSPolicyNamePRD')]",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNamePRD'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
             ],
@@ -770,7 +770,7 @@
         {
             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
             "apiVersion": "2016-06-01",
-            "name": "[parameters('OSPolicyNameNonPRD')]",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
             ],
