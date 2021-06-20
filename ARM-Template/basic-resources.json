@@ -216,6 +216,7 @@
         "shortlocation": "[take(resourceGroup().location,10)]",
         "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
         "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
+        "vmRegistration": true,
         "VARnetworkAclsVirtualNetworkRules": [
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
@@ -752,7 +753,7 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
             ],
             "properties": {
-                "registrationEnabled": "[parameters('vmRegistration')]",
+                "registrationEnabled": "[variables('vmRegistration')]",
                 "virtualNetwork": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
                 }
