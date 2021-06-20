@@ -136,6 +136,14 @@
             "type": "String",
             "defaultValue": "Standard_B1s"
         },
+        "SAPWinAdminPatchMode": {
+            "type": "String",
+            "defaultValue": "AutomaticByOS"
+        },
+        "SAPWinAdminEnableHotpatching": {
+            "type": "Bool",
+            "defaultValue": "false"
+        },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbits",
             "type": "String"
@@ -1080,8 +1088,8 @@
                         "enableAutomaticUpdates": true,
                         "provisionVmAgent": true,
                         "patchSettings": {
-                            "enableHotpatching": "AutomaticByOS",
-                            "patchMode": "false"
+                            "enableHotpatching": "[parameters('SAPWinAdminPatchMode')]",
+                            "patchMode": "[parameters('SAPWinAdminEnableHotpatching')]"
                         }
                     }
                 },
