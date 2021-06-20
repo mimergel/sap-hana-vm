@@ -18,7 +18,8 @@ Table of contents
 
 <!--ts-->
    * [Deployment Framework](#Deployment-Framework)
-   * [Table of contents](#table-of-contents)
+   * [HANA VM Sizes and Storage Configurations](#HANA-VM-Sizes-and-Storage-Configurations)
+      * [Deploy only HANA VM & Storage](#Deploy-only-HANA-VM-&-Storage)
    * [Installation](#installation)
    * [Usage](#usage)
       * [STDIN](#stdin)
@@ -43,11 +44,8 @@ The DevOps Pipeline is used as a GUI to simplify deployments. It fetches the pip
 
 ![Deployment Architecture](./Documentation/Images/deployment-architecture.jpg)
 
-## VM Sizes and Storage Configurations
-
-For just infrastructure deployments (VM+Storage) without any additional steps you can use this button:
-	
-[![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
+HANA VM Sizes and Storage Configurations
+========================================
 
 
 <table>
@@ -129,6 +127,13 @@ For just infrastructure deployments (VM+Storage) without any additional steps yo
 </table>
 
 Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
+
+Deploy only HANA VM & Storage
+-----------------------------
+[![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
+
+
+
 
 ## Prerequesites for the full deployment experience with Azure DevOps
 1. [Azure Subscription](https://portal.azure.com/) 
