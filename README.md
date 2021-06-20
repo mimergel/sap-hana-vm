@@ -20,21 +20,10 @@ Table of contents
    * [Deployment Framework](#Deployment-Framework)
    * [HANA VM Sizes and Storage Configurations](#HANA-VM-Sizes-and-Storage-Configurations)
       * [Deploy only HANA VM and Storage](#Deploy-only-HANA-VM-and-Storage)
-   * [Installation](#installation)
+   * [Prerequesites](#Prerequesites)
+   * [Setup the Azure DevOps Pipeline](#Setup-the-Azure-DevOps-Pipeline)
    * [Usage](#usage)
       * [STDIN](#stdin)
-      * [Local files](#local-files)
-      * [Remote files](#remote-files)
-      * [Multiple files](#multiple-files)
-      * [Combo](#combo)
-      * [Auto insert and update TOC](#auto-insert-and-update-toc)
-      * [GitHub token](#github-token)
-      * [TOC generation with Github Actions](#toc-generation-with-github-actions)
-   * [Tests](#tests)
-   * [Dependency](#dependency)
-   * [Docker](#docker)
-     * [Local](#local)
-     * [Public](#public)
 <!--te-->
 
 
@@ -134,9 +123,9 @@ Deploy only HANA VM and Storage
 [![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
 
 
+Prerequesites
+=============
 
-
-## Prerequesites for the full deployment experience with Azure DevOps
 1. [Azure Subscription](https://portal.azure.com/) 
 2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
 3. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
@@ -178,7 +167,9 @@ Deploy only HANA VM and Storage
 		4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
-## Deploy the HANA VM including all subsequent steps via Azure DevOps
+Setup the Azure DevOps Pipeline
+===============================
+
 1. Fork this repository in Github or create your own new Repository based on this template
 2. Create a Project in Azure DevOps
 3. In the DevOps Pipeline Area
