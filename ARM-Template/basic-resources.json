@@ -251,6 +251,7 @@
             "type": "Object"
         },
         "instantRpRetentionRangeInDays": {
+            "defaultValue": 3,
             "type": "Int"
         }
     },
