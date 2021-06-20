@@ -655,7 +655,7 @@
         },
         {
             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
-            "apiVersion": "2016-06-01",
+            "apiVersion": "2016-12-01",
             "name": "[concat(parameters('RecoveryServiceVaultName'), '/TestPolicy')]",
             "dependsOn": [
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
