@@ -22,7 +22,7 @@
             "type": "string",
             "defaultValue": "daftpunk.net"
         },
-        "Script_URL": {
+        "SetupDeploymentAgentScriptURL": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
         },
@@ -487,7 +487,7 @@
             "Publisher": "Microsoft.Azure.Extensions",
             "Name": "CustomScript",
             "Version": "2.0",
-            "script": "[parameters('Script_URL')]",
+            "script": "[parameters('SetupDeploymentAgentScriptURL')]",
             "scriptCall": "[concat('sh setup-deployment-agent.sh ', parameters('adminUsername'))]"
             }
         }
