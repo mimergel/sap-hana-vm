@@ -6,7 +6,7 @@ Table of contents
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
   * [Deploy only a HANA VM and Storage via ARM](#deploy-only-a-hana-vm-and-storage-via-arm)
-- [Prerequesites](#prerequesites)
+- [Prerequesites for DevOps Deployments](#Prerequesites-for-DevOps-Deployments)
     + [Deploy Basic Resources](#deploy-basic-resources)
   * [5.1 Option A) With this ARM-Template](#51-option-a--with-this-arm-template)
   * [5.2 Option B) Manually](#52-option-b--manually)
@@ -128,7 +128,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 [![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
 
 
-# Prerequesites
+# Prerequesites for DevOps Deployments
 
 1. [Azure Subscription](https://portal.azure.com/) 
 2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
