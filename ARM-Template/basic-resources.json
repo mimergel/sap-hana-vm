@@ -6,6 +6,22 @@
             "defaultValue": "[resourceGroup().location]",
             "type": "String"
         },
+        "adminUsername": {
+            "defaultValue": "mimergel",
+            "type": "String"
+        },
+        "adminPublicKey": {
+            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
+            "type": "SecureString"
+        },
+        "WindowsPassword": {
+            "defaultValue": "*************",
+            "type": "SecureString"
+        },
+        "Script_URL": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
+        },
         "SAPVNETName": {
             "defaultValue": "[concat('vnet-sap-prod-',resourceGroup().location,'-001')]",
             "type": "String"
@@ -96,24 +112,29 @@
             "type": "String",
             "defaultValue": "devopsdeployer"
         },
+        "SAPWinAdminVMName": {
+            "type": "String",
+            "defaultValue": "sapwinadmin"
+        },
+        "SAPWinAdminComputerName": {
+            "type": "String",
+            "defaultValue": "sapwinadmin"
+        },
         "DevOpsDeployerosDiskType": {
             "type": "String",
             "defaultValue": "Premium_LRS"
         },
-        "DevOpsDeployerosvirtualMachineSize": {
+        "DevOpsDeployerVirtualMachineSize": {
             "type": "String",
             "defaultValue": "Standard_B1s"
         },
-        "adminUsername": {
+        "SAPWinAdminDiskType": {
             "type": "String",
-            "defaultValue": "azureuser"
+            "defaultValue": "Premium_LRS"
         },
-        "adminPublicKey": {
-            "type": "SecureString"
-        },
-        "Script_URL": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
+        "SAPWinAdminVirtualMachineSize": {
+            "type": "String",
+            "defaultValue": "Standard_B1s"
         },
         "storageAccountNameSAPBits": {
             "defaultValue": "stsapbits",
@@ -484,7 +505,9 @@
             }
         ],
         "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
+        "SAPWinAdminNWInterfaceName": "[concat(parameters('SAPWinAdminVMName'), '-nic')]",
         "DevOpsDeployerOS": "Linux",
+        "SAPWinAdminOS": "Windows",
         "DevOpsDeployerCSExtension": {
             "Linux": {
             "Publisher": "Microsoft.Azure.Extensions",
@@ -928,7 +951,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('DevOpsDeployerosvirtualMachineSize')]"
+                    "vmSize": "[parameters('DevOpsDeployerVirtualMachineSize')]"
                 },
                 "storageProfile": {
                     "osDisk": {
@@ -993,12 +1016,78 @@
                     "commandToExecute": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].scriptCall]"
                 }
             }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "name": "[variables('SAPWinAdminNWInterfaceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "sapwinadminipconfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('SAPAdminSubnetName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }            
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2021-03-01",
+            "name": "[parameters('SAPWinAdminVMName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('SAPWinAdminNWInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('SAPWinAdminVirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('SAPWinAdminDiskType')]"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsDesktop",
+                        "offer": "Windows-10",
+                        "sku": "21h1-pro",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('SAPWinAdminNWInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('SAPWinAdminComputerName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('WindowsPassword')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": true,
+                        "provisionVmAgent": true,
+                        "patchSettings": {
+                            "enableHotpatching": "AutomaticByOS",
+                            "patchMode": "false"
+                        }
+                    }
+                },
+                "licenseType": "Windows_Client"
+            }
         }
     ],
-    "outputs": {
-        "networkAclsVirtualNetworkRules": {
-        "type": "Array",
-        "value": "[variables('VARnetworkAclsVirtualNetworkRules')]"
-        }
-    }
+    "outputs": {}
 }
