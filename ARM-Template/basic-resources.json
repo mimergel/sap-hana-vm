@@ -69,19 +69,19 @@
             "defaultValue": false
         },
         "OSPolicyNamePRD": {
-            "defaultValue": "OS-PROD",
+            "defaultValue": "[concat('pol-sapos-prod-',resourceGroup().location)]",
             "type": "string"
         },
         "OSPolicyNameNonPRD": {
-            "defaultValue": "OS-Non-PROD",
+            "defaultValue": "[concat('pol-sapos-nonprod-',resourceGroup().location)]",
             "type": "string"
         },
         "HANAPolicyNamePRD": {
-            "defaultValue": "HANA-PROD",
+            "defaultValue": "[concat('pol-saphana-prod-',resourceGroup().location)]",
             "type": "string"
         },
         "HANAPolicyNameNonPRD": {
-            "defaultValue": "HANA-Non-PROD",
+            "defaultValue": "[concat('pol-saphana-nonprod-',resourceGroup().location)]",
             "type": "string"
         },
         "PrivateDNSName": {
