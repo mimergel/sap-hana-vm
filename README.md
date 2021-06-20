@@ -1,24 +1,11 @@
-# SAP HANA VM Deployments
-
-This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps including the following options: 
-
-* SLES 12 & 15
-* RHEL 7 & 8 
-* VM sizes from 128GB to 12TB
-* OS Preparation with required patches and configurations according to relevant SAP notes
-* Backup Integration into an Azure Recovery Service Vault including execution of initial OS & HANA backups
-* Selective disk backup, which excludes hana log & data disks from the OS backups
-* Setup Azure Monitoring Extension for SAP
-* Execution of HANA Cloud Measurement Tool (HCMT)
-* Removal of the complete deployment 
-
-
-# Table of contents
+Table of contents
+=================
 
 <!--ts-->
+- [SAP HANA VM Deployments](#SAP-HANA-VM-Deployments)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
-  * [Deploy only HANA VM and Storage](#deploy-only-hana-vm-and-storage)
+  * [Deploy only a HANA VM and Storage via ARM](#deploy-only-a-hana-vm-and-storage-via-arm)
 - [Prerequesites](#prerequesites)
     + [Deploy Basic Resources](#deploy-basic-resources)
   * [5.1 Option A) With this ARM-Template](#51-option-a--with-this-arm-template)
@@ -33,6 +20,19 @@ This repository can be used to deploy a SAP HANA Database 2.0 with Azure DevOps 
 - [Disclaimer](#disclaimer)
 <!--te-->
 
+# SAP HANA VM Deployments
+
+This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps including the following options: 
+
+* SLES 12 & 15
+* RHEL 7 & 8 
+* VM sizes from 128GB to 12TB
+* OS Preparation with required patches and configurations according to relevant SAP notes
+* Backup Integration into an Azure Recovery Service Vault including execution of initial OS & HANA backups
+* Selective disk backup, which excludes hana log & data disks from the OS backups
+* Setup Azure Monitoring Extension for SAP
+* Execution of HANA Cloud Measurement Tool (HCMT)
+* Removal of the complete deployment 
 
 # Deployment Framework
 
@@ -123,7 +123,7 @@ The DevOps Pipeline is used as a GUI to simplify deployments. It fetches the pip
 
 Note: Eds_v4 Series use premium disk without write accellerations, therefore this is recommended for Non-PRD envrionments only
 
-## Deploy only HANA VM and Storage
+## Deploy only a HANA VM and Storage via ARM
 
 [![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
 
