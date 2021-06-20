@@ -424,132 +424,9 @@
                 }
             ],
             "type": "Array"
-        }
-    },
-    "variables": {
-        "resourcegroupId": "[resourceGroup().id]",
-        "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
-        "shortlocation": "[take(resourceGroup().location,10)]",
-        "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
-        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
-        "vmRegistration": true,
-        "VARnetworkAclsVirtualNetworkRules": [
-            {
-                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
-            }
-        ],
-        "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
-        "DevOpsDeployerOS": "Linux",
-        "DevOpsDeployerCSExtension": {
-            "Linux": {
-            "Publisher": "Microsoft.Azure.Extensions",
-            "Name": "CustomScript",
-            "Version": "2.0",
-            "script": "[parameters('Script_URL')]",
-            "scriptCall": "[concat('sh setup-deployment-agent.sh ', parameters('adminUsername'))]"
-            }
-        },
-        "hanabackupsettings": {
-            "timeZone": "W. Europe Standard Time",
-            "issqlcompression": false,
-            "isCompression": false
-        },
-        "HANAsubProtectionPolicyListPRD": {
-            "value": [
-                {
-                    "policyType": "Full",
-                    "schedulePolicy": {
-                        "schedulePolicyType": "SimpleSchedulePolicy",
-                        "scheduleRunFrequency": "Daily",
-                        "scheduleRunDays": null,
-                        "scheduleRunTimes": [
-                            "2021-06-19T21:00:00.000Z"
-                        ]
-                    },
-                    "retentionPolicy": {
-                        "retentionPolicyType": "LongTermRetentionPolicy",
-                        "dailySchedule": {
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 14,
-                                "durationType": "Days"
-                            }
-                        },
-                        "weeklySchedule": {
-                            "daysOfTheWeek": [
-                                "Sunday"
-                            ],
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 4,
-                                "durationType": "Weeks"
-                            }
-                        },
-                        "monthlySchedule": {
-                            "retentionScheduleFormatType": "Weekly",
-                            "retentionScheduleDaily": null,
-                            "retentionScheduleWeekly": {
-                                "daysOfTheWeek": [
-                                    "Sunday"
-                                ],
-                                "weeksOfTheMonth": [
-                                    "First"
-                                ]
-                            },
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 3,
-                                "durationType": "Months"
-                            }
-                        },
-                        "yearlySchedule": {
-                            "retentionScheduleFormatType": "Weekly",
-                            "monthsOfYear": [
-                                "January"
-                            ],
-                            "retentionScheduleDaily": null,
-                            "retentionScheduleWeekly": {
-                                "daysOfTheWeek": [
-                                    "Sunday"
-                                ],
-                                "weeksOfTheMonth": [
-                                    "First"
-                                ]
-                            },
-                            "retentionTimes": [
-                                "2021-06-19T21:00:00.000Z"
-                            ],
-                            "retentionDuration": {
-                                "count": 1,
-                                "durationType": "Years"
-                            }
-                        }
-                    }
-                },
-                {
-                    "policyType": "Log",
-                    "schedulePolicy": {
-                        "schedulePolicyType": "LogSchedulePolicy",
-                        "scheduleFrequencyInMins": 15
-                    },
-                    "retentionPolicy": {
-                        "retentionPolicyType": "SimpleRetentionPolicy",
-                        "retentionDuration": {
-                            "count": 14,
-                            "durationType": "Days"
-                        }
-                    }
-                }
-            ]
         },
         "HANAsubProtectionPolicyListNonPRD": {
-            "value": [
+            "defaultValue": [
                 {
                     "policyType": "Full",
                     "schedulePolicy": {
@@ -590,7 +467,32 @@
                         }
                     }
                 }
-            ]
+            ],
+            "type": "Array"
+        }
+    },
+    "variables": {
+        "resourcegroupId": "[resourceGroup().id]",
+        "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
+        "shortlocation": "[take(resourceGroup().location,10)]",
+        "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
+        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
+        "vmRegistration": true,
+        "VARnetworkAclsVirtualNetworkRules": [
+            {
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
+            }
+        ],
+        "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
+        "DevOpsDeployerOS": "Linux",
+        "DevOpsDeployerCSExtension": {
+            "Linux": {
+            "Publisher": "Microsoft.Azure.Extensions",
+            "Name": "CustomScript",
+            "Version": "2.0",
+            "script": "[parameters('Script_URL')]",
+            "scriptCall": "[concat('sh setup-deployment-agent.sh ', parameters('adminUsername'))]"
+            }
         }
     },
     "resources": [
@@ -783,23 +685,6 @@
             }
         },
         {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "BackupPoliciesDeployments",
-            "dependsOn": [
-                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "resources": [
-                    ]
-                }
-            }
-        },
-        {
             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
             "apiVersion": "2016-06-01",
             "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('HANAPolicyNamePRD'))]",
@@ -809,8 +694,8 @@
             "properties": {
                 "backupManagementType": "AzureWorkload",
                 "workloadType": "SAPHanaDatabase",
-                "settings": "[variables('hanabackupsettings')]",
-                "subProtectionPolicy": "[variables('HANAsubProtectionPolicyListPRD')]"
+                "settings": "[parameters('hanabackupsettings')]",
+                "subProtectionPolicy": "[parameters('HANAsubProtectionPolicyListPRD')]"
             }
         },
         {
@@ -823,8 +708,8 @@
             "properties": {
                 "backupManagementType": "AzureWorkload",
                 "workloadType": "SAPHanaDatabase",
-                "settings": "[variables('hanabackupsettings')]",
-                "subProtectionPolicy": "[variables('HANAsubProtectionPolicyListNonPRD')]"
+                "settings": "[parameters('hanabackupsettings')]",
+                "subProtectionPolicy": "[parameters('HANAsubProtectionPolicyListNonPRD')]"
             }
         },
         {
