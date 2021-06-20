@@ -172,7 +172,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 		2. Ensure the deployment agent software is automatically started as a service after each reboot: `sudo ./svc.sh install ; sudo ./svc.sh start`
 		3. `az login`. You might want to use a [service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
-		4. Save your private ssh-key in ~.ssh/id_rsa (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
+		4. Save your private ssh-key in `~/.ssh/id_rsa` (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
 # Setup the Azure DevOps Pipeline
