@@ -114,7 +114,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Private DNS Zone (Makes everything easier)
 	* For production workloads please consider using the [Microsoft Cloud Adoption Framework for SAP on Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)
 
-	[![Deploy basic resources to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) Note: Policies not yet working and this includes as well the DevOps Deployer. Proceed to step "Complete the DevOps Deployment Agent Setup"
+	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
 
 5. Setup your own DevOps Deployment Agent within the same or peered VNET 	
 	* Option A) With this ARM-Template
