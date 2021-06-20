@@ -698,7 +698,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[parameters('OSPolicyNameNonPRD')]",
+            "name": "BackupPoliciesDeployments",
             "dependsOn": [
                 "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
             ],
