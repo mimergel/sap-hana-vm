@@ -208,10 +208,6 @@
         "bastionEnabled": {
             "defaultValue": false,
             "type": "Bool"
-        },
-        "instantRPDetails": {
-            "defaultValue": {},
-            "type": "Object"
         }
     },
     "variables": {
@@ -221,6 +217,7 @@
         "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
         "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
         "vmRegistration": true,
+        "instantRPDetails": {},
         "VARnetworkAclsVirtualNetworkRules": [
             {
                 "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
@@ -702,7 +699,7 @@
                                     "monthlySchedule": null,
                                     "yearlySchedule": null
                                 },
-                                "instantRPDetails": "[parameters('instantRPDetails')]"
+                                "instantRPDetails": "[variables('instantRPDetails')]"
                             }
                         }
                     ]
