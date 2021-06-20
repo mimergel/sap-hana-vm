@@ -657,7 +657,10 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "TestPolicy",
+            "name": "[parameters('OSPolicyNameNonPRD')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -667,10 +670,7 @@
                         {
                             "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
                             "apiVersion": "2016-06-01",
-                            "name": "[concat(parameters('RecoveryServiceVaultName'), '/TestPolicy')]",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
-                            ],
+                            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
                             "properties": {
                                 "backupManagementType": "AzureIaasVM",
                                 "instantRpRetentionRangeInDays": 3,
@@ -702,22 +702,6 @@
                         }
                     ]
                 }
-            }
-        },
-        {
-            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
-            "apiVersion": "2016-06-01",
-            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
-            ],
-            "properties": {
-                "backupManagementType": "AzureIaasVM",
-                "instantRpRetentionRangeInDays": 5,
-                "schedulePolicy": "[variables('OSNonPRODSchedule')]",
-                "timeZone": "[variables('timeZone')]",
-                "retentionPolicy": "[variables('OSNonPRODRetention')]",
-                "instantRPDetails": {}
             }
         },
         {
