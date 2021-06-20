@@ -208,6 +208,10 @@
         "bastionEnabled": {
             "defaultValue": false,
             "type": "Bool"
+        },
+        "instantRPDetails": {
+            "value": {},
+            "type": "Object"
         }
     },
     "variables": {
@@ -697,7 +701,8 @@
                                     "weeklySchedule": null,
                                     "monthlySchedule": null,
                                     "yearlySchedule": null
-                                }
+                                },
+                                "instantRPDetails": "[parameters('instantRPDetails')]"
                             }
                         }
                     ]

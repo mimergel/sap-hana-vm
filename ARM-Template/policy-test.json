@@ -1,0 +1,82 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vaultSubscriptionID": {
+            "defaultValue": "35b67b4c-4fd4-4f0b-997c-bbb82032d45d",
+            "type": "String"
+        },
+        "vaultResourceGroup": {
+            "defaultValue": "HANABackups",
+            "type": "String"
+        },
+        "vaultName": {
+            "defaultValue": "hanabackupvault",
+            "type": "String"
+        },
+        "backupManagementType": {
+            "value": "AzureIaasVM",
+            "type": "String"
+        },
+        "policyName": {
+            "value": "pol-test-template-germanywestcentral",
+            "type": "String"
+        },
+        "instantRpRetentionRangeInDays": {
+            "value": 3,
+            "type": "Int"
+        },
+        "schedule": {
+            "value": {
+                "schedulePolicyType": "SimpleSchedulePolicy",
+                "scheduleRunFrequency": "Daily",
+                "scheduleRunDays": null,
+                "scheduleRunTimes": [
+                    "2021-06-19T20:00:00.000Z"
+                ]
+            },
+            "type": "Object"
+        },
+        "timeZone": {
+            "value": "UTC",
+            "type": "String"
+        },
+        "retention": {
+            "value": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": {
+                    "retentionTimes": [
+                        "2021-06-19T20:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                },
+                "weeklySchedule": null,
+                "monthlySchedule": null,
+                "yearlySchedule": null
+            },
+            "type": "Object"
+        },
+        "instantRPDetails": {
+            "value": {},
+            "type": "Object"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-12-01",
+            "name": "[concat(parameters('vaultName'), '/', parameters('policyName'))]",
+            "properties": {
+                "backupManagementType": "[parameters('backupManagementType')]",
+                "instantRpRetentionRangeInDays": "[parameters('instantRpRetentionRangeInDays')]",
+                "schedulePolicy": "[parameters('schedule')]",
+                "timeZone": "[parameters('timeZone')]",
+                "retentionPolicy": "[parameters('retention')]",
+                "instantRPDetails": "[parameters('instantRPDetails')]"
+            }
+        }
+    ]
+}

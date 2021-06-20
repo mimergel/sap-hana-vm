@@ -109,7 +109,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 3. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
 4. Basic Resources
 	* VNET + Subnets + NSGs
-	* Recovery Service Vault with Policies for HANA & OS Backups, "HANA-Non-PRD", "HANA-PRD", "OS-Non-PRD", "OS-PRD"
+	* Recovery Service Vault with Policies for HANA & OS Backups
 	* Storage Accounts (For SAP binaries, Scripts & Boot Diagnostics)
 	* Private DNS Zone
 	* Bastion Host
