@@ -199,15 +199,17 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
 	![Variables](./Documentation/Images/variables.jpg)
 
+
 # Run the Azure DevOps Pipeline
 
+Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 * Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)
 * Provide inputs as required ![Pipeline Inputs](./Documentation/Images/pipeline-inputs.jpg)
 
 
 # SAP VM Deployment
-This is work in progress. 
-Right now just empty VMs including file systems can be deployed: 
+Use this ARM template to deploy the SAP Application VMs.
+Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
 
 [![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-vm.json) 
 
