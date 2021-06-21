@@ -28,6 +28,7 @@ This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps inclu
 * RHEL 7 & 8 
 * VM sizes from 128GB to 12TB
 * OS Preparation with required patches and configurations according to relevant SAP notes
+* HANA 2.0 Installation
 * Backup Integration into an Azure Recovery Service Vault including execution of initial OS & HANA backups
 * Selective disk backup, which excludes hana log & data disks from the OS backups
 * Setup Azure Monitoring Extension for SAP
