@@ -26,7 +26,10 @@ sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
 
 # This Ansible setting is required to prevent ssh prompts during first logins
-echo "host_key_checking = False" >> /etc/ansible/ansible.cfg
+#host_key_checking = False
+sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
+sed -i 's/##allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
+
 
 # Install Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
