@@ -228,6 +228,15 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 * The pipeline fails in step "Prepare OS
 	* ~/.ssh/id_rsa file is missing or has wrong permissions.
 	* Add `host_key_checking = False` to the ansible configuration file `/etc/ansible/ansible.cfg`. This will prevent ssh prompts during first logins.
+* Ansible stages do not run
+	* Try to run the Ansible command on the deployment agent manually
+	* Therefore clone the code on the deployment agent: 
+		`git clone https://github.com/<your-git-user-id>/sap-hana-vm.git`
+		Add the fqdn of the VM into the file `/etc/ansible/hosts`
+		`cd sap-hana-vm`
+		Execute: `ansible-playbook -vvvv Ansible/os-settings_playbook.yml`
+		Analyse the more detailed debugging information with the option "-vvvv"
+		
 
 
 # FAQ
