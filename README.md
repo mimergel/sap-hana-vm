@@ -14,6 +14,7 @@ Table of contents
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
 - [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
 - [SAP VM Deployment](#sap-vm-deployment)
+- [HANA Cloud Measuremnt Results (HCMT)](#HANA-Cloud-Measuremnt-Results-(HCMT))
 - [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
@@ -144,12 +145,12 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
 
-	## Deploy Basic Resources
-	Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.iii
+		##### Deploy Basic Resources
+		Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.iii
 
-	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
+		[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
 
-	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
+		**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
 
 5. Setup the Deployment Agent in an existing landing zone
