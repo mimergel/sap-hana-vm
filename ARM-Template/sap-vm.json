@@ -165,6 +165,7 @@
             "disks": [
               {
                 "lun": 0,
+                "name": "[concat(variables('vmName'), '-sapexe-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 128
@@ -180,6 +181,7 @@
             "disks": [
               {
                 "lun": 0,
+                "name": "[concat(variables('vmName'), '-sapexe-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 256
@@ -195,6 +197,7 @@
             "disks": [
               {
                 "lun": 0,
+                "name": "[concat(variables('vmName'), '-sapexe-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 512
