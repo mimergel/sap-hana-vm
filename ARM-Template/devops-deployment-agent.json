@@ -35,7 +35,7 @@
         },
         "Script_URL": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh"
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/setup-deployment-agent.sh"
         },
         "Owner": {
             "type": "string",
