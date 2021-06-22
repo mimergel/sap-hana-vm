@@ -14,7 +14,7 @@ Table of contents
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
 - [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
 - [SAP VM Deployment](#sap-vm-deployment)
-- [HANA Cloud Measuremnt Results (HCMT)](#HANA-Cloud-Measuremnt-Results-(HCMT))
+- [HANA Cloud Measuremnt Results (HCMT)](#HANA-Cloud-Measuremnt-Results--HCMT-)
 - [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
@@ -145,22 +145,19 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
 	#### Deploy the Basic Resources
+	Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.iii
 
-		Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.iii
+	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
 
-
-		[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
-
-
-		**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
+	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
 5. Setup the Deployment Agent in an existing landing zone
-	1. Option A) With this ARM-Template	
+	1. #### Option A) With this ARM-Template	
 		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
 		Required target Subnet ID can be retrieved in cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
-	2. Option B) Manually 
+	2. #### Option B) Manually 
     	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key.
 		* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 		* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
@@ -168,7 +165,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 		Use this [tested agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz) as the latest version doesn't handel SLES 15 SP2 correctly
 		* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 
-	3. Finalize the Deployment Agent Setup
+	3. #### Finalize the Deployment Agent Setup
 		* Login with your ssh user and `cd devopsagent ; ./config.sh` -> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 		* Ensure the deployment agent software is automatically started as a service after each reboot: `sudo ./svc.sh install ; sudo ./svc.sh start`
