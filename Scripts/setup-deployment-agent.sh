@@ -2,7 +2,7 @@
 
 # Install Powershell
 # Update the list of packages
-sudo apt-get update
+sudo apt-get update -y
 # Install pre-requisite packages.
 sudo apt-get install -y wget apt-transport-https software-properties-common
 # Download the Microsoft repository GPG keys
@@ -10,7 +10,7 @@ wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-pr
 # Register the Microsoft repository GPG keys
 sudo dpkg -i packages-microsoft-prod.deb
 # Update the list of products
-sudo apt-get update
+sudo apt-get update -y
 # Enable the "universe" repositories
 sudo add-apt-repository universe
 # Install PowerShell
@@ -20,10 +20,10 @@ sudo apt-get install -y powershell
 
 
 # Install Ansible
-sudo apt update
-sudo apt install software-properties-common
+sudo apt update -y
+sudo apt install -y software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
-sudo apt install ansible
+sudo apt install -y ansible
 
 # Install Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -43,7 +43,7 @@ echo "sudo ./svc.sh install"
 echo "sudo ./svc.sh start"
 echo "##################################################################################"
 echo "To Do 2."
-echo "Create a service principle and login via az login"
+echo "Create a service principle or login via az login"
 echo "##################################################################################"
 echo "To Do 3."
 echo "put your private ssh-key in ~.ssh/id_rsa with 600 file permissions"

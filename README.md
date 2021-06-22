@@ -230,6 +230,8 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 # FAQ
 * Where is the HCMT result?
 	- \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
+	- Upload the test results [here](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html)
+	- More information on HCMT [here](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/)
 * How do I create the service principle?
 	- Via CLI: https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli 
 	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
