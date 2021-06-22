@@ -13,7 +13,7 @@ Table of contents
   * [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
 - [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
-- [HANA Cloud Measurement Test Results (HCMT)](#hana-cloud-measurement-test-results--hcmt-)
+- [HANA Cloud Measurement Test Results)](#hana-cloud-measurement-test-results)
 - [SAP VM Deployment](#sap-vm-deployment)
 - [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
@@ -200,7 +200,7 @@ Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 * Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)
 * Provide inputs as required ![Pipeline Inputs](./Documentation/Images/hana-pipeline-inputs.jpg)
 
-# HANA Cloud Measurement Test Results (HCMT)
+# HANA Cloud Measurement Test Results
 * The result will be placed after a couple of hours here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * Upload the test results here: [https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html) 
 * More information on HCMT [in this blog](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/)
@@ -218,7 +218,6 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 * HA Cluster Setup 
 * HANA Scale-Out Deployments
 
-
 # Troubleshooting
 * ARM deployment fails because the URL to the diskConfig.sh Script is not reachable from the deployed VM. In this case login to the VM and try with wget to download the script. Use your own container in your storage account and ensure it's reachable from VMs in the target subnet
 * During Stage "Prepare_OS" ssh connection must work from the deployment agent to the HANA VM. In case of troubles try to connect from the agent maually via ssh and solve the issue. Connection must work without interactive ssh prompts. You might need to set `StrictHostKeyChecking no` in `~/.ssh/config` when deploying VMs with different names to the same IP 
@@ -235,9 +234,7 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 		* Execute: `ansible-playbook -vvvv Ansible/os-settings_playbook.yml`
 		* Analyse the now more detailed debugging information due to option "-vvvv"
 * Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user
-	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`
-		
-
+	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`	
 
 # FAQ
 * Where is the HCMT result?
@@ -247,7 +244,6 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 * How do I create the service principle?
 	- Via CLI: https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli 
 	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
-
 
 # Disclaimer
 THIS REPOSITORY AND ALL IT'S CONTENT IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
