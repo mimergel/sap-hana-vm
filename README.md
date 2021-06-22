@@ -181,7 +181,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 3. In the DevOps Pipeline Area
 	* Create a "New Pipeline" 
 	* Where is your code? => "GitHub" 
-	* Select a repository => "<git-user>/sap-hana-vm" 
+	* Select a repository => "\<git-user\>/sap-hana-vm" 
 	* Configure your pipeline => "Existing Azure Pipeline YAML file"
 	* Branch "Main" 
 	* Path "/DevOpsPipeline/hana-vm.yml" 
@@ -215,7 +215,7 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 
 # HANA Cloud Measuremnt Results (HCMT)
 * The result will be placed after a couple of hours here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
-* Upload the test results [here](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html)
+* Upload the test results here: [https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html) 
 * More information on HCMT [here](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/)
 
 ![Example:](./Documentation/Images/hcmt-result.jpg)
