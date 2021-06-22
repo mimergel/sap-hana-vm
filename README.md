@@ -229,11 +229,11 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 * Ansible stages do not run
 	* Try to run the Ansible command on the deployment agent manually
 	* Therefore clone the code on the deployment agent: 
-		`git clone https://github.com/<your-git-user-id>/sap-hana-vm.git`
-		Add the fqdn of the VM into the file `/etc/ansible/hosts`
-		`cd sap-hana-vm`
-		Execute: `ansible-playbook -vvvv Ansible/os-settings_playbook.yml`
-		Analyse the more detailed debugging information with the option "-vvvv"
+		* `git clone https://github.com/<your-git-user-id>/sap-hana-vm.git`
+		* Add the fqdn of the VM into the file `/etc/ansible/hosts`
+		* `cd sap-hana-vm`
+		* Execute: `ansible-playbook -vvvv Ansible/os-settings_playbook.yml`
+		* Analyse the now more detailed debugging information due to option "-vvvv"
 * Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user
 	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`
 		
