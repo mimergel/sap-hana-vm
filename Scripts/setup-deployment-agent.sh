@@ -25,6 +25,9 @@ sudo apt install -y software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
 
+# This Ansible setting is required to prevent ssh prompts during first logins
+echo "host_key_checking = False" >> /etc/ansible/ansible.cfg
+
 # Install Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 # create a service principle and perform az login
