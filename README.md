@@ -216,9 +216,9 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 # HANA Cloud Measuremnt Results (HCMT)
 * The result will be placed after a couple of hours here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * Upload the test results here: [https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html) 
-* More information on HCMT [here](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/)
+* More information on HCMT [in this blog](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/)
 
-![Example:](./Documentation/Images/hcmt-result.jpg)
+	![Example:](./Documentation/Images/hcmt-result.jpg)
 
 
 # Todo
