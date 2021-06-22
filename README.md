@@ -145,6 +145,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
 	#### Deploy the Basic Resources
+	
 		Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.iii
 
 		[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
