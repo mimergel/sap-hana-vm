@@ -13,8 +13,8 @@ Table of contents
   * [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
 - [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
-- [SAP VM Deployment](#sap-vm-deployment)
 - [HANA Cloud Measurement Test Results (HCMT)](#HANA-Cloud-Measurement-Test-Results--HCMT-)
+- [SAP VM Deployment](#sap-vm-deployment)
 - [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
@@ -41,7 +41,6 @@ This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps inclu
 The DevOps Pipeline is used as a GUI to simplify deployments. It fetches the pipeline from the GitHub repository. The GitHub repository itself can be most easily adapted to your landing zone specifics with Visual Studio Code on your local PC. In the grey rectangle we see the Ubuntu VM which acts as deployment agent and the require Azure ressources like VNET, DNS, Storage, etc. 
 
 ![Deployment Architecture](./Documentation/Images/deployment-architecture.jpg)
-
 
 # HANA VM Sizes and Storage Configurations
 
@@ -129,7 +128,6 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 [![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
 
-
 # Prerequesites for DevOps Deployments
 
 1. [Azure Subscription](https://portal.azure.com/) 
@@ -172,7 +170,6 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 		* `az login`. You might want to use a [service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 		* Save your private ssh-key in `~/.ssh/id_rsa` (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
-
 # Setup the Azure DevOps Pipeline
 
 1. Fork this repository in Github or create your own new Repository based on this template
@@ -197,20 +194,11 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
 	![Variables](./Documentation/Images/variables.jpg)
 
-
 # Run the Azure DevOps Pipeline
 
 Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 * Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)
 * Provide inputs as required ![Pipeline Inputs](./Documentation/Images/hana-pipeline-inputs.jpg)
-
-
-# SAP VM Deployment
-Use this ARM template to deploy the SAP Application VMs.
-Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
-
-[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-vm.json) 
-
 
 # HANA Cloud Measurement Test Results (HCMT)
 * The result will be placed after a couple of hours here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
@@ -219,6 +207,11 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 
 	![Example:](./Documentation/Images/hcmt-result.jpg)
 
+# SAP VM Deployment
+Use this ARM template to deploy the SAP Application VMs.
+Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
+
+[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-vm.json) 
 
 # Todo
 * SAP Installation
