@@ -7,7 +7,7 @@ Table of contents
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
   * [Deploy only a HANA VM and Storage via ARM](#deploy-only-a-hana-vm-and-storage-via-arm)
 - [Prerequesites for DevOps Deployments](#Prerequesites-for-DevOps-Deployments)
-  * [Deploy Basic Resources](#deploy-basic-resources)
+  * [Deploy the Basic Resources](#deploy-the-basic-resources)
   * [5.1 Option A) With this ARM-Template](#51-option-a--with-this-arm-template)
   * [5.2 Option B) Manually](#52-option-b--manually)
   * [5.3 Finalize the Deployment Agent Setup](#53-finalize-the-deployment-agent-setup)
@@ -144,7 +144,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	* DevOps Deployment Agent 
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
-	#### Deploy Basic Resources
+	#### Deploy the Basic Resources
 		Use this button to setup all of the above in case you need quickly a basic landing zone. When done continue with 5.iii
 
 		[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
