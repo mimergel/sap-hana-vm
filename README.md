@@ -13,7 +13,7 @@ Table of contents
   * [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
 - [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
-- [HANA Cloud Measurement Test Results (HCMT)](#HANA-Cloud-Measurement-Test-Results--HCMT-)
+- [HANA Cloud Measurement Test Results (HCMT)](#hana-cloud-measurement-test-results--hcmt-)
 - [SAP VM Deployment](#sap-vm-deployment)
 - [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
