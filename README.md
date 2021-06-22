@@ -8,8 +8,8 @@ Table of contents
   * [Deploy only a HANA VM and Storage via ARM](#deploy-only-a-hana-vm-and-storage-via-arm)
 - [Prerequesites for DevOps Deployments](#Prerequesites-for-DevOps-Deployments)
   * [Deploy the Basic Resources](#deploy-the-basic-resources)
-  * [Option A) With this ARM-Template](#option-a--with-this-arm-template)
-  * [Option B) Manually](#option-b--manually)
+  * [Option A With this ARM-Template](#option-a-with-this-arm-template)
+  * [Option B Manually](#option-b-manually)
   * [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
 - [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
@@ -150,12 +150,12 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
 5. Setup the Deployment Agent in an existing landing zone
-	1. #### Option A) With this ARM-Template	
+	1. #### Option A With this ARM-Template	
 		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
 		Required target Subnet ID can be retrieved in cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
-	2. #### Option B) Manually 
+	2. #### Option B Manually 
     	* Deploy an Ubuntu 18.04 VM. Use a public ssh-key.
 		* Install [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1#ubuntu-1804)
 		* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
