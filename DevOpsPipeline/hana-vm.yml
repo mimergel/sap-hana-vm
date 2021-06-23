@@ -43,7 +43,12 @@ parameters:
   default: "20"
 
 - name: vmname
-  displayName: HANA VM Name
+  displayName: HANA VM Name in Azure
+  type: string
+  default: "HANATEST"
+
+- name: hostname
+  displayName: HANA Host Name in the OS
   type: string
   default: "hanatest"
 
@@ -138,7 +143,7 @@ variables:
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanadbinst: ${{ parameters.hanadbinstallation }}
   hanavmrg: rg-HANA-${{ parameters.sid }}
-  hanavmfqdn: ${{ parameters.vmname }}.$(privatednszone)
+  hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
   containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
   hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
@@ -182,7 +187,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
         csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Backup "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -206,8 +211,8 @@ stages:
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
 
-    - script: until ping -c1 "${{ parameters.vmname }}".$(privatednszone) >/dev/null 2>&1; do :; done
-      displayName: Wait until DNS resolves "${{ parameters.vmname }}"
+    - script: until ping -c1 $(hanavmfqdn) >/dev/null 2>&1; do :; done
+      displayName: Wait until DNS resolves $(hanavmfqdn)
       failOnStderr: false
 
     - task: Ansible@0
@@ -251,7 +256,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(hanavmfqdn)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
 - stage: Install_XSA
@@ -269,7 +274,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(hanavmfqdn)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
 - stage: Backup_Prerequesite
@@ -288,7 +293,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(hanavmfqdn)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.vmname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
