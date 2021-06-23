@@ -1359,7 +1359,7 @@
           }
         }
       },
-      "vmName": "[toLower(parameters('vmNameInput'))]",
+      "vmName": "[parameters('vmNameInput')]",
       "HostName": "[toLower(parameters('HostNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
