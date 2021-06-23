@@ -330,7 +330,7 @@ stages:
           -RSV "$(rsv)"
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
-          -SERVER ${{ parameters.hostname }}
+          -SERVER "${{ parameters.hostname }}"
           -VMRG "$(hanavmrg)"
           -POL "$(backuptype)"
         errorActionPreference: continue
