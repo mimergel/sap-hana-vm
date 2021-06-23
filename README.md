@@ -137,7 +137,7 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 3. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
 4. Basic Resources
 	* VNET + Subnets + NSGs
-	* Recovery Service Vault with Policies for HANA & OS Backups
+	* Recovery Service Vault with Policies for HANA & OS Backups 
 	* Storage Accounts (For SAP binaries, Scripts & Boot Diagnostics)
 	* Private DNS Zone
 	* Bastion Host
