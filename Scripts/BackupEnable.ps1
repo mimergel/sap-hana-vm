@@ -48,7 +48,7 @@ Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
 Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" 
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
-Write-Host "$VMID" -ForegroundColor Red
+Write-Host "$VMID" 
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 

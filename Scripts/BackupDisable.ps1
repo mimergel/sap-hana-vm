@@ -38,8 +38,9 @@ $CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
 $CONTAINER2="VMAppContainer;Compute;$VMRG;$VM"
 $ITEMSYS="saphanadatabase;$SID;systemdb"
 $ITEMTEN="saphanadatabase;$SID;$SID"
-$OSPOL="pol-sapos-$POL"
-$HANAPOL="pol-saphana-$POL"
+$pol=$POL.ToLower()
+$OSPOL="pol-sapos-$pol"
+$HANAPOL="pol-saphana-$pol"
 
 Write-Host "-----------------------------------------------------"
 Write-Host "----------Disable existing HANA backup items---------"
