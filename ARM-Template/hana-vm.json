@@ -5,7 +5,13 @@
       "vmNameInput": {
         "type": "string",
         "metadata": {
-          "description": "The VM Name in Azure and OS level that you want to deploy"
+          "description": "The VM Name in Azure that you want to deploy"
+        }
+      },
+      "HostNameInput": {
+        "type": "string",
+        "metadata": {
+          "description": "The Host Name on OS level that you want to deploy"
         }
       },
       "hanaSystemId": {
@@ -1354,6 +1360,7 @@
         }
       },
       "vmName": "[toLower(parameters('vmNameInput'))]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
@@ -1411,7 +1418,7 @@
             "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
           },
           "osProfile": {
-            "computerName": "[variables('vmName')]",
+            "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
