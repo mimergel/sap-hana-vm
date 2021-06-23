@@ -15,7 +15,7 @@
     $VMRG="rg-HANA-MM6"
     $POL="Non-PRD"
 
-    ./Scripts/BackupEnable.ps1 -SID $SID -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL
+    ./Scripts/BackupEnable.ps1 -SID $SID -RGV $RGV -RSV $RSV -VM $VM -VM $HOST -VMRG $VMRG -POL $POL
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
