@@ -16,7 +16,7 @@ sap_hostname:
 #
 # using own accessible storage account:
 url_sapcar: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
-url_hdbserver: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR 
+url_hdbserver: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR
 url_hcmt: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/HCMT_055_0-80003261.SAR
 
 url_xsa_media: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/51054859.ZIP

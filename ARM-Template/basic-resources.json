@@ -116,24 +116,24 @@
             "defaultValue": false
         },
         "OSPolicyNamePRD": {
-            "defaultValue": "[concat('pol-sapos-prod-',resourceGroup().location)]",
+            "defaultValue": "pol-sapos-prod",
             "type": "string"
         },
         "OSPolicyNameNonPRD": {
-            "defaultValue": "[concat('pol-sapos-nonprod-',resourceGroup().location)]",
+            "defaultValue": "pol-sapos-non-prod",
             "type": "string"
         },
         "HANAPolicyNamePRD": {
-            "defaultValue": "[concat('pol-saphana-prod-',resourceGroup().location)]",
+            "defaultValue": "pol-saphana-prod",
             "type": "string"
         },
         "HANAPolicyNameNonPRD": {
-            "defaultValue": "[concat('pol-saphana-nonprod-',resourceGroup().location)]",
+            "defaultValue": "pol-saphana-non-prod",
             "type": "string"
         },
         "DevOpsDeployerVMName": {
             "type": "String",
-            "defaultValue": "devopsdeployer"
+            "defaultValue": "DEVOPSDEPLOYER"
         },
         "DevOpsDeployerComputerName": {
             "type": "String",
@@ -141,7 +141,7 @@
         },
         "SAPWinAdminVMName": {
             "type": "String",
-            "defaultValue": "sapwinadmin"
+            "defaultValue": "SAPWINADMIN"
         },
         "SAPWinAdminComputerName": {
             "type": "String",
