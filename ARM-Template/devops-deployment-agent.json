@@ -12,11 +12,11 @@
         },
         "DevOpsDeployerVMName": {
             "type": "String",
-            "defaultValue": "[concat('devopsdeployer',resourceGroup().location)]"
+            "defaultValue": "DEVOPSDEPLOYER"
         },
         "DevOpsDeployerComputerName": {
             "type": "String",
-            "defaultValue": "[concat('devopsdeployer',resourceGroup().location)]"
+            "defaultValue": "devopsdeployer"
         },
         "DevOpsDeployerosDiskType": {
             "type": "String",
