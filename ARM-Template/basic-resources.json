@@ -120,7 +120,7 @@
             "type": "string"
         },
         "OSPolicyNameNonPRD": {
-            "defaultValue": "pol-sapos-nonprod",
+            "defaultValue": "pol-sapos-non-prod",
             "type": "string"
         },
         "HANAPolicyNamePRD": {
@@ -128,7 +128,7 @@
             "type": "string"
         },
         "HANAPolicyNameNonPRD": {
-            "defaultValue": "pol-saphana-nonprod",
+            "defaultValue": "pol-saphana-non-prod",
             "type": "string"
         },
         "DevOpsDeployerVMName": {

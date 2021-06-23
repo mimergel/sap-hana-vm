@@ -130,7 +130,7 @@
           "description": "Provide mandatory Cost Center ID"
         }
       },
-      "Backup": {
+      "BackupTag": {
         "type": "string",
         "defaultValue": "Non-PRD",
         "metadata": {
@@ -1412,7 +1412,7 @@
         "zones": "[variables('selectedZones')]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('Backup')]"},
+        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('BackupTag')]"},
         "properties": {
           "hardwareProfile": {
             "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
