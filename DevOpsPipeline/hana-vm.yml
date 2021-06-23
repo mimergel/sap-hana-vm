@@ -141,7 +141,6 @@ pool:
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  backuppolicy: lower(variables['backuptype'])
   hanadbinst: ${{ parameters.hanadbinstallation }}
   hanavmrg: rg-HANA-${{ parameters.sid }}
   hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
@@ -331,8 +330,9 @@ stages:
           -RSV "$(rsv)"
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
+          -SERVER "${{ parameters.hostname }}"
           -VMRG "$(hanavmrg)"
-          -POL "$(backuppolicy)"
+          -POL "$(backuptype)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false

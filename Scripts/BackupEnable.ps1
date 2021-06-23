@@ -10,11 +10,12 @@
     $SID="MM6"
     $RGV="HANABackups"
     $RSV="hanabackupvault"
-    $VM="hanatest06"
+    $VM="HANATEST06"
+    $SERVER="hanatest06"
     $VMRG="rg-HANA-MM6"
     $POL="Non-PRD"
 
-    ./Scripts/BackupEnable.ps1 -SID $SID -RGV $RGV -RSV $RSV -VM $VM -VMRG $VMRG -POL $POL
+    ./Scripts/BackupEnable.ps1 -SID $SID -RGV $RGV -RSV $RSV -VM $VM -SERVER $SERVER -VMRG $VMRG -POL $POL
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -32,6 +33,7 @@ param(
     [Parameter(Mandatory = $true)][string]$RGV,
     [Parameter(Mandatory = $true)][string]$RSV,
     [Parameter(Mandatory = $true)][string]$VM,
+    [Parameter(Mandatory = $true)][string]$SERVER,
     [Parameter(Mandatory = $true)][string]$VMRG,
     [Parameter(Mandatory = $true)][string]$POL
 )
@@ -40,14 +42,15 @@ $CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
 $CONTAINER2="VMAppContainer;Compute;$VMRG;$VM"
 $ITEMSYS="saphanadatabase;$SID;systemdb"
 $ITEMTEN="saphanadatabase;$SID;$SID"
-$OSPOL="pol-sapos-$POL"
-$HANAPOL="pol-saphana-$POL"
+$pol=$POL.ToLower()
+$OSPOL="pol-sapos-$pol"
+$HANAPOL="pol-saphana-$pol"
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
 Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" 
 $VMID=az vm show -g $VMRG -n $VM --query id --output tsv
-Write-Host "$VMID" -ForegroundColor Red
+Write-Host "$VMID" 
 Write-Host "-----------------------------------------------------"
 Write-Host ""
 
@@ -100,12 +103,12 @@ az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDat
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------------------------------------------------"
 Write-Host "------------Enable SYSTEM DB Backups-----------------"  
-Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $SERVER --workload-type SAPHanaDatabase" 
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $SERVER --workload-type SAPHanaDatabase
 Write-Host ""
 Write-Host "------------Enable TENANT DB Backups-----------------"  
-Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $SERVER --workload-type SAPHanaDatabase" 
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $SERVER --workload-type SAPHanaDatabase
 Write-Host ""
 
 Write-Host "Uncomment following lines to activate immediate initial OS & HANA backups"
