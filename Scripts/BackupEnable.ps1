@@ -10,7 +10,8 @@
     $SID="MM6"
     $RGV="HANABackups"
     $RSV="hanabackupvault"
-    $VM="hanatest06"
+    $VM="HANATEST06"
+    $HOST="hanatest06"
     $VMRG="rg-HANA-MM6"
     $POL="Non-PRD"
 
@@ -101,12 +102,12 @@ az backup protectable-item initialize -g $RGV -v $RSV --workload-type SAPHanaDat
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------------------------------------------------"
 Write-Host "------------Enable SYSTEM DB Backups-----------------"  
-Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMSYS' --protectable-item-type SAPHANADatabase --server-name $HOST --workload-type SAPHanaDatabase" 
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMSYS" --protectable-item-type SAPHANADatabase --server-name $HOST --workload-type SAPHanaDatabase
 Write-Host ""
 Write-Host "------------Enable TENANT DB Backups-----------------"  
-Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase" 
-az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $VM --workload-type SAPHanaDatabase
+Write-Host "az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name '$ITEMTEN' --protectable-item-type SAPHANADatabase --server-name $HOST --workload-type SAPHanaDatabase" 
+az backup protection enable-for-azurewl -g $RGV -v $RSV --policy-name $HANAPOL --protectable-item-name "$ITEMTEN" --protectable-item-type SAPHANADatabase --server-name $HOST --workload-type SAPHanaDatabase
 Write-Host ""
 
 Write-Host "Uncomment following lines to activate immediate initial OS & HANA backups"
