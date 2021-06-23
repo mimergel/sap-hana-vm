@@ -141,7 +141,7 @@ pool:
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  backuppolicy: lower($backuptype)
+  backuppolicy: lower('$backuptype')
   hanadbinst: ${{ parameters.hanadbinstallation }}
   hanavmrg: rg-HANA-${{ parameters.sid }}
   hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
