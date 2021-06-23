@@ -331,7 +331,7 @@ stages:
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -POL "${{ lower('$(backuptype)') }}"
+          -POL "$(backuptype)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
