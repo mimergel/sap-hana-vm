@@ -5,7 +5,7 @@ Table of contents
 - [SAP HANA VM Deployments](#SAP-HANA-VM-Deployments)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
-    + [[Azure Subscription](https://portal.azure.com/)](#-azure-subscription--https---portalazurecom--)
+    + [Azure Subscription](#azure-subscription)
     + [[Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account](#-azure-devops--http---devazurecom---and--github--http---githubcom---account)
     + [SAP User for the [Software Downloads](https://launchpad.support.sap.com/)](#sap-user-for-the--software-downloads--https---launchpadsupportsapcom--)
     + [Basic Resources](#basic-resources)
