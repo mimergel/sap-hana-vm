@@ -132,10 +132,10 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 
 # Prerequesites for DevOps Deployments
 
-1. [Azure Subscription](https://portal.azure.com/) 
-2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
-3. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
-4. Basic Resources
+1. ### [Azure Subscription](https://portal.azure.com/) 
+2. ### [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
+3. ### SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
+4. ### Basic Resources
 	* VNET + Subnets + NSGs
 	* Recovery Service Vault with Policies for HANA & OS Backups 
 	* Storage Accounts (For SAP binaries, Scripts & Boot Diagnostics)
@@ -151,7 +151,7 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 
 	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
-5. Setup the Deployment Agent in an existing landing zone
+5. ### Setup the Deployment Agent in an existing landing zone
 	1. #### Option A With this ARM-Template	
 		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
@@ -196,7 +196,7 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
 	![Variables](./Documentation/Images/variables.jpg)
 
-# Run the Azure DevOps Pipeline
+# HANA VM Deployment - Run the Azure DevOps Pipeline 
 
 Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 * Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)

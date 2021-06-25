@@ -47,4 +47,4 @@ else {
     Write-Host ""
 }
 
-exit 0
+Write-Host "Last exit code: $LASTEXITCODE"
