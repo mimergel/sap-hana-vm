@@ -6,7 +6,7 @@ Table of contents
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
     + [Azure Subscription](#azure-subscription)
-    + [Azure DevOps](#azure-devops)
+    + [Azure DevOps and Github account](#azure-devops-and-github-account)
     + [SAP User for the Software Downloads](#sap-user-for-the-software-downloads)
     + [Basic Resources](#basic-resources)
       - [Deploy the Basic Resources](#deploy-the-basic-resources)
@@ -240,6 +240,9 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 		* Analyse the now more detailed debugging information due to option "-vvvv"
 * Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user
 	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`	
+* Backup or SAP Monitoring scripts fails
+	* Perform `az login` on the ubuntu deployment agent
+
 
 # FAQ
 * Where is the HCMT result?
