@@ -71,3 +71,4 @@ $PROTECT = az backup protection check-vm --vm $VMID
     }
 
 
+Write-Host "Last exit code: $LASTEXITCODE"

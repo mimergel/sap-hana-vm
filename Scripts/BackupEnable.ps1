@@ -127,4 +127,5 @@ Write-Host ""
 
 # az backup protection enable-for-azurewl command can return error when running twice over the same ITEM. 
 # As errors in this step do not harm at all exit with 0 to avoid failure of step and stage. 
-exit 0
+
+Write-Host "Last exit code: $LASTEXITCODE"

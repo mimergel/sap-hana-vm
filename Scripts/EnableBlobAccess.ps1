@@ -33,4 +33,4 @@ Write-Host "BlobId= WIP"
 Write-Host "az role assignment create --role "Storage Blob Data Reader"  --assignee $spID --scope $BlobId"
 # az role assignment create --role "Storage Blob Data Reader"  --assignee $spID --scope $BlobId
 
-exit 0
+Write-Host "Last exit code: $LASTEXITCODE"

@@ -5,14 +5,17 @@ Table of contents
 - [SAP HANA VM Deployments](#SAP-HANA-VM-Deployments)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
-  * [Deploy only a HANA VM and Storage via ARM](#deploy-only-a-hana-vm-and-storage-via-arm)
-- [Prerequesites for DevOps Deployments](#Prerequesites-for-DevOps-Deployments)
-  * [Deploy the Basic Resources](#deploy-the-basic-resources)
-  * [Option A With this ARM-Template](#option-a-with-this-arm-template)
-  * [Option B Manually](#option-b-manually)
-  * [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
+    + [Azure Subscription](#azure-subscription)
+    + [Azure DevOps and Github account](#azure-devops-and-github-account)
+    + [SAP User for the Software Downloads](#sap-user-for-the-software-downloads)
+    + [Basic Resources](#basic-resources)
+      - [Deploy the Basic Resources](#deploy-the-basic-resources)
+    + [Setup the Deployment Agent in an existing landing zone](#setup-the-deployment-agent-in-an-existing-landing-zone)
+      - [Option A With this ARM-Template](#option-a-with-this-arm-template)
+      - [Option B Manually](#option-b-manually)
+      - [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
 - [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
-- [Run the Azure DevOps Pipeline](#run-the-azure-devops-pipeline)
+- [HANA VM Deployment - Run the Azure DevOps Pipeline](#hana-vm-deployment---run-the-azure-devops-pipeline)
 - [HANA Cloud Measurement Test Results](#hana-cloud-measurement-test-results)
 - [SAP VM Deployment](#sap-vm-deployment)
 - [Todo](#todo)
@@ -132,10 +135,10 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 
 # Prerequesites for DevOps Deployments
 
-1. [Azure Subscription](https://portal.azure.com/) 
-2. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
-3. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
-4. Basic Resources
+1. ### [Azure Subscription](https://portal.azure.com/) 
+2. ### [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
+3. ### SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
+4. ### Basic Resources
 	* VNET + Subnets + NSGs
 	* Recovery Service Vault with Policies for HANA & OS Backups 
 	* Storage Accounts (For SAP binaries, Scripts & Boot Diagnostics)
@@ -151,7 +154,7 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 
 	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
-5. Setup the Deployment Agent in an existing landing zone
+5. ### Setup the Deployment Agent in an existing landing zone
 	1. #### Option A With this ARM-Template	
 		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
 
@@ -196,7 +199,7 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
 	![Variables](./Documentation/Images/variables.jpg)
 
-# Run the Azure DevOps Pipeline
+# HANA VM Deployment - Run the Azure DevOps Pipeline 
 
 Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 * Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)
@@ -237,6 +240,9 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 		* Analyse the now more detailed debugging information due to option "-vvvv"
 * Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user
 	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`	
+* Backup or SAP Monitoring scripts fails
+	* Perform `az login` on the ubuntu deployment agent
+
 
 # FAQ
 * Where is the HCMT result?

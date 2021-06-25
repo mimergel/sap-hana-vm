@@ -113,3 +113,5 @@ Write-Host "az backup item show -c "$CONTAINER1" -g $RGV -v $RSV --name $VM"
 az backup item show -c "$CONTAINER1" -g $RGV -v $RSV --name $VM
 Write-Host "-----------------------------------------------------"
 Write-Host ""
+
+Write-Host "Last exit code: $LASTEXITCODE"
