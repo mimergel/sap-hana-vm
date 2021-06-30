@@ -143,7 +143,7 @@ variables:
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanadbinst: ${{ parameters.hanadbinstallation }}
   hanavmrg: RG-HANA-${{ parameters.sid }}
-  hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
+  PRIVATEIP: ${{ parameters.hostname }}.$(privatednszone)
   containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
   hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
   hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
@@ -190,6 +190,19 @@ stages:
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -BackupTag "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
+        deploymentOutputs: arm_output
+
+    - task: PowerShell@2
+      displayName: 'Get the IP via ARM Output variables'
+      # https://adamtheautomator.com/arm-templates-in-azure/#Invoking_ARM_Templates_in_Azure_Pipelines
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/parse_arm_deployment_output.ps1'
+        arguments: >
+          -ArmOutputString "$(arm_output)"
+        errorActionPreference: stop
+        showWarnings: true
+        failOnStderr: false
 
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
@@ -199,11 +212,11 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        entry=`ssh-keygen -F $(hanavmfqdn)`
+        entry=`ssh-keygen -F $(PRIVATEIP)`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $(hanavmfqdn)
+          ssh-keygen -f "~/.ssh/known_hosts" -R $(PRIVATEIP)
         else
           echo "No entry found, nothing to remove"
         fi
@@ -211,8 +224,8 @@ stages:
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
 
-    - script: until ping -c1 $(hanavmfqdn) >/dev/null 2>&1; do :; done
-      displayName: Wait until DNS resolves $(hanavmfqdn)
+    - script: until ping -c1 $(PRIVATEIP) >/dev/null 2>&1; do :; done
+      displayName: Wait until DNS resolves $(PRIVATEIP)
       failOnStderr: false
 
     - task: Ansible@0
@@ -223,7 +236,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(PRIVATEIP)
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
@@ -236,7 +249,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(PRIVATEIP)
         args: -vv 
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
@@ -255,7 +268,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(PRIVATEIP)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
@@ -273,7 +286,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(PRIVATEIP)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
@@ -292,7 +305,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(PRIVATEIP)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         timeoutInMinutes: 5
         showWarnings: true
@@ -388,7 +401,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(PRIVATEIP)
         args: -v 
         failOnStdErr: false
 
