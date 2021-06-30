@@ -19,7 +19,7 @@ parameters:
   - M208s_v2_2.850_GB
   - M128dms_v2_3.892_GB
   - M208ms_v2_5.700_GB
-  - M416ms_v2_11..400_GB
+  - M416ms_v2_11.400_GB
 
 - name: os
   displayName: Operating System
