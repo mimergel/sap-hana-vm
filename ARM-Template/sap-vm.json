@@ -417,5 +417,19 @@
           }
         }
       }
-    ]
+    ],
+    "outputs": {
+       "SAPVMNAME": {
+        "type": "string",
+        "value": "[variables('vmName')]"
+      },
+      "SAPSID": {
+        "type": "string",
+        "value": "[parameters('sapSystemId')]"
+      },
+      "PRIVATEIP": {
+        "type": "string",
+        "value": "[reference('nicName').ipConfigurations[0].properties.privateIPAddress]"
+      }
+    }
   }
