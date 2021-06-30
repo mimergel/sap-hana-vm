@@ -1486,6 +1486,10 @@
       "HANADBID": {
         "type": "string",
         "value": "[parameters('hanaSystemId')]"
+      },
+      "PRIVATEIP": {
+        "type": "string",
+        "value": "[reference('nicName').ipConfigurations[0].properties.privateIPAddress]"
       }
     }
   }
