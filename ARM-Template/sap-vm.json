@@ -420,16 +420,16 @@
     ],
     "outputs": {
        "SAPVMNAME": {
-        "type": "string",
-        "value": "[variables('vmName')]"
+        "value": "[variables('vmName')]",
+        "type": "string"
       },
       "SAPSID": {
-        "type": "string",
-        "value": "[parameters('sapSystemId')]"
+        "value": "[parameters('sapSystemId')]",
+        "type": "string"
       },
       "PRIVATEIP": {
-        "type": "string",
-        "value": "[reference('nicName').ipConfigurations[0].properties.privateIPAddress]"
+        "value": "[reference('nicName').ipConfigurations[0].properties.privateIPAddress]",
+        "type": "string"
       }
     }
   }

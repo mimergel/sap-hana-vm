@@ -1480,16 +1480,16 @@
     ],
     "outputs": {
        "HANAVMNAME": {
-        "type": "string",
-        "value": "[variables('vmName')]"
+        "value": "[variables('vmName')]",
+        "type": "string"
       },
       "HANADBID": {
-        "type": "string",
-        "value": "[parameters('hanaSystemId')]"
+        "value": "[parameters('hanaSystemId')]",
+        "type": "string"
       },
       "PRIVATEIP": {
-        "type": "string",
-        "value": "[reference('nicName').ipConfigurations[0].properties.privateIPAddress]"
+        "value": "[reference('nicName').ipConfigurations[0].properties.privateIPAddress]",
+        "type": "string"
       }
     }
   }
