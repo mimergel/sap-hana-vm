@@ -169,6 +169,13 @@ stages:
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
+    - script: |
+        #!/bin/bash
+        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}
+        exit 0
+      displayName: Write Inventory
+      failOnStderr: false
+
     - task: PowerShell@2
       displayName: 'Get the IP via ARM Output variables'
       # https://adamtheautomator.com/arm-templates-in-azure/#Invoking_ARM_Templates_in_Azure_Pipelines
@@ -179,13 +186,6 @@ stages:
           -ArmOutputString "$(arm_output)"
         errorActionPreference: stop
         showWarnings: true
-
-    - script: |
-        #!/bin/bash
-        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}
-        exit 0
-      displayName: Write Inventory
-      failOnStderr: false
 
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
