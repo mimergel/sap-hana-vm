@@ -190,7 +190,7 @@ stages:
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -BackupTag "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
-        deploymentOutputs: arm_output
+        deploymentOutputs: 'arm_output'
 
     - task: PowerShell@2
       displayName: 'Get the IP via ARM Output variables'
@@ -202,7 +202,6 @@ stages:
           -ArmOutputString "$(arm_output)"
         errorActionPreference: stop
         showWarnings: true
-        failOnStderr: false
 
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
