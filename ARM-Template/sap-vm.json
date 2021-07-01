@@ -217,11 +217,10 @@
         }
       },
       "sidlower": "[toLower(parameters('sapSystemId'))]",
-      "vmName": "[toLower(parameters('vmNameInput'))]",
+      "vmName": "[parameters('vmNameInput')]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
-      "publicIpName": "[concat(variables('vmName'), '-pib')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
-      "nsgName": "[concat(variables('vmName'), '-nsg-cs')]",
       "subnetName": "Subnet",
       "linuxConfiguration": {
         "disablePasswordAuthentication": true,
@@ -245,10 +244,6 @@
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('nicName')]",
         "apiVersion": "2018-10-01",
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
-          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
-        ],
         "location": "[parameters('location')]",
         "properties": {
           "ipConfigurations": [
@@ -279,7 +274,7 @@
             "vmSize": "[variables('sizes')[parameters('sapSystemSize')].vmSize]"
           },
           "osProfile": {
-            "computerName": "[variables('vmName')]",
+            "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
