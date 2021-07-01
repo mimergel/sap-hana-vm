@@ -180,6 +180,13 @@ stages:
         errorActionPreference: stop
         showWarnings: true
 
+    - script: |
+        #!/bin/bash
+        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}
+        exit 0
+      displayName: Write Inventory
+      failOnStderr: false
+
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
   jobs:
