@@ -200,10 +200,6 @@ stages:
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
 
-    - script: until ping -c1 $(PRIVATEIP) >/dev/null 2>&1; do :; done
-      displayName: Wait until DNS resolves $(PRIVATEIP)
-      failOnStderr: false
-
     - task: Ansible@0
       displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
       inputs:
@@ -248,68 +244,14 @@ stages:
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw)
         failOnStdErr: false
 
-- stage: Install_XSA
-  condition: eq(${{ parameters.xsasetup }}, true)
-  jobs:
-  - job: Install_XSA
-    steps:
-    - checkout: none
-    - task: Ansible@0
-      displayName: 'XSA Setup (Ansible)'
-      inputs:
-        ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/xsa-setup_playbook.yml'
-        inventoriesAgentMachine: inlineContent
-        inventoryInlineContentAgentMachine: |
-          [sap]
-          $(PRIVATEIP)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw)
-        failOnStdErr: false
-
-- stage: Backup_Prerequesite
-  condition: eq(variables.backuptodo, true)
-  jobs:
-  - job: Backup_Prerequesite
-    steps:
-    - checkout: none
-    - task: Ansible@0
-      displayName: 'SAP Backup Prerequesites (Ansible)'
-      # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
-      inputs:
-        ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/backup_playbook.yml'
-        inventoriesAgentMachine: inlineContent
-        inventoryInlineContentAgentMachine: |
-          [sap]
-          $(PRIVATEIP)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw) 
-        timeoutInMinutes: 5
-        showWarnings: true
-        failOnStdErr: false
-
-- stage: Backup_Activation
+- stage: OS_Backup
   condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Activation
     steps:
     - checkout: none
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Setup SAP Backup Container (ARM)'
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
-        action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(rsv-rg)'
-        location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(subscription)" -protectionContainers ["$(sapbackupcontainer)"] -sourceResourceIds ["$(sapvmid)"]'
-        deploymentMode: 'Incremental'
-        deploymentName: 'sap-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
-
     - task: PowerShell@2
-      displayName: 'SAP Backup Registration and Execution (PWSH)'
+      displayName: 'OS Backup Setup (PWSH)'
       inputs:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
