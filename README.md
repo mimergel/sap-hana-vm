@@ -129,7 +129,7 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 ## Deploy **only** a HANA VM and Storage via ARM
 
-[![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fhana-vm.json) 
+[![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fhana-vm.json) 
 
 Note: Required target Subnet ID can be retrieved in cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
@@ -150,13 +150,13 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 	#### Deploy the Basic Resources
 	Use this button to setup all of the above for a basic landing zone. When done continue with 5.iii
 
-	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fbasic-resources.json) 
+	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fbasic-resources.json) 
 
 	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
 5. ### Setup the Deployment Agent in an existing landing zone
 	1. #### Option A With this ARM-Template	
-		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fdevops-deployment-agent.json) 
+		[![Deploy DevOps Agent to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fdevops-deployment-agent.json) 
 
 		Note: Required target Subnet ID can be retrieved in cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
@@ -216,7 +216,7 @@ Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 Use this ARM template to deploy the SAP Application VMs.
 Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
 
-[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-vm.json) 
+[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fsap-vm.json) 
 
 # Todo
 * SAP Installation
