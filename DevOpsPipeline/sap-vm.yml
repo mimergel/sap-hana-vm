@@ -120,7 +120,6 @@ pool:
 variables:
   backuptype: ${{ parameters.sapbackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  sapdbinst: ${{ parameters.sapinstallation }}
   sapvmrg: RG-SAP-${{ parameters.sid }}
   PRIVATEIP: ${{ parameters.hostname }}.$(privatednszone)
   containersuffix: "$(sapvmrg);${{ parameters.vmname }}"
