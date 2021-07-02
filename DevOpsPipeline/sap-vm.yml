@@ -40,12 +40,12 @@ parameters:
 - name: vmname
   displayName: SAP VM Name in Azure
   type: string
-  default: "SAPTEST"
+  default: "SAPTESTSID"
 
 - name: hostname
   displayName: SAP Host Name in the OS
   type: string
-  default: "saptest"
+  default: "saptestsid"
 
 - name: location
   displayName: Target Region
