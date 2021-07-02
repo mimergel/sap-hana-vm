@@ -169,23 +169,11 @@ stages:
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
-    - script: |
-        #!/bin/bash
-        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}
-        exit 0
-      displayName: Write Inventory
-      failOnStderr: false
-
-    - task: PowerShell@2
-      displayName: 'Get the IP via ARM Output variables'
-      # https://adamtheautomator.com/arm-templates-in-azure/#Invoking_ARM_Templates_in_Azure_Pipelines
+    - task: ARM Outputs@6
       inputs:
-        targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/parse_arm_deployment_output.ps1'
-        arguments: >
-          -ArmOutputString "$(arm_output)"
-        errorActionPreference: stop
-        showWarnings: true
+        ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
+        resourceGroupName: '$(sapvmrg)'
+        whenLastDeploymentIsFailed: 'fail'
 
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
