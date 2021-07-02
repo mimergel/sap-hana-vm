@@ -169,11 +169,15 @@ stages:
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
-    - task: ARM Outputs@6
+    - task: PowerShell@2
+      displayName: 'Get ARM Output variables'
+      # https://www.timmerman.it/index.php/using-values-from-your-arm-template-across-your-azure-devops-pipeline-with-powershell/
       inputs:
-        ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
-        resourceGroupName: '$(sapvmrg)'
-        whenLastDeploymentIsFailed: 'fail'
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/ReadOutputParameters.ps1'
+        arguments: -armOutputString '$(arm_output)'
+        errorActionPreference: stop
+        showWarnings: true
 
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
