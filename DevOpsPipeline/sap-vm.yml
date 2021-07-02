@@ -174,7 +174,6 @@ stages:
         ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
         resourceGroupName: '$(sapvmrg)'
         whenLastDeploymentIsFailed: 'fail'
-        deploymentNameFilter: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
 
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
