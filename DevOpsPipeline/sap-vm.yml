@@ -121,7 +121,7 @@ variables:
   backuptype: ${{ parameters.sapbackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   sapvmrg: RG-SAP-${{ parameters.sid }}
-  PRIVATEIP: ${{ parameters.hostname }}.$(privatednszone)
+  sapvmfqdn: ${{ parameters.hostname }}.$(privatednszone)
   containersuffix: "$(sapvmrg);${{ parameters.vmname }}"
   sapvmid: /subscriptions/$(subscription)/resourceGroups/$(sapvmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   subnetid: /subscriptions/$(subscription)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
@@ -187,11 +187,11 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        entry=`ssh-keygen -F $(PRIVATEIP)`
+        entry=`ssh-keygen -F $(ARM_Output_privateip)`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $(PRIVATEIP)
+          ssh-keygen -f "~/.ssh/known_hosts" -R $(ARM_Output_privateip)
         else
           echo "No entry found, nothing to remove"
         fi
@@ -207,7 +207,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
-          $(PRIVATEIP)
+          $(ARM_Output_privateip)
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
@@ -220,7 +220,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
-          $(PRIVATEIP)
+          $(ARM_Output_privateip)
         args: -vv 
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
@@ -239,7 +239,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
-          $(PRIVATEIP)
+          $(ARM_Output_privateip)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw)
         failOnStdErr: false
 
