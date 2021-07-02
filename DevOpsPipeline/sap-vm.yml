@@ -4,7 +4,7 @@ parameters:
 - name: size
   displayName: SAP VM Size
   type: string
-  default: E16ds_v4_(128GB)
+  default: E2ds_v4_(16GB)
   values:
   - E2ds_v4_(16GB)
   - E4ds_v4_(32GB)
