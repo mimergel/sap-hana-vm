@@ -236,7 +236,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
-          $(privateip)
+          $(arm_output.privateip.value)
         args: -vv 
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
