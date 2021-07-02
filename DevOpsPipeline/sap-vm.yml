@@ -187,9 +187,9 @@ stages:
 
     - script: |
         #!/bin/bash
-        echo sapvmname $(sapvmname)    > ~/Inventory/${{ parameters.vmname }}.csv
-        echo sapsid $(sapsid)         >> ~/Inventory/${{ parameters.vmname }}.csv
-        echo privateip $(privateip)   >> ~/Inventory/${{ parameters.vmname }}.csv
+        echo "sapvmname $(sapvmname)"    > ~/Inventory/${{ parameters.vmname }}.csv
+        echo "sapsid $(sapsid)"         >> ~/Inventory/${{ parameters.vmname }}.csv
+        echo "privateip $(privateip)"   >> ~/Inventory/${{ parameters.vmname }}.csv
       displayName: Write Inventory CSV
       failOnStderr: false
 
