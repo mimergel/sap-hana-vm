@@ -187,8 +187,8 @@ stages:
 
     - script: |
         #!/bin/bash
-        echo '$(sapvmname)'  > ~/Inventory/${{ parameters.vmname }}.sapvmname
-        echo '$(sapsid)'     > ~/Inventory/${{ parameters.vmname }}.sapsid
+        echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
+        echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
         echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
       displayName: Write Inventory files
       failOnStderr: false
@@ -223,7 +223,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
-          $(privateip)
+          $(arm_output.privateip.value)
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
