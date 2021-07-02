@@ -179,6 +179,20 @@ stages:
         errorActionPreference: stop
         showWarnings: true
 
+    - script: |
+        #!/bin/bash
+        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
+      displayName: Write Inventory JSON
+      failOnStderr: false
+
+    - script: |
+        #!/bin/bash
+        echo sapvmname $(sapvmname)    > ~/Inventory/${{ parameters.vmname }}.csv
+        echo sapsid $(sapsid)         >> ~/Inventory/${{ parameters.vmname }}.csv
+        echo privateip $(privateip)   >> ~/Inventory/${{ parameters.vmname }}.csv
+      displayName: Write Inventory CSV
+      failOnStderr: false
+
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
   jobs:
