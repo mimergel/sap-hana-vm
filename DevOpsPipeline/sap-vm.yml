@@ -247,6 +247,13 @@ stages:
   - job: Install_SAP
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'SAP Installation (Ansible)'
       inputs:
