@@ -1,5 +1,5 @@
 ---
-- hosts: hana
+- hosts: all
   become: true
   vars_files:
     - vars/default.yml
