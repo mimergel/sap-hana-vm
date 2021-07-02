@@ -187,10 +187,10 @@ stages:
 
     - script: |
         #!/bin/bash
-        echo "sapvmname $(sapvmname)"    > ~/Inventory/${{ parameters.vmname }}.csv
-        echo "sapsid $(sapsid)"         >> ~/Inventory/${{ parameters.vmname }}.csv
-        echo "privateip $(privateip)"   >> ~/Inventory/${{ parameters.vmname }}.csv
-      displayName: Write Inventory CSV
+        echo $(sapvmname)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
+        echo $(sapsid)     > ~/Inventory/${{ parameters.vmname }}.sapsid
+        echo $(privateip)  > ~/Inventory/${{ parameters.vmname }}.privateip
+      displayName: Write Inventory files
       failOnStderr: false
 
 - stage: Prepare_OS
@@ -201,16 +201,18 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        entry=`ssh-keygen -F $(privateip)`
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip;]$privateip"
+        entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $(privateip)
+          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
         exit 0
-      displayName: Remove known_hosts entries from former runs that used the same name
+      displayName: Remove known_hosts entries from former runs that used the same name or ip
       failOnStderr: false
 
     - task: Ansible@0
