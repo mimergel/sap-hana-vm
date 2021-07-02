@@ -175,7 +175,7 @@ stages:
       inputs:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/ReadOutputParameters.ps1'
-        arguments: -armOutputString "$(arm_output)"
+        arguments: -armOutputString '$(arm_output)'
         errorActionPreference: stop
         showWarnings: true
 
