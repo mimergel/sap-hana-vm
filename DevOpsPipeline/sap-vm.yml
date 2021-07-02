@@ -4,7 +4,7 @@ parameters:
 - name: size
   displayName: SAP VM Size
   type: string
-  default: E16ds_v4_(128GB)
+  default: E2ds_v4_(16GB)
   values:
   - E2ds_v4_(16GB)
   - E4ds_v4_(32GB)
@@ -179,6 +179,20 @@ stages:
         errorActionPreference: stop
         showWarnings: true
 
+    - script: |
+        #!/bin/bash
+        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
+      displayName: Write Inventory JSON
+      failOnStderr: false
+
+    - script: |
+        #!/bin/bash
+        echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
+        echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
+        echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
+      displayName: Write Inventory files
+      failOnStderr: false
+
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
   jobs:
@@ -187,16 +201,18 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        entry=`ssh-keygen -F $(privateip)`
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $(privateip)
+          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
         exit 0
-      displayName: Remove known_hosts entries from former runs that used the same name
+      displayName: Remove known_hosts entries from former runs that used the same name or ip
       failOnStderr: false
 
     - task: Ansible@0
