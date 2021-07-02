@@ -33,7 +33,7 @@ url_xsa_mta:
 
 url_retries_delay: 10
 url_timeout: 30
-url_retries_cnt: 20
+url_retries_cnt: 5
 
 install_cockpit: false
 install_shine: false
