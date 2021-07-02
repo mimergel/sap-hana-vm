@@ -9,7 +9,7 @@ $armOutputObj = $armOutputString | convertfrom-json
 
 $armOutputObj.PSObject.Properties | ForEach-Object {
     $type = ($_.value.type).ToLower()
-    $keyname = "Output_"+$_.name
+    $keyname = "ARM_Output_"+$_.name
     $value = $_.value.value
 
     if ($type -eq "securestring") {
