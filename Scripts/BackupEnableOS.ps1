@@ -11,8 +11,8 @@
 
     $RGV="SAPonAzureFrance"
     $RSV="rsv-sap-francecentral-001"
-    $VM="HANATESTSID"
-    $SERVER="hanatestsid"
+    $VM="SAPTESTSID"
+    $SERVER="saptestsid"
     $VMRG="RG-SAP-SID"
     $POL="Non-PRD"
 
