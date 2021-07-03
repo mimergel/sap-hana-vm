@@ -276,9 +276,8 @@ stages:
       displayName: 'OS Backup Setup (PWSH)'
       inputs:
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnableOS.ps1'
         arguments: >
-          -SID "${{ parameters.sid }}"
           -RSV "$(rsv)"
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
