@@ -336,7 +336,7 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnableHANA.ps1'
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(rsv)"
