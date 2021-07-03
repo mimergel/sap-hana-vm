@@ -3,7 +3,8 @@
     This script activates OS Backups
 
 .DESCRIPTION
-	This script activates OS Backups
+	Protection will be enabled 
+
 
 .EXAMPLE
     Test the script:
@@ -15,7 +16,7 @@
     $VMRG="RG-SAP-SID"
     $POL="Non-PRD"
 
-    ./Scripts/BackupEnable.ps1 -RGV $RGV -RSV $RSV -VM $VM -SERVER $SERVER -VMRG $VMRG -POL $POL
+    ./Scripts/BackupEnableOS.ps1 -RGV $RGV -RSV $RSV -VM $VM -SERVER $SERVER -VMRG $VMRG -POL $POL
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
@@ -73,7 +74,7 @@ Write-Host "Uncomment following lines to activate immediate initial OS backups"
 Write-Host "-----------------------------------------------------"
 Write-Host "-------------------Run OS Backups------------------" 
 Write-Host "az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM"
-# az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM
+az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM
 Write-Host ""
 Write-Host "-----------------------------------------------------"
 
