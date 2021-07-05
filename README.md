@@ -256,7 +256,7 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	- For example you could use a set of global variables relevant for all pipelines and a set for specific areas like, workload types, subscriptions, regions, etc. See an example here:
 
 
-	![Example:](./Documentation/Images/variable-groups.jpg)
+		![Example:](./Documentation/Images/variable-groups.jpg)
 
 # Disclaimer
 THIS REPOSITORY AND ALL IT'S CONTENT IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
