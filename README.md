@@ -194,7 +194,7 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the Pipeline
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
 7. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
-8. Setup the [Azure Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure) in [project settings](./Documentation/Images/azure-service-connection.jpg)
+8. [Create an azure resource manager service connection with an existing service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
 9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
 	![Variables](./Documentation/Images/variables.jpg)
 
@@ -252,7 +252,7 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	- Via CLI: https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli 
 	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
 * I don't like entering so many variables manually. Isn't there a better way?
-	- Create variable groups in the Pipelines Library and assign the groups to the pipelines
+	- Create variable groups in the Pipelines Library and assign the groups to the relevant pipelines
 	- For example you could use a set of global variables relevant for all pipelines and a set for specific areas like, workload types, subscriptions, regions, etc. See an example here:
 
 
