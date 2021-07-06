@@ -253,7 +253,7 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
 * I don't like entering so many variables manually. Isn't there a better way?
 	- Create variable groups in the Pipelines Library and assign the groups to the relevant pipelines
-	- For example you could use a set of global variables relevant for all pipelines and a set for specific areas like, workload types, subscriptions, regions, etc. See an example here:
+	- For example you could use a set of global variables relevant for all pipelines and a set for specific areas like, workload types, subscriptions, regions, etc ... See an example here:
 
 
 		![Example:](./Documentation/Images/variable-groups.jpg)
