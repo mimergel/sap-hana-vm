@@ -136,7 +136,7 @@ trigger:
   none
 
 pool:
-  name: Germany
+  name: $(agent)
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
