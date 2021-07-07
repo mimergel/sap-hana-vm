@@ -219,7 +219,7 @@ stages:
       failOnStderr: false
 
 - stage: Prepare_OS
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(${{ parameters.osprep }}, true ))
+  condition: eq(${{ parameters.osprep }}, true )
   jobs:
   - job: Prepare_OS
     steps:
@@ -271,7 +271,7 @@ stages:
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
-  condition: and(succeeded(), eq(${{ parameters.hanadbinstallation }}, true))
+  condition: eq(${{ parameters.hanadbinstallation }}, true)
   jobs:
   - job: Install_HANA
     steps:
@@ -296,7 +296,7 @@ stages:
         failOnStdErr: false
 
 - stage: Install_XSA
-  condition: and(succeeded(), eq(${{ parameters.xsasetup }}, true))
+  condition: eq(${{ parameters.xsasetup }}, true)
   jobs:
   - job: Install_XSA
     steps:
@@ -321,7 +321,7 @@ stages:
         failOnStdErr: false
 
 - stage: Backup_Prerequesite
-  condition: and(succeeded(), eq(variables.backuptodo, true))
+  condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Prerequesite
     steps:
@@ -349,7 +349,7 @@ stages:
         failOnStdErr: false
 
 - stage: Backup_Activation
-  condition: and(succeeded(), eq(variables.backuptodo, true))
+  condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Activation
     steps:
@@ -403,7 +403,7 @@ stages:
         failOnStderr: false
 
 - stage: Monitoring_EXT_SAP
-  condition: and(succeeded(), eq(${{ parameters.monitoringextsap }}, true))
+  condition: eq(${{ parameters.monitoringextsap }}, true)
   jobs:
   - job: Monitoring_EXT_SAP
     steps:
@@ -422,7 +422,7 @@ stages:
         failOnStderr: false
 
 - stage: Testing
-  condition: and(succeeded(), eq(${{ parameters.hcmt }}, true))
+  condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: HCMT
     timeoutInMinutes: 360
