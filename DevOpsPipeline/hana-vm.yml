@@ -292,7 +292,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) -e sapbits_storage=${sapbitssstorageaccountname}
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         failOnStdErr: false
 
 - stage: Install_XSA
@@ -317,7 +317,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) -e sapbits_storage=${sapbitssstorageaccountname}
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
 - stage: Backup_Prerequesite
@@ -343,7 +343,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) -e sapbits_storage=${sapbitssstorageaccountname}
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
