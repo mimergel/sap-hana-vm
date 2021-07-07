@@ -212,8 +212,8 @@ stages:
     - script: |
         #!/bin/bash
         # mkdir -p ~/Inventory
-        echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.hanavmname
-        echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
+        echo $(arm_output.hanavmname.value)  > ~/Inventory/${{ parameters.vmname }}.hanavmname
+        echo $(arm_output.hanadbid.value)     > ~/Inventory/${{ parameters.vmname }}.hanadbid
         echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
       displayName: Write Inventory files
       failOnStderr: false
@@ -271,7 +271,7 @@ stages:
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_HANA
-  condition: eq(${{ parameters.hanadbinstallation }}, true)
+  condition: and(succeeded(), eq(${{ parameters.hanadbinstallation }}, true))
   jobs:
   - job: Install_HANA
     steps:
@@ -296,7 +296,7 @@ stages:
         failOnStdErr: false
 
 - stage: Install_XSA
-  condition: eq(${{ parameters.xsasetup }}, true)
+  condition: and(succeeded(), eq(${{ parameters.xsasetup }}, true))
   jobs:
   - job: Install_XSA
     steps:
@@ -321,7 +321,7 @@ stages:
         failOnStdErr: false
 
 - stage: Backup_Prerequesite
-  condition: eq(variables.backuptodo, true)
+  condition: and(succeeded(), eq(variables.backuptodo, true))
   jobs:
   - job: Backup_Prerequesite
     steps:
@@ -349,7 +349,7 @@ stages:
         failOnStdErr: false
 
 - stage: Backup_Activation
-  condition: eq(variables.backuptodo, true)
+  condition: and(succeeded(), eq(variables.backuptodo, true))
   jobs:
   - job: Backup_Activation
     steps:
@@ -403,7 +403,7 @@ stages:
         failOnStderr: false
 
 - stage: Monitoring_EXT_SAP
-  condition: eq(${{ parameters.monitoringextsap }}, true)
+  condition: and(succeeded(), eq(${{ parameters.monitoringextsap }}, true))
   jobs:
   - job: Monitoring_EXT_SAP
     steps:
@@ -422,7 +422,7 @@ stages:
         failOnStderr: false
 
 - stage: Testing
-  condition: eq(${{ parameters.hcmt }}, true)
+  condition: and(succeeded(), eq(${{ parameters.hcmt }}, true))
   jobs:
   - job: HCMT
     timeoutInMinutes: 360
