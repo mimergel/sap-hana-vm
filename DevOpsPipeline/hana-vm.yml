@@ -274,6 +274,13 @@ stages:
   - job: Install_HANA
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -292,6 +299,13 @@ stages:
   - job: Install_XSA
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'XSA Setup (Ansible)'
       inputs:
@@ -310,6 +324,13 @@ stages:
   - job: Backup_Prerequesite
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'HANA Backup Prerequesites (Ansible)'
       # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
@@ -407,6 +428,13 @@ stages:
     # HCMT runs very loooooooooooooooooong
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'Run HCMT (Ansible)'
       inputs:
