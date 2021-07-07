@@ -142,7 +142,7 @@ stages:
         artifact: sap
 
 - stage: Deploy_VM
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(${{ parameters.sapvmdeployment }}, true))
+  condition: eq(${{ parameters.sapvmdeployment }}, true)
   jobs:
   - job: Deploy_VM
     steps:
@@ -196,7 +196,7 @@ stages:
       failOnStderr: false
 
 - stage: Prepare_OS
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(${{ parameters.osprep }}, true))
+  condition: eq(${{ parameters.osprep }}, true)
   jobs:
   - job: Prepare_OS
     steps:
@@ -244,7 +244,7 @@ stages:
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_SAP
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(${{ parameters.sapinstallation }}, true))
+  condition: eq(${{ parameters.sapinstallation }}, true)
   jobs:
   - job: Install_SAP
     steps:
@@ -269,7 +269,7 @@ stages:
         failOnStdErr: false
 
 - stage: OS_Backup
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(variables.backuptodo, true))
+  condition: eq(variables.backuptodo, true)
   jobs:
   - job: Backup_Activation
     steps:
@@ -291,7 +291,7 @@ stages:
         failOnStderr: false
 
 - stage: Monitoring_EXT_SAP
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(${{ parameters.monitoringextsap }}, true))
+  condition: eq(${{ parameters.monitoringextsap }}, true)
   jobs:
   - job: Monitoring_EXT_SAP
     steps:
@@ -310,7 +310,7 @@ stages:
         failOnStderr: false
 
 - stage: Cleanup
-  condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), eq(${{ parameters.cleanup }}, true))
+  condition: eq(${{ parameters.cleanup }}, true)
   jobs:
   - job: Remove_Backups
     steps:
