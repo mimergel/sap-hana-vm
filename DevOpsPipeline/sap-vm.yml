@@ -115,7 +115,7 @@ trigger:
   none
 
 pool:
-  name: Default
+  name: $(agent)
 
 variables:
   backuptype: ${{ parameters.sapbackupsetup }}
@@ -181,12 +181,14 @@ stages:
 
     - script: |
         #!/bin/bash
+        mkdir -p ~/Inventory
         echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
       displayName: Write Inventory JSON
       failOnStderr: false
 
     - script: |
         #!/bin/bash
+        mkdir -p ~/Inventory
         echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
         echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
         echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip

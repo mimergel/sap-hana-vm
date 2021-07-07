@@ -136,7 +136,7 @@ trigger:
   none
 
 pool:
-  name: Default
+  name: $(agent)
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
@@ -204,20 +204,22 @@ stages:
 
     - script: |
         #!/bin/bash
+        mkdir -p ~/Inventory
         echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
       displayName: Write Inventory JSON
       failOnStderr: false
 
     - script: |
         #!/bin/bash
-        echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
-        echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
+        mkdir -p ~/Inventory
+        echo $(arm_output.hanavmname.value)  > ~/Inventory/${{ parameters.vmname }}.hanavmname
+        echo $(arm_output.hanadbid.value)     > ~/Inventory/${{ parameters.vmname }}.hanadbid
         echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
       displayName: Write Inventory files
       failOnStderr: false
 
 - stage: Prepare_OS
-  condition: eq(${{ parameters.osprep }}, true)
+  condition: eq(${{ parameters.osprep }}, true )
   jobs:
   - job: Prepare_OS
     steps:
