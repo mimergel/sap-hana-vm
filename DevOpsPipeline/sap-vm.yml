@@ -265,7 +265,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [sap]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw) -e sapbits_storage=${{ sapbitssstorageaccountname }}
         failOnStdErr: false
 
 - stage: OS_Backup
