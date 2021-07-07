@@ -219,7 +219,7 @@ stages:
       failOnStderr: false
 
 - stage: Prepare_OS
-  condition: and(succeeded(), eq(${{ parameters.osprep }}, true ) 
+  condition: and(succeeded(), eq(${{ parameters.osprep }}, true ))
   jobs:
   - job: Prepare_OS
     steps:
