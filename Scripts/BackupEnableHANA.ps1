@@ -1,10 +1,13 @@
 <#
 .SYNOPSIS
     This script activates the SAP HANA Backups
+
 .DESCRIPTION
 	This script activates the SAP HANA Backups by registering the SAP HANA Instance, 
     enable protection and finally running the backups for the systemdb and tenant db.
-	The script requires as prerequesite a successfully finished pre-registration script from here:
+	The script requires as prerequesite a successfully finished pre-registration script, see links.
+    OS Backups will be enaled as well.
+
 .EXAMPLE
     Test the script:
     $SID="MM6"
@@ -15,15 +18,17 @@
     $VMRG="rg-HANA-MM6"
     $POL="Non-PRD"
 
-    ./Scripts/BackupEnable.ps1 -SID $SID -RGV $RGV -RSV $RSV -VM $VM -SERVER $SERVER -VMRG $VMRG -POL $POL
+    ./Scripts/BackupEnableHANA.ps1 -SID $SID -RGV $RGV -RSV $RSV -VM $VM -SERVER $SERVER -VMRG $VMRG -POL $POL
 
     some helpful commands:
     az backup protectable-item list -g HANABackups -v hanabackupvault --workload-type SAPHANA  --output table
     az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureIaasVM --output tsv
     az backup container list -g HANABackups -v hanabackupvault --backup-management-type AzureWorkload  --output tsv
-.LINKs
+
+.LINK
     https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli
 	https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database 
+
 .NOTES
     v0.1 - Initial version
 #>

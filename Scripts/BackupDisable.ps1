@@ -34,13 +34,13 @@ param(
     [Parameter(Mandatory = $true)][string]$POL
 )
 
-$CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
-$CONTAINER2="VMAppContainer;Compute;$VMRG;$VM"
+$vmrg=$VMRG.ToLower()
+$vm=$VM.ToLower()
+$CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$vmrg;$vm"
+$CONTAINER2="VMAppContainer;Compute;$vmrg;$vm"
 $ITEMSYS="saphanadatabase;$SID;systemdb"
 $ITEMTEN="saphanadatabase;$SID;$SID"
-$pol=$POL.ToLower()
-$OSPOL="pol-sapos-$pol"
-$HANAPOL="pol-saphana-$pol"
+
 
 Write-Host "-----------------------------------------------------"
 Write-Host "----------Disable existing HANA backup items---------"

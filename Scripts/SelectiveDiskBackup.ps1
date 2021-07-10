@@ -46,7 +46,7 @@ Write-Host "-----------Check if the VM is protected--------------"
 Write-Host "az backup protection check-vm --vm $VMID"
 $PROTECT = az backup protection check-vm --vm $VMID
 
-    if ([string]::IsNullOrEmpty($PROTECT)) {
+    if (-not $PROTECT) {
         Write-Host "---VM is not protected, no selectve disk backup can be enabled---"
     }
     else {
@@ -60,7 +60,7 @@ $PROTECT = az backup protection check-vm --vm $VMID
 
         [int[]] $EX = $DATALUNS + $LOGLUNS
 
-        Write-Host "These LUNs will be excluded from OS Backups: $EX[0] $EX[1] $EX[2] $EX[3] $EX[4] $EX[5] $EX[6] $EX[7] $EX[8] $EX[9]"
+        Write-Host "These LUNs will be excluded from OS Backups: $($EX -join " ") " 
        
         Write-Host "-----------------------------------------------------"
         Write-Host "---------------Exclude relevant LUNs-----------------"

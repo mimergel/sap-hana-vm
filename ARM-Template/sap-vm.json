@@ -2,6 +2,18 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+      "vmNameInput": {
+        "type": "string",
+        "metadata": {
+          "description": "The VM Name in Azure and OS level that you want to deploy"
+        }
+      },
+      "HostNameInput": {
+        "type": "string",
+        "metadata": {
+          "description": "The Host Name on OS level that you want to deploy"
+        }
+      },
       "sapSystemId": {
         "type": "string",
         "maxLength": 3,
@@ -9,12 +21,6 @@
         "defaultValue": "SID",
         "metadata": {
           "description": "SAP System ID."
-        }
-      },
-      "vmNameInput": {
-        "type": "string",
-        "metadata": {
-          "description": "The VM Name in Azure and OS level that you want to deploy"
         }
       },
       "osType": {
@@ -67,7 +73,7 @@
           "description": "Type of authentication to use on the Virtual Machine."
         }
       },
-   "adminPasswordOrKey": {
+      "adminPasswordOrKey": {
         "type": "securestring",
         "metadata": {
           "description": "Password or ssh key for the Virtual Machine."
@@ -95,23 +101,24 @@
           "description": "Location for all resources."
         }
       },
-      "Owner": {
+      "diagnosticsStorageAccountName": {
         "type": "string",
-        "defaultValue": "SAP Team Contact",
+        "defaultValue": "saponazuretrialdiag",
         "metadata": {
-          "description": "Provide mandatory Owner Name"
+          "description": "Name of the storage account for boot diagnostics"
         }
       },
-      "CostCenter": {
+      "Script_URL": {
         "type": "string",
-        "defaultValue": "28007510",
+        "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh",
         "metadata": {
-          "description": "Provide mandatory Cost Center ID"
+          "description": "URL of the disk configuration script"
         }
       }
     },
     "variables": {
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
+
       "images": {
         "RHEL 7.7": {
           "sku": "77sapha-gen2",
@@ -155,7 +162,7 @@
           "Publisher": "Microsoft.Azure.Extensions",
           "Name": "CustomScript",
           "Version": "2.0",
-          "script": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/scripts/diskConfig.sh",
+          "script": "[parameters('Script_URL')]",
           "scriptCall": "sh diskConfig.sh"
         }
       },
@@ -210,11 +217,10 @@
         }
       },
       "sidlower": "[toLower(parameters('sapSystemId'))]",
-      "vmName": "[toLower(parameters('vmNameInput'))]",
+      "vmName": "[parameters('vmNameInput')]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
-      "publicIpName": "[concat(variables('vmName'), '-pib')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
-      "nsgName": "[concat(variables('vmName'), '-nsg-cs')]",
       "subnetName": "Subnet",
       "linuxConfiguration": {
         "disablePasswordAuthentication": true,
@@ -227,41 +233,6 @@
           ]
         }
       },
-      "osSecurityRules": {
-        "Windows": [
-          {
-            "name": "RDP",
-            "properties": {
-              "description": "Allow RDP Subnet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          }
-        ],
-        "Linux": [
-          {
-            "name": "SSH",
-            "properties": {
-              "description": "Allow SSH Subnet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "22",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          }
-        ]
-      },
-      "selectedSecurityRules": "[variables('osSecurityRules')[variables('internalOSType')]]",
       "subnets": {
         "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
         "false": "[parameters('subnetId')]"
@@ -270,76 +241,16 @@
     },
     "resources": [
       {
-        "type": "Microsoft.Network/networkSecurityGroups",
-        "name": "[concat(variables('nsgName'))]",
-        "apiVersion": "2018-10-01",
-        "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
-        "condition": "[equals(length(parameters('subnetId')), 0)]",
-        "properties": {
-          "securityRules": "[variables('selectedSecurityRules')]"
-        }
-      },
-      {
-        "type": "Microsoft.Network/virtualNetworks",
-        "name": "[variables('vnetName')]",
-        "apiVersion": "2018-10-01",
-        "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
-        "dependsOn": [
-          "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
-        ],
-        "condition": "[equals(length(parameters('subnetId')), 0)]",
-        "properties": {
-          "addressSpace": {
-            "addressPrefixes": [
-              "10.0.0.0/16"
-            ]
-          },
-          "subnets": [
-            {
-              "name": "[variables('subnetName')]",
-              "properties": {
-                "addressPrefix": "10.0.0.0/24",
-                "networkSecurityGroup": {
-                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
-                }
-              }
-            }
-          ]
-        }
-      },
-      {
-        "type": "Microsoft.Network/publicIPAddresses",
-        "name": "[variables('publicIpName')]",
-        "apiVersion": "2018-10-01",
-        "condition": "[equals(length(parameters('subnetId')), 0)]",
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
-        ],
-        "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
-        "properties": {
-          "publicIPAllocationMethod": "Dynamic"
-        }
-      },
-      {
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('nicName')]",
         "apiVersion": "2018-10-01",
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
-          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
-        ],
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "properties": {
           "ipConfigurations": [
             {
               "name": "ipconfig1",
               "properties": {
                 "privateIPAllocationMethod": "Dynamic",
-                "publicIPAddress": "[if(equals(length(parameters('subnetId')), 0), json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName')) ,'\"}')), json('null'))]",
                 "subnet": {
                   "id": "[variables('selectedSubnetId')]"
                 }
@@ -358,13 +269,12 @@
         "zones": "[variables('selectedZones')]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "properties": {
           "hardwareProfile": {
             "vmSize": "[variables('sizes')[parameters('sapSystemSize')].vmSize]"
           },
           "osProfile": {
-            "computerName": "[variables('vmName')]",
+            "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
@@ -392,6 +302,12 @@
                 "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
               }
             ]
+          },
+          "diagnosticsProfile": {
+              "bootDiagnostics": {
+                  "enabled": true,
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+              }
           }
         }
       },
@@ -400,7 +316,6 @@
         "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "dependsOn": [
           "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
         ],
@@ -417,5 +332,19 @@
           }
         }
       }
-    ]
+    ],
+    "outputs": {
+       "SAPVMNAME": {
+        "value": "[variables('vmName')]",
+        "type": "string"
+      },
+      "SAPSID": {
+        "value": "[parameters('sapSystemId')]",
+        "type": "string"
+      },
+      "PRIVATEIP": {
+        "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]",
+        "type": "string"
+      }
+    }
   }

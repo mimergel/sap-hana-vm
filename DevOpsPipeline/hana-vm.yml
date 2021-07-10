@@ -136,7 +136,7 @@ trigger:
   none
 
 pool:
-  name: Default
+  name: $(agent)
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
@@ -190,20 +190,49 @@ stages:
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -BackupTag "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+
+    - task: PowerShell@2
+      displayName: 'Get ARM Output variables'
+      # https://www.timmerman.it/index.php/using-values-from-your-arm-template-across-your-azure-devops-pipeline-with-powershell/
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/Parse_ARM_Deployment_Output.ps1'
+        arguments: -ArmOutputString '$(arm_output)' -MakeOutput -ErrorAction Stop
+        errorActionPreference: stop
+        showWarnings: true
+
+    - script: |
+        #!/bin/bash
+        mkdir -p ~/Inventory
+        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
+      displayName: Write Inventory JSON
+      failOnStderr: false
+
+    - script: |
+        #!/bin/bash
+        mkdir -p ~/Inventory
+        echo $(arm_output.hanavmname.value)  > ~/Inventory/${{ parameters.vmname }}.hanavmname
+        echo $(arm_output.hanadbid.value)     > ~/Inventory/${{ parameters.vmname }}.hanadbid
+        echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
+      displayName: Write Inventory files
+      failOnStderr: false
 
 - stage: Prepare_OS
-  condition: eq(${{ parameters.osprep }}, true)
+  condition: eq(${{ parameters.osprep }}, true )
   jobs:
   - job: Prepare_OS
     steps:
     - checkout: none
     - script: |
         #!/bin/bash
-        entry=`ssh-keygen -F $(hanavmfqdn)`
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $(hanavmfqdn)
+          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
@@ -211,8 +240,8 @@ stages:
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
 
-    - script: until ping -c1 $(hanavmfqdn) >/dev/null 2>&1; do :; done
-      displayName: Wait until DNS resolves $(hanavmfqdn)
+    - script: until ping -c1 $(privateip) >/dev/null 2>&1; do :; done
+      displayName: Wait until IP is accessible $(privateip)
       failOnStderr: false
 
     - task: Ansible@0
@@ -223,7 +252,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(privateip)
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
@@ -236,7 +265,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(privateip)
         args: -vv 
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
@@ -247,6 +276,13 @@ stages:
   - job: Install_HANA
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
@@ -255,8 +291,8 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+          $(privateip)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         failOnStdErr: false
 
 - stage: Install_XSA
@@ -265,6 +301,13 @@ stages:
   - job: Install_XSA
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'XSA Setup (Ansible)'
       inputs:
@@ -273,7 +316,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(privateip)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
 
@@ -283,6 +326,13 @@ stages:
   - job: Backup_Prerequesite
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'HANA Backup Prerequesites (Ansible)'
       # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
@@ -292,7 +342,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(privateip)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         timeoutInMinutes: 5
         showWarnings: true
@@ -324,7 +374,7 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnable.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnableHANA.ps1'
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(rsv)"
@@ -380,6 +430,13 @@ stages:
     # HCMT runs very loooooooooooooooooong
     steps:
     - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
     - task: Ansible@0
       displayName: 'Run HCMT (Ansible)'
       inputs:
@@ -388,7 +445,7 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          $(hanavmfqdn)
+          $(privateip)
         args: -v 
         failOnStdErr: false
 

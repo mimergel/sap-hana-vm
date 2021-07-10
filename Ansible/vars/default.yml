@@ -15,11 +15,11 @@ sap_hostname:
 # url_hcmt: https://softwaredownloads.sap.com/file/0020000000392012021
 #
 # using own accessible storage account:
-url_sapcar: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
-url_hdbserver: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR
-url_hcmt: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/HCMT_055_0-80003261.SAR
+url_sapcar: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
+url_hdbserver: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR
+url_hcmt: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/HCMT_055_0-80003261.SAR
 
-url_xsa_media: https://stsapbitsfrancecent.blob.core.windows.net/sapbits/51054859.ZIP
+url_xsa_media: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/51054859.ZIP
 
 url_cockpit: 
 url_di_core: 
@@ -33,7 +33,7 @@ url_xsa_mta:
 
 url_retries_delay: 10
 url_timeout: 30
-url_retries_cnt: 20
+url_retries_cnt: 5
 
 install_cockpit: false
 install_shine: false

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Install Powershell
+# Install Powershell and other Tools
+
 # Update the list of packages
 sudo apt-get update -y
 # Install pre-requisite packages.
@@ -15,9 +16,17 @@ sudo apt-get update -y
 sudo add-apt-repository universe
 # Install PowerShell
 sudo apt-get install -y powershell
-# Start PowerShell via pwsh
-# pwsh
 
+# Install unzip
+sudo apt install unzip -y
+
+# Install command-line JSON processor
+sudo apt install jq -y
+
+# Install terraform
+wget https://releases.hashicorp.com/terraform/0.15.5/terraform_0.15.5_linux_amd64.zip
+unzip terraform_0.15.5_linux_amd64.zip
+sudo mv terraform /bin/
 
 # Install Ansible
 sudo apt update -y
@@ -26,10 +35,13 @@ sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
 
 # This Ansible setting is required to prevent ssh prompts during first logins
-#host_key_checking = False
+# host_key_checking = False
 sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
-sed -i 's/##allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
 
+# This Ansible setting is required to prevent the error
+# Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user
+# allow_world_readable_tmpfiles = True
+sed -i 's/#allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
 
 # Install Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
