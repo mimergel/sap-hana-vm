@@ -169,8 +169,8 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 
 	3. #### Finalize the Deployment Agent Setup
 		* Login with your ssh user to the ubuntu based deployment agent, then <br />
-			`cd devopsagent ; ./config.sh` 
-			-> follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
+			`cd devopsagent ; ./config.sh` <br />
+			Follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 		* Ensure the deployment agent software is automatically started as a service after each reboot: <br />
 			`sudo ./svc.sh install ; sudo ./svc.sh start`
