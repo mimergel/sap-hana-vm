@@ -131,7 +131,8 @@ Note: Eds_v4 Series use premium disk without write accellerations, therefore thi
 
 [![Deploy HANA VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fhana-vm.json) 
 
-Note: Required target Subnet ID can be retrieved in cloudshell via `az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
+Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
+`az network vnet subnet list -g [ResourceGroup] --vnet-name [Name] --query [].id`
 
 # Prerequesites for DevOps Deployments
 
@@ -165,7 +166,8 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 		* Install [Ansible 2.10.*](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu)
 		* Setup an [Azure DevOps Deployment Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops) in your landing zone
 		Use this [tested agent version 2.184.2](https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz) as the latest version doesn't handel SLES 15 SP2 correctly
-		* Install Azure CLI: `curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` and perform `az login --use-device-code`. Preferable for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
+		* Install Azure CLI: <br />
+			`curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash`
 
 	3. #### Finalize the Deployment Agent Setup
 		* Login with your ssh user to the ubuntu based deployment agent, then <br />
@@ -174,7 +176,9 @@ Note: Required target Subnet ID can be retrieved in cloudshell via `az network v
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 		* Ensure the deployment agent software is automatically started as a service after each reboot: <br />
 			`sudo ./svc.sh install ; sudo ./svc.sh start`
-		* `az login`. You might want to use a [service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
+		* Login to Azure <br />
+			`az login` <br /> 
+			Optionally for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
 		* Save your private ssh-key in `~/.ssh/id_rsa` (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 # Setup the Azure DevOps Pipeline

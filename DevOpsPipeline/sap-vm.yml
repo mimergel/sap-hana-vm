@@ -26,6 +26,7 @@ parameters:
   - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
+  - "Custom RHEL 8.1"
 
 - name: sid
   displayName: SAP System ID
