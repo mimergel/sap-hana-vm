@@ -156,12 +156,10 @@
           "version": "latest"
         },
         "Custom RHEL 8.1": {
-          "id": "tbd.",
-          "sku": "81sapha-gen2",
-          "offer": "RHEL-SAP-HA",
-          "publisher": "RedHat",
-          "OSType": "Linux",
-          "version": "8.1.2021040902"
+          "id": "tbd."
+        },
+        "Custom SLES 12 SP5": {
+          "id": "tbd."
         }
       },
       "internalOSType": "[variables('images')[parameters('osType')].OSType]",
