@@ -202,7 +202,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
 7. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
 8. [Create an azure resource manager service connection with an existing service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
-9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone:
+9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone: <br />
 	![Variables](./Documentation/Images/variables.jpg)
 
 # HANA VM Deployment - Run the Azure DevOps Pipeline 
@@ -214,8 +214,7 @@ Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 # HANA Cloud Measurement Test Results
 * The tests run a couple of hours. Once the execution is completed it will create a file here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * You need to upload the results file on a SAP web site to check if the systems meet the configuration and performance requirements. Upload link: [https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html) 
-* More information on HCMT [in this blog](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/)
-
+* More information on HCMT [in this blog](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/) <br />
 	![Example:](./Documentation/Images/hcmt-result.jpg)
 
 # SAP VM Deployment
@@ -260,9 +259,8 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
 * I don't like entering so many variables manually. Isn't there a better way?
 	- Create variable groups in the Pipelines Library and assign the groups to the relevant pipelines
-	- For example you could use a set of global variables relevant for all pipelines and a set for specific areas like, workload types, subscriptions, regions, etc ... See an example here:
-
-
+	- You could use a set of global variables relevant for all pipelines and a set for specific areas like, workload types, subscriptions, regions, etc. <br />
+		See an example here: <br />
 		![Example:](./Documentation/Images/variable-groups.jpg)
 
 # Disclaimer
