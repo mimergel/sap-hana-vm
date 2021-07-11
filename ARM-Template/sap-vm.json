@@ -156,10 +156,10 @@
           "version": "latest"
         },
         "Custom RHEL 8.1": {
-          "id": "tbd."
+          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPHANAImages/images/rhel-81-sapha-g2/versions/0.0.1"
         },
         "Custom SLES 12 SP5": {
-          "id": "tbd."
+          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPHANAImages/images/12-sp4-gen2/versions/0.0.1"
         }
       },
       "internalOSType": "[variables('images')[parameters('osType')].OSType]",
@@ -287,10 +287,7 @@
           },
           "storageProfile": {
             "imageReference": {
-              "publisher": "[variables('images')[parameters('osType')].publisher]",
-              "offer": "[variables('images')[parameters('osType')].offer]",
-              "sku": "[variables('images')[parameters('osType')].sku]",
-              "version": "[variables('images')[parameters('osType')].version]"
+              "id": "[variables('images')[parameters('osType')].id]"
             },
             "osDisk": {
               "name": "[concat(variables('vmName'), '-osdisk')]",
