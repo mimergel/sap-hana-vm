@@ -1,0 +1,344 @@
+# Azure DevOps Pipeline to deploy a SAP VM and subsequent tasks
+
+parameters:
+- name: size
+  displayName: SAP VM Size
+  type: string
+  default: E2ds_v4_(16GB)
+  values:
+  - E2ds_v4_(16GB)
+  - E4ds_v4_(32GB)
+  - E8ds_v4_(64GB)
+  - E16ds_v4_(128GB)
+  - E20ds_v4_(160GB)
+  - E32ds_v4_(256GB)
+  - E48ds_v4_(384GB)
+  - E64ds_v4_(504GB)
+  - E80ids_v4_(504GB)
+
+- name: os
+  displayName: Operating System
+  type: string
+  default: "SLES 12 SP4"
+  values:
+  - "RHEL 7.7"
+  - "RHEL 8.1"
+  - "SLES 12 SP4"
+  - "SLES 12 SP5"
+  - "SLES 15 SP2"
+  - "Custom RHEL 8.1"
+
+- name: sid
+  displayName: SAP System ID
+  type: string
+  default: "SID"
+
+- name: nr
+  displayName: SAP Instance Number (00-99)
+  type: string
+  default: "00"
+
+- name: vmname
+  displayName: SAP VM Name in Azure
+  type: string
+  default: "SAPTESTSID"
+
+- name: hostname
+  displayName: SAP Host Name in the OS
+  type: string
+  default: "saptestsid"
+
+- name: location
+  displayName: Target Region
+  type: string
+  default: "France Central"
+  values:
+  - "West Europe"
+  - "France Central"
+  - "Germany West Central"
+
+- name: vnet_subnet
+  displayName: Target VNET & Subnet
+  type: string
+  default: "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
+  values:
+  - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
+  - "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
+  - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
+  # Adapt according to your target landing zone
+  # "<VNET>/subnets/<subnet>"
+
+- name: availzone
+  displayName: Availability Zone
+  type: number
+  default: 0
+  values:
+  - 0
+  - 1
+  - 2
+  - 3
+
+- name: sapvmdeployment
+  displayName: SAP VM Deployment
+  type: boolean
+  default: true
+
+- name: osprep
+  displayName: OS Preparations
+  type: boolean
+  default: true
+
+- name: sapinstallation
+  displayName: SAP Installation
+  type: boolean
+  default: true
+
+- name: sapbackupsetup
+  displayName: SAP Backup Setup
+  type: string
+  default: "Non-PROD"
+  values:
+  - "Non-PROD"
+  - "PROD"
+  - "None"
+
+- name: monitoringextsap
+  displayName: Azure Monitoring Extension for SAP
+  type: boolean
+  default: True
+
+- name: cleanup
+  displayName: Remove everything at the end
+  type: boolean
+  default: False
+
+trigger:
+  none
+
+pool:
+  name: $(agent)
+
+variables:
+  backuptype: ${{ parameters.sapbackupsetup }}
+  backuptodo: $[ ne(variables['backuptype'], 'None') ]
+  sapvmrg: RG-SAP-${{ parameters.sid }}
+  sapvmfqdn: ${{ parameters.hostname }}.$(privatednszone)
+  containersuffix: "$(sapvmrg);${{ parameters.vmname }}"
+  sapvmid: /subscriptions/$(subscription)/resourceGroups/$(sapvmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  subnetid: /subscriptions/$(subscription)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+  osvar: ${{ parameters.os }}
+  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
+
+name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+stages:
+- stage: Publish_Pipeline_Artifact
+  jobs:
+  - job: Publish_Pipeline_Artifact
+    steps:
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact'
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)'
+        artifact: sap
+
+- stage: Deploy_VM
+  condition: eq(${{ parameters.sapvmdeployment }}, true)
+  jobs:
+  - job: Deploy_VM
+    steps:
+    - checkout: none
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact'
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)'
+        artifact: sap
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'SAP VM Deployment via ARM'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(azureconnectionname)'
+        subscriptionId: '$(subscription)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(sapvmrg)'
+        location: ${{ parameters.location }}
+        templateLocation: 'URL of the file'
+        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/sap-vm.json'
+        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
+        deploymentMode: 'Complete'
+        deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+
+    - task: PowerShell@2
+      displayName: 'Get ARM Output variables'
+      # https://www.timmerman.it/index.php/using-values-from-your-arm-template-across-your-azure-devops-pipeline-with-powershell/
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/Parse_ARM_Deployment_Output.ps1'
+        arguments: -ArmOutputString '$(arm_output)' -MakeOutput -ErrorAction Stop
+        errorActionPreference: stop
+        showWarnings: true
+
+    - script: |
+        #!/bin/bash
+        mkdir -p ~/Inventory
+        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
+      displayName: Write Inventory JSON
+      failOnStderr: false
+
+    - script: |
+        #!/bin/bash
+        mkdir -p ~/Inventory
+        echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
+        echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
+        echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
+      displayName: Write Inventory files
+      failOnStderr: false
+
+- stage: Prepare_OS
+  condition: eq(${{ parameters.osprep }}, true)
+  jobs:
+  - job: Prepare_OS
+    steps:
+    - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        entry=`ssh-keygen -F $privateip`
+        if [[ -n $entry ]]
+        then
+          echo "Known host entry will be removed"
+          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
+        else
+          echo "No entry found, nothing to remove"
+        fi
+        exit 0
+      displayName: Remove known_hosts entries from former runs that used the same name or ip
+      failOnStderr: false
+
+    - task: Ansible@0
+      displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [sap]
+          $(privateip)
+        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        failOnStdErr: false
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
+
+    - task: Ansible@0
+      displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [sap]
+          $(privateip)
+        args: -vv 
+        failOnStdErr: false
+      condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+
+- stage: Install_SAP
+  condition: eq(${{ parameters.sapinstallation }}, true)
+  jobs:
+  - job: Install_SAP
+    steps:
+    - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
+    - task: Ansible@0
+      displayName: 'SAP Installation (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: 'Ansible/sap-install_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [sap]
+          $(privateip)
+        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw) -e sapbits_storage=${sapbitssstorageaccountname}
+        failOnStdErr: false
+
+- stage: OS_Backup
+  condition: eq(variables.backuptodo, true)
+  jobs:
+  - job: Backup_Activation
+    steps:
+    - checkout: none
+    - task: PowerShell@2
+      displayName: 'OS Backup Setup (PWSH)'
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupEnableOS.ps1'
+        arguments: >
+          -RSV "$(rsv)"
+          -RGV "$(rsv-rg)"
+          -VM "${{ parameters.vmname }}"
+          -SERVER "${{ parameters.hostname }}"
+          -VMRG "$(sapvmrg)"
+          -POL "$(backuptype)"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
+- stage: Monitoring_EXT_SAP
+  condition: eq(${{ parameters.monitoringextsap }}, true)
+  jobs:
+  - job: Monitoring_EXT_SAP
+    steps:
+    - checkout: none
+    - task: PowerShell@2
+      displayName: 'Azure Monitoring Extension for SAP (PWSH)'
+      # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/deployment-guide#bb61ce92-8c5c-461f-8c53-39f5e5ed91f2
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
+        arguments: >
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(sapvmrg)"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
+- stage: Cleanup
+  condition: eq(${{ parameters.cleanup }}, true)
+  jobs:
+  - job: Remove_Backups
+    steps:
+    - checkout: none
+    - task: PowerShell@2
+      displayName: 'SAP Backup Removal (PWSH)'
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupDisable.ps1'
+        arguments: >
+          -SID "${{ parameters.sid }}"
+          -RSV "$(rsv)"
+          -RGV "$(rsv-rg)"
+          -VM "${{ parameters.vmname }}"
+          -VMRG "$(sapvmrg)"
+          -POL "NA"
+        errorActionPreference: continue
+        showWarnings: true
+        failOnStderr: false
+
+  - job: Remove_RG
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(azureconnectionname)'
+        subscriptionId: '$(subscription)'
+        action: 'DeleteRG'
+        resourceGroupName: '$(sapvmrg)'
