@@ -247,6 +247,12 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`	
 * Backup or SAP Monitoring scripts fails
 	* Perform `az login` on the ubuntu deployment agent
+* Deployment of the devopsdeployer VM fails in the last step: message: "VM has reported a failure when processing extension 'CustomScript' ..."
+	* The VM might not have access to the internet and therefore cannot download the custom script that handles to download of ansible, azure cli, etc.
+	* Solution: Adapt the FW and grant temporarily (e.g. for 5 minutes) internet access for the VM. Run the custom script manually. Steps:
+		* `wget https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/setup-deployment-agent.sh`
+		* `chmod 755 setup-deployment-agent.sh`
+		* `sudo ./setup-deployment-agent.sh`
 
 
 # FAQ
