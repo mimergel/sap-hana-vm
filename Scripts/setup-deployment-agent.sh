@@ -47,6 +47,11 @@ sed -i 's/#allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles =
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 # create a service principle and perform az login
 
+# Download Github Repos
+mkdir ~/Azure_SAP_Automated_Deployment; cd $_
+git clone https://github.com/Azure/sap-hana.git
+git clone https://github.com/mimergel/sap-hana-vm.git
+
 # Install DevOps Agent in the home directory of the adminuser
 su - $@ -c 'wget https://vstsagentpackage.azureedge.net/agent/2.184.2/vsts-agent-linux-x64-2.184.2.tar.gz'
 su - $@ -c 'mkdir devopsagent && cd devopsagent ; tar zxvf ~/vsts-agent-linux-x64-2.184.2.tar.gz'

@@ -253,7 +253,8 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 		* `wget https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/setup-deployment-agent.sh`
 		* `chmod 755 setup-deployment-agent.sh`
 		* `sudo ./setup-deployment-agent.sh`
-
+* The Self-hosted DevOps deployment agent is not able to connect to Azure DevOps
+	* Make sure the deployment agent VM is able to connect to Azure DevOps, most likely a FW rule is required. [See here for details.](https://docs.microsoft.com/en-us/azure/devops/organizations/security/allow-list-ip-url?view=azure-devops&tabs=IP-V4#ip-addresses-and-range-restrictions)
 
 # FAQ
 * Where is the HCMT result?
