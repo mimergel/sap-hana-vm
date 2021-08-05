@@ -156,13 +156,9 @@
           "version": "latest"
         },
         "Custom RHEL 8.1": {
-          "OSType": "Linux",
-          "publisher": "RedHat",
           "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPHANAImages/images/rhel-81-sapha-g2/versions/0.0.1"
         },
         "Custom SLES 12 SP5": {
-          "OSType": "Linux",
-          "publisher": "SUSE",
           "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPHANAImages/images/12-sp4-gen2/versions/0.0.1"
         }
       },
