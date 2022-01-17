@@ -1525,7 +1525,7 @@
           "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
         ],
         "zones": "[variables('selectedZones')]",
-        "apiVersion": "2018-10-01",
+        "apiVersion": "2020-12-01",
         "location": "[parameters('location')]",
         "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('BackupTag')]"},
         "properties": {
