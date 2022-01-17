@@ -29,7 +29,6 @@ parameters:
   values:
   - "RHEL 7.7"
   - "RHEL 8.1"
-  - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
 
