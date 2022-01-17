@@ -83,22 +83,22 @@ parameters:
 - name: hanavmdeployment
   displayName: HANA VM Deployment
   type: boolean
-  default: true
+  default: True
 
 - name: osprep
   displayName: OS Preparations
   type: boolean
-  default: true
+  default: False
 
 - name: hanadbinstallation
   displayName: HANA DB Installation
   type: boolean
-  default: true
+  default: False
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
   type: string
-  default: "Non-PROD"
+  default: "None"
   values:
   - "Non-PROD"
   - "PROD"
@@ -107,7 +107,7 @@ parameters:
 - name: monitoringextsap
   displayName: Azure Monitoring Extension for SAP
   type: boolean
-  default: True
+  default: False
 
 #will be added soon
 #- name: qualitychecks
