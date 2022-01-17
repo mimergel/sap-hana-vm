@@ -8,6 +8,9 @@
     "vmNameInput": {
       "value": "hanatest"
     },
+    "HostNameInput": {
+      "value": "hanatest"
+    },
     "hanaSystemSize": {
       "value": "M32ls_256_GB"
     },
