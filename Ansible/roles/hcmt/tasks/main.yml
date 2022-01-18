@@ -1,6 +1,12 @@
 ---
 # https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/
 
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /hana/shared/install
+    state: directory
+    mode: '0755'
+    
 - name: download sapcar
   get_url:
     url: "{{ url_sapcar }}"
