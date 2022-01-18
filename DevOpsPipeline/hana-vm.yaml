@@ -40,39 +40,41 @@ parameters:
 - name: rg
   displayName: Resource group
   type: string
-  default: "HDB"
+  default: "DEV-NOEU-SAP02-X02"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
   type: string
-  default: "20"
+  default: "00"
 
 - name: vmname
   displayName: HANA VM Name in Azure
   type: string
-  default: "HANATEST"
+  default: "DEV-NOEU-SAP02-X02_x02dhdb00l01f8"
 
 - name: hostname
   displayName: HANA Host Name in the OS
   type: string
-  default: "hanatest"
+  default: "x02dhdb00l01f8"
 
 - name: location
   displayName: Target Region
   type: string
-  default: "West Europe"
+  default: "North Europe"
   values:
   - "West Europe"
+  - "North Europe"
   - "Germany West Central"
 
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
+  default: "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
   values:
   - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
   - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
   - "SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
+  - "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
 
