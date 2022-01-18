@@ -37,6 +37,11 @@ parameters:
   type: string
   default: "HDB"
 
+- name: rg
+  displayName: Resource group
+  type: string
+  default: "HDB"
+
 - name: nr
   displayName: HANA Instance Number (00-99)
   type: string
@@ -141,7 +146,7 @@ variables:
   backuptype: ${{ parameters.hanabackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanadbinst: ${{ parameters.hanadbinstallation }}
-  hanavmrg: RG-HANA-${{ parameters.sid }}
+  hanavmrg: ${{ parameters.rg }}
   hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
   containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
   hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
