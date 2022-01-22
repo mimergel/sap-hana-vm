@@ -91,7 +91,6 @@
       },
       "adminPasswordOrKey": {
         "type": "securestring",
-        "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
         "metadata": {
           "description": "Password or ssh key for the Virtual Machine."
         }
