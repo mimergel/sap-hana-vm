@@ -142,7 +142,8 @@ trigger:
   none
 
 pool:
-  name: $(Agent)
+  # name: $(Agent)
+  vmImage: ubuntu-latest
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
