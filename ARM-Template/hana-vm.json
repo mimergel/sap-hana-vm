@@ -73,7 +73,7 @@
       },
       "adminUsername": {
         "type": "string",
-        "defaultValue": "azureuser",
+        "defaultValue": "azureadm",
         "metadata": {
           "description": "Username for the Virtual Machine."
         }
@@ -1484,7 +1484,7 @@
         "ssh": {
           "publicKeys": [
             {
-              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "path": "/home/azureadm/.ssh/authorized_keys",
               "keyData": "[parameters('adminPasswordOrKey')]"
             }
           ]
