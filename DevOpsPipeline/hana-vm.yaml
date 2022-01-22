@@ -60,7 +60,7 @@ parameters:
 - name: location
   displayName: Target Region
   type: string
-  default: "North Europe"
+  default: "Germany West Central"
   values:
   - "West Europe"
   - "North Europe"
@@ -69,7 +69,7 @@ parameters:
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
+  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
   - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
