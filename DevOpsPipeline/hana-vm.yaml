@@ -117,12 +117,6 @@ parameters:
   type: boolean
   default: False
 
-#will be added soon
-#- name: qualitychecks
-#  displayName: HANA quality checks
-#  type: boolean
-#  default: False
-
 - name: xsasetup
   displayName: Install XSA components
   type: boolean
@@ -143,7 +137,6 @@ trigger:
 
 pool:
   name: $(Agent)
-  # vmImage: ubuntu-latest
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
@@ -194,30 +187,34 @@ stages:
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
-    - task: PowerShell@2
-      displayName: 'Get ARM Output variables'
-      # https://www.timmerman.it/index.php/using-values-from-your-arm-template-across-your-azure-devops-pipeline-with-powershell/
-      inputs:
-        targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/Parse_ARM_Deployment_Output.ps1'
-        arguments: -ArmOutputString '$(arm_output)' -MakeOutput -ErrorAction Stop
-        errorActionPreference: stop
-        showWarnings: true
-
     - script: |
         #!/bin/bash
-        mkdir -p $(System.DefaultWorkingDirectory)/Inventory
-        echo $(arm_output) > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
-      displayName: Write Inventory JSON
-      failOnStderr: false
-
-    - script: |
-        #!/bin/bash
-        mkdir -p $(System.DefaultWorkingDirectory)/Inventory
-        echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
-        echo $(arm_output.hanadbid.value)     > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
-        echo $(arm_output.privateip.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
-      displayName: Write Inventory files
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        if [ -z $(arm_output) ]; then
+        echo "##vso[task.logissue type=error]Variable arm_output is empty"
+          exit 2
+        else
+          echo -e "$green--- Writing arm_output into the inventory ---$reset"
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory
+          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
+          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
+          echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
+          cd $(Build.Repository.LocalPath)
+          git checkout $(Build.SourceBranch)
+          git pull
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write Inventory JSON and add this information to the Azure DevOps repository
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
 
 - stage: Prepare_OS
