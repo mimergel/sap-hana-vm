@@ -32,7 +32,7 @@
           "SLES 12 SP5",
           "SLES 15 SP2"
         ],
-        "defaultValue": "SLES 12 SP5",
+        "defaultValue": "SLES 12 SP4",
         "metadata": {
           "description": "The type of the operating system you want to deploy."
         }
@@ -73,23 +73,14 @@
       },
       "adminUsername": {
         "type": "string",
-        "defaultValue": "azureadm",
+        "defaultValue": "azureuser",
         "metadata": {
           "description": "Username for the Virtual Machine."
         }
       },
-      "authenticationType": {
-        "type": "string",
-        "defaultValue": "sshPublicKey",
-        "allowedValues": [
-          "sshPublicKey"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine."
-        }
-      },
-      "adminPublicKey": {
+      "adminPasswordOrKey": {
         "type": "securestring",
+        "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
         "metadata": {
           "description": "Password or ssh key for the Virtual Machine."
         }
@@ -350,7 +341,7 @@
             "useFastNetwork": true
           }
         },
-        "M32ts_192_GB_ZRS": {
+        "M32ts_192_GB": {
           "HANA": {
             "vmSize": "Standard_M32ts",
             "disks": [
@@ -464,7 +455,7 @@
             "useFastNetwork": true
           }
         },
-        "M32ts_192_GB": {
+        "M32ts_192_GB_ZRS": {
           "HANA": {
             "vmSize": "Standard_M32ts",
             "disks": [
@@ -1488,7 +1479,7 @@
       {
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('nicName')]",
-        "apiVersion": "2021-06-01",
+        "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
         "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "properties": {
@@ -1513,7 +1504,7 @@
           "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
         ],
         "zones": "[variables('selectedZones')]",
-        "apiVersion": "2021-07-01",
+        "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
         "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('BackupTag')]"},
         "properties": {
@@ -1523,16 +1514,18 @@
           "osProfile": {
             "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": {
               "disablePasswordAuthentication": true,
               "ssh": {
                 "publicKeys": [
                   {
                     "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-                    "keyData": "[parameters('adminPublicKey')]"
+                    "keyData": "[parameters('adminPasswordOrKey')]"
                   }
                 ]
               }
+            }
           },
           "storageProfile": {
             "imageReference": {
@@ -1569,7 +1562,7 @@
       {
         "type": "Microsoft.Compute/virtualMachines/extensions",
         "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
-        "apiVersion": "2021-07-01",
+        "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
         "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "dependsOn": [
