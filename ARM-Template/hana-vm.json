@@ -1484,7 +1484,6 @@
         "ssh": {
           "publicKeys": [
             {
-              "path": "/home/azureadm/.ssh/authorized_keys",
               "keyData": "[parameters('adminPasswordOrKey')]"
             }
           ]
