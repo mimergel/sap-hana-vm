@@ -210,17 +210,17 @@ stages:
 
     - script: |
         #!/bin/bash
-        mkdir -p ~/Inventory
-        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
+        mkdir -p $(System.DefaultWorkingDirectory)/Inventory
+        echo $(arm_output) > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
       displayName: Write Inventory JSON
       failOnStderr: false
 
     - script: |
         #!/bin/bash
-        mkdir -p ~/Inventory
-        echo $(arm_output.hanavmname.value)  > ~/Inventory/${{ parameters.vmname }}.hanavmname
-        echo $(arm_output.hanadbid.value)     > ~/Inventory/${{ parameters.vmname }}.hanadbid
-        echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
+        mkdir -p $(System.DefaultWorkingDirectory)/Inventory
+        echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
+        echo $(arm_output.hanadbid.value)     > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
+        echo $(arm_output.privateip.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
       displayName: Write Inventory files
       failOnStderr: false
 
@@ -232,7 +232,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
@@ -284,7 +284,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -309,7 +309,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -334,7 +334,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -438,7 +438,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -487,3 +487,4 @@ stages:
         subscriptionId: '$(subscription)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
+
