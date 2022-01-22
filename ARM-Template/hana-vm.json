@@ -4,12 +4,14 @@
     "parameters": {
       "vmNameInput": {
         "type": "string",
+        "defaultValue": "HANATEST",
         "metadata": {
           "description": "The VM Name in Azure that you want to deploy"
         }
       },
       "HostNameInput": {
         "type": "string",
+        "defaultValue": "hanatest",
         "metadata": {
           "description": "The Host Name on OS level that you want to deploy"
         }
@@ -79,6 +81,7 @@
       },
       "subnetId": {
         "type": "string",
+        "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
         "metadata": {
           "description": "The id of the subnet you want to use."
         }
@@ -122,7 +125,7 @@
       },
       "diagnosticsStorageAccountName": {
         "type": "string",
-        "defaultValue": "saponazuretrialdiag",
+        "defaultValue": "stdiagnosticsgermanywes",
         "metadata": {
           "description": "Name of the storage account for boot diagnostics"
         }
