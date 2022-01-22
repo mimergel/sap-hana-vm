@@ -122,13 +122,6 @@
           "description": "Provide mandatory Cost Center ID"
         }
       },
-      "BackupTag": {
-        "type": "string",
-        "defaultValue": "Non-PRD",
-        "metadata": {
-          "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
-        }
-      },
       "diagnosticsStorageAccountName": {
         "type": "string",
         "defaultValue": "stdiagnosticsgermanywes",
@@ -1482,7 +1475,6 @@
         "name": "[variables('nicName')]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "properties": {
           "ipConfigurations": [
             {
@@ -1507,7 +1499,6 @@
         "zones": "[variables('selectedZones')]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('BackupTag')]"},
         "properties": {
           "hardwareProfile": {
             "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
@@ -1564,7 +1555,6 @@
         "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "dependsOn": [
           "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
         ],
