@@ -142,8 +142,8 @@ trigger:
   none
 
 pool:
-  # name: $(Agent)
-  vmImage: ubuntu-latest
+  name: $(Agent)
+  # vmImage: ubuntu-latest
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
@@ -187,7 +187,7 @@ stages:
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: '$(System.DefaultWorkingDirectory)/ARM-Template/hana-vm.json'
+        csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/hana-vm.json'
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -BackupTag "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
