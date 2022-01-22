@@ -90,7 +90,7 @@
         }
       },
       "adminPasswordOrKey": {
-        "type": "securestring",
+        "type": "string",
         "metadata": {
           "description": "Password or ssh key for the Virtual Machine."
         }
