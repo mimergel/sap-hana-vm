@@ -134,7 +134,7 @@ parameters:
   default: True
 
 - name: cleanup
-  displayName: Remove everything at the end
+  displayName: Remove the deployment
   type: boolean
   default: False
 
@@ -142,7 +142,7 @@ trigger:
   none
 
 pool:
-  name: $(agent)
+  name: $(Agent)
 
 variables:
   backuptype: ${{ parameters.hanabackupsetup }}
@@ -192,7 +192,7 @@ stages:
         resourceGroupName: '$(hanavmrg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
+        csmFileLink: '$(System.DefaultWorkingDirectory)/DevOpsPipeline/hana-vm.json'
         overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -BackupTag "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
         deploymentMode: 'Complete'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
@@ -254,7 +254,7 @@ stages:
       displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -267,7 +267,7 @@ stages:
       displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -293,7 +293,7 @@ stages:
       displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/saphana-install_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/saphana-install_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -318,7 +318,7 @@ stages:
       displayName: 'XSA Setup (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/xsa-setup_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/xsa-setup_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -344,7 +344,7 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/backup_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/backup_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
@@ -370,7 +370,7 @@ stages:
         resourceGroupName: '$(rsv-rg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
+        csmFileLink: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
         overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(subscription)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
@@ -447,7 +447,7 @@ stages:
       displayName: 'Run HCMT (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/hcmt_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/hcmt_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
