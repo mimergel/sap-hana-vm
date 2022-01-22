@@ -177,12 +177,6 @@ stages:
   - job: Deploy_VM
     steps:
     - checkout: none
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)'
-        artifact: hana
-
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'SAP HANA VM Deployment via ARM'
       inputs:
