@@ -191,7 +191,7 @@ stages:
         #!/bin/bash
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
         if [ -z $(arm_output) ]; then
-        echo "##vso[task.logissue type=error]Variable arm_output is empty"
+          echo "##vso[task.logissue type=error]Variable arm_output is empty"
           exit 2
         else
           echo -e "$green--- Writing arm_output into the inventory ---$reset"
