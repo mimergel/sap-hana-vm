@@ -82,15 +82,14 @@
         "type": "string",
         "defaultValue": "sshPublicKey",
         "allowedValues": [
-          "password",
           "sshPublicKey"
         ],
         "metadata": {
           "description": "Type of authentication to use on the Virtual Machine."
         }
       },
-      "adminPasswordOrKey": {
-        "type": "string",
+      "adminPublicKey": {
+        "type": "securestring",
         "metadata": {
           "description": "Password or ssh key for the Virtual Machine."
         }
@@ -1524,7 +1523,6 @@
           "osProfile": {
             "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": {
               "disablePasswordAuthentication": true,
               "ssh": {
