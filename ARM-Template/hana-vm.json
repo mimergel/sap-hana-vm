@@ -28,7 +28,6 @@
         "allowedValues": [
           "RHEL 7.7",
           "RHEL 8.1",
-          "SLES 12 SP4",
           "SLES 12 SP5",
           "SLES 15 SP2"
         ],
@@ -76,23 +75,6 @@
         "defaultValue": "azureuser",
         "metadata": {
           "description": "Username for the Virtual Machine."
-        }
-      },
-      "authenticationType": {
-        "type": "string",
-        "defaultValue": "password",
-        "allowedValues": [
-          "password",
-          "sshPublicKey"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine."
-        }
-      },
-      "adminPasswordOrKey": {
-        "type": "securestring",
-        "metadata": {
-          "description": "Password or ssh key for the Virtual Machine."
         }
       },
       "subnetId": {
@@ -1479,17 +1461,6 @@
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
-      "linuxConfiguration": {
-        "disablePasswordAuthentication": true,
-        "ssh": {
-          "publicKeys": [
-            {
-              "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
-              "keyData": "[parameters('adminPasswordOrKey')]"
-            }
-          ]
-        }
-      },
       "subnets": {
         "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
         "false": "[parameters('subnetId')]"
@@ -1535,7 +1506,6 @@
           "osProfile": {
             "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPasswordOrKey')]",
             "linuxConfiguration": {
               "disablePasswordAuthentication": true,
               "ssh": {
