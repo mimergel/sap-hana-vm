@@ -40,7 +40,7 @@ parameters:
 - name: rg
   displayName: Resource group
   type: string
-  default: "DEV-NOEU-SAP02-X02"
+  default: "HANATEST"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
@@ -50,12 +50,12 @@ parameters:
 - name: vmname
   displayName: HANA VM Name in Azure
   type: string
-  default: "DEV-NOEU-SAP02-X02_x02dhdb00l01f8"
+  default: "HANATEST-VM"
 
 - name: hostname
   displayName: HANA Host Name in the OS
   type: string
-  default: "x02dhdb00l01f8"
+  default: "hanatest"
 
 - name: location
   displayName: Target Region
