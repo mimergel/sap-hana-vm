@@ -1484,7 +1484,7 @@
         "ssh": {
           "publicKeys": [
             {
-              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
               "keyData": "[parameters('adminPasswordOrKey')]"
             }
           ]
