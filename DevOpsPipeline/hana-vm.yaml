@@ -35,7 +35,7 @@ parameters:
 - name: authentication
   displayName: Authentication type
   type: string
-  default: "password"
+  default: "sshPublicKey"
   values:
   - "password"
   - "sshPublicKey"
