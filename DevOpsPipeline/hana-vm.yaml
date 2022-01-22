@@ -210,8 +210,8 @@ stages:
           git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
           git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
           git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
-          # git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
-          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin HEAD:$(Build.SourceBranchName)
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+          # git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin HEAD:$(Build.SourceBranchName)
         fi
       displayName: Write Inventory JSON and add this information to the Azure DevOps repository
       env:
