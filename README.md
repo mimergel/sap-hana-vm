@@ -208,24 +208,26 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	
 	Variables:
 
-    * adminuser 
-	* advice.detachedHead
-	* Agent
-	* ARM_CLIENT_ID
-	* ARM_CLIENT_SECRET
-	* ARM_SUBSCRIPTION_ID
-	* ARM_TENANT_ID
-	* AZURE_CONNECTION_NAME
-	* diagnosticsstorageaccountname
-	* hana-pw
-	* privatednszone
-	* pubsshkey
-	* rsv
-	* rsv-rg
-	* skipComponentGovernanceDetection
-	* url-disk-cfg (if required)
-	* vnet-rg 	<br />
-	
+	```
+    * adminuser                  azureadm
+	* advice.detachedHead        false
+	* Agent                      [Agent Pool Name]
+	* ARM_CLIENT_ID              [SPN ID]
+	* ARM_CLIENT_SECRET          [SPN secret]
+	* ARM_SUBSCRIPTION_ID        [subscription id]
+	* ARM_TENANT_ID              [tenant id]
+	* AZURE_CONNECTION_NAME      [azure connection name as defined in devops service connections]]
+	* diagnosticsstorageaccount  [name of diagnostics storage account]
+	* hana-pw                    [password for the hana db]
+	* privatednszone             [e.g. contoso.com]
+	* pubsshkey                  rsa-ssh ABCxxxx...
+	* rsv                        [recovery service vault name]
+	* rsv-rg                     [resource group of the recovery service vault]
+	* skipComponentGovernanceDetection true
+	* url-disk-cfg (if required) [url]
+	* vnet-rg                    [target vnet resource group]
+	```
+
 	Example: <br />
 	
 	![Variables](./Documentation/Images/variablegroup.jpg)
@@ -240,6 +242,7 @@ Now you're ready to deploy the SAP HANA VM including subsequent tasks.
 * The tests run a couple of hours. Once the execution is completed it will create a file here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * You need to upload the results file on a SAP web site to check if the systems meet the configuration and performance requirements. Upload link: [https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html) 
 * More information on HCMT [in this blog](https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/) <br />
+
 	![Example:](./Documentation/Images/hcmt-result.jpg)
 
 # SAP VM Deployment
@@ -247,11 +250,6 @@ Use this ARM template to deploy the SAP Application VMs.
 Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
 
 [![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fsap-vm.json) 
-
-# Todo
-* SAP Installation
-* HA Cluster Setup 
-* HANA Scale-Out Deployments
 
 # Troubleshooting
 * ARM deployment fails because the URL to the diskConfig.sh Script is not reachable from the deployed VM. In this case login to the VM and try with wget to download the script. Use your own container in your storage account and ensure it's reachable from VMs in the target subnet
@@ -280,6 +278,13 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 		* `sudo ./setup-deployment-agent.sh`
 * The Self-hosted DevOps deployment agent is not able to connect to Azure DevOps
 	* Make sure the deployment agent VM is able to connect to Azure DevOps, most likely a FW rule is required. [See here for details.](https://docs.microsoft.com/en-us/azure/devops/organizations/security/allow-list-ip-url?view=azure-devops&tabs=IP-V4#ip-addresses-and-range-restrictions)
+* The value of parameter linuxConfiguration.ssh.publicKeys.keyData is invalid
+	* The key is incorrect. Make sure the pubsshkey variable looks similar to this: <br />
+	  ssh-rsa AB2C1D2csadasdlfk23094rewqfösadnf8urhfeöwndsadmsäewidfuewfbdcsaklNFDWEIFNÖADNFfEJWNFÖOWIBNEFADSASDFafdasdfasdfaR§FGBTGHDFASDADaaSDFASDFASDFSADFSDAFASDFASDDASDFGHFDSFasdfdfghdjdghffvBgDFAGSFDgsfdgasdfgdafgdfgearghsfgdhadfgasdfadfgdfhethjzgasdf54624uadsrfg34ze65htrsearw45ztrgsef4t5z6trgfedw4t5zrgfedw345trgfdew345trfedw345trgsfedw3245trgfedw3ra4t5rgfedw32tr5fdswr34t5z6hg==
+* Failed to connect to the host via ssh: key_load_public: invalid format or other ssh connectivity issues
+	* Use the same adminuser name on deployer and HANA VM
+* InvalidParameter: Destination path for SSH public keys is currently limited to its default value /home/$(adminuser)/.ssh/authorized_keys  due to a known issue in Linux provisioning agent.
+	* Make sure the adminuser variable is set and corresponds to the adminuser during initial deployment of the HANA VM
 
 # FAQ
 * Where is the HCMT result?
@@ -289,13 +294,6 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 * How do I create the service principle?
 	- Via CLI: https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli 
 	- Via Portal: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal 
-* The value of parameter linuxConfiguration.ssh.publicKeys.keyData is invalid
-	- The key is incorrect. Make sure the pubsshkey variable looks similar to this:
-	  ssh-rsa AB2C1D2csadasdlfk23094rewqfösadnf8urhfeöwndsadmsäewidfuewfbdcsaklNFDWEIFNÖADNFfEJWNFÖOWIBNEFADSASDFafdasdfasdfaR§FGBTGHDFASDADaaSDFASDFASDFSADFSDAFASDFASDDASDFGHFDSFasdfdfghdjdghffvBgDFAGSFDgsfdgasdfgdafgdfgearghsfgdhadfgasdfadfgdfhethjzgasdf54624uadsrfg34ze65htrsearw45ztrgsef4t5z6trgfedw4t5zrgfedw345trgfdew345trfedw345trgsfedw3245trgfedw3ra4t5rgfedw32tr5fdswr34t5z6hg==
-* Failed to connect to the host via ssh: key_load_public: invalid format or other ssh connectivity issues
-	- Use the same adminuser name on deployer and HANA VM
-* InvalidParameter: Destination path for SSH public keys is currently limited to its default value /home/$(adminuser)/.ssh/authorized_keys  due to a known issue in Linux provisioning agent.
-	- Make sure the adminuser variable is set and corresponds to the adminuser during initial deployment of the HANA VM
 
 # Disclaimer
 THIS REPOSITORY AND ALL IT'S CONTENT IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT. <br />
