@@ -210,19 +210,18 @@ stages:
           echo $(arm_output)
           cd $(Build.Repository.LocalPath)
           mkdir -p $(System.DefaultWorkingDirectory)/Inventory
-          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
-          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
-          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
-          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
+          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.json
+          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.privateip
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
-          # git pull
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.json
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.hanavmname
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.hanadbid
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.privateip
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
@@ -282,9 +281,12 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv 
+        args: '-vv --private-key /home/$(adminuser)/.ssh/id_rsa'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: false
+        ANSIBLE_HOST_KEY_CHECKING: false
 
 - stage: Install_HANA
   condition: eq(${{ parameters.hanadbinstallation }}, true)
