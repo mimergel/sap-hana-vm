@@ -207,8 +207,8 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 9. Create the variable group "**SAP-HANA-VM-Deployments** with the all required variables. Use the values corresponding to your target landing zone: <br />
 	
 	Variables:
-	`
-	* adminuser
+
+	` - adminuser
 	* advice.detachedHead
 	* Agent
 	* ARM_CLIENT_ID
@@ -224,8 +224,8 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* rsv-rg
 	* skipComponentGovernanceDetection
 	* url-disk-cfg (if required)
-	* vnet-rg
-	`
+	* vnet-rg 	`
+	
 	Example: <br />
 	
 	![Variables](./Documentation/Images/variablegroup.jpg)
