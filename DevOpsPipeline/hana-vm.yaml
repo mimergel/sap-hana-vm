@@ -139,7 +139,7 @@ pool:
   name: $(Agent)
 
 variables:
-  group: "SAP-HANA-VM-deployments"
+  group: "SAP-HANA-VM-Deployments"
   backuptype: ${{ parameters.hanabackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanadbinst: ${{ parameters.hanadbinstallation }}
