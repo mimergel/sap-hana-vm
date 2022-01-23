@@ -238,7 +238,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
@@ -248,6 +248,8 @@ stages:
         else
           echo "No entry found, nothing to remove"
         fi
+        echo "try login"
+        ssh -i  /home/$(adminuser)/.ssh/id_rsa azureadm@$privateip
         exit 0
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
