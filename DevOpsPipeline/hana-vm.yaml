@@ -139,7 +139,6 @@ pool:
   name: $(Agent)
 
 variables:
-  group: "SAP-HANA-VM-Deployments"
   backuptype: ${{ parameters.hanabackupsetup }}
   backuptodo: $[ ne(variables['backuptype'], 'None') ]
   hanadbinst: ${{ parameters.hanadbinstallation }}
@@ -151,6 +150,7 @@ variables:
   subnetid: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
   osvar: ${{ parameters.os }}
   usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
+  - group: "SAP-HANA-VM-Deployments"
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -258,6 +258,9 @@ stages:
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: false
+        ANSIBLE_HOST_KEY_CHECKING: false
 
     - task: Ansible@0
       displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
