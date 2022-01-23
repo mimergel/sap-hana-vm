@@ -108,7 +108,7 @@
           "description": "Location for all resources."
         }
       },
-      "diagnosticsStorageAccountName": {
+      "diagnosticsStorageAccount": {
         "type": "string",
         "defaultValue": "stdiagnosticsgermanywes",
         "metadata": {
@@ -1531,7 +1531,7 @@
           "diagnosticsProfile": {
               "bootDiagnostics": {
                   "enabled": true,
-                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccount'), '.blob.core.windows.net/')]"
               }
           }
         }

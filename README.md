@@ -33,9 +33,10 @@ This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps inclu
 * VM sizes from 128GB to 12TB
 * OS Preparation with required patches and configurations according to relevant SAP notes
 * HANA 2.0 Installation
-* Backup Integration into an Azure Recovery Service Vault including execution of initial OS & HANA backups
+* Backup Integration into an Azure Recovery Service Vault including optional execution of initial OS & HANA backups
 * Selective disk backup, which excludes hana log & data disks from the OS backups
 * Setup Azure Monitoring Extension for SAP
+* Execution quality checks (WIP)
 * Execution of HANA Cloud Measurement Tool (HCMT)
 * Removal of the complete deployment 
 
@@ -152,7 +153,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fbasic-resources.json) 
 
-	**For production workloads use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
+	**For more complex architectures including ANF, AFS, clustering, etc. use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 
 5. ### Setup the Deployment Agent in an existing landing zone
 	1. #### Option A With this ARM-Template	
@@ -183,27 +184,51 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 # Setup the Azure DevOps Pipeline
 
-1. Fork this repository in Github or create your own new Repository based on this template
-2. Create a Project in Azure DevOps
+1. Create a Project in Azure DevOps and 
+2. Import this Github repository into the Azure DevOps repository
 3. In the DevOps Pipeline Area
 	* Create a "New Pipeline" 
-	* Where is your code? => "GitHub" 
-	* Select a repository => "\<git-user\>/sap-hana-vm" 
+	* Where is your code? => "Azure Repos Git" 
+	* Select a repository => "sap-hana-vm" 
 	* Configure your pipeline => "Existing Azure Pipeline YAML file"
-	* Branch "Main" 
-	* Path "/DevOpsPipeline/hana-vm.yml" 
+	* Branch "Main" (or Beta)
+	* Path "/DevOpsPipeline/hana-vm.yaml" 
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
-	* In the process you will need to connect your Github Repository with Azure DevOps [details here](https://docs.microsoft.com/en-us/azure/devops/boards/github/connect-to-github?view=azure-devops)
-4. Add the [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) to your DevOps Project
-5. Download the required SAP Binaries [SAPCAR*](https://softwaredownloads.sap.com/file/0020000002208852020), [IMDB_SERVER*](https://stsapbitsfrancecent.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR ), optionally [HCMT*](https://softwaredownloads.sap.com/file/0020000000392012021) and [XSA components](https://softwaredownloads.sap.com/file/0030000000269122021). Store the files in a storage container. Get the URLs from the storage container and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml`. An easy way to download the SAP binaries is on the sapwinadmin host where you can connect with the Azure Bastion Service. From there you can upload to the Storage Account via the Azure Portal.
+4. Add following extensions to your DevOps Project
+	* [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) 
+	* [Post Build Cleanup](https://marketplace.visualstudio.com/items?itemName=mspremier.PostBuildCleanup)
+5. Download the required SAP Binaries [SAPCAR*](https://softwaredownloads.sap.com/file/0020000002208852020), [IMDB_SERVER*](https://softwaredownloads.sap.com/file/0020000001739942021), optionally [HCMT*](https://softwaredownloads.sap.com/file/0020000001663012021) and [XSA components](https://softwaredownloads.sap.com/file/0030000000269122021). Store the files in a storage container. Get the URLs from the storage container and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml`. An easy way to download the SAP binaries is on the sapwinadmin host where you can connect with the Azure Bastion Service. From there you can upload to the Storage Account via the Azure Portal. Note: these links might change, please check in the SAP Support Portal for the latest version.
 6. In case the target networks don't have access to the internet
-	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the Pipeline
+	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the pipeline variables 
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
 7. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
 8. [Create an azure resource manager service connection with an existing service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
-9. Enter the required variables to the pipeline configuration. Use the values corresponding to your target landing zone: <br />
-	![Variables](./Documentation/Images/variables.jpg)
+9. Create the variable group "**SAP-HANA-VM-Deployments** with the all required variables. Use the values corresponding to your target landing zone: <br />
+	
+	Variables:
+
+    * adminuser 
+	* advice.detachedHead
+	* Agent
+	* ARM_CLIENT_ID
+	* ARM_CLIENT_SECRET
+	* ARM_SUBSCRIPTION_ID
+	* ARM_TENANT_ID
+	* AZURE_CONNECTION_NAME
+	* diagnosticsstorageaccountname
+	* hana-pw
+	* privatednszone
+	* pubsshkey
+	* rsv
+	* rsv-rg
+	* skipComponentGovernanceDetection
+	* url-disk-cfg (if required)
+	* vnet-rg 	<br />
+	
+	Example: <br />
+	
+	![Variables](./Documentation/Images/variablegroup.jpg)
 
 # HANA VM Deployment - Run the Azure DevOps Pipeline 
 

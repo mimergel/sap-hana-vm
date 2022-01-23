@@ -139,17 +139,29 @@ pool:
   name: $(Agent)
 
 variables:
-  backuptype: ${{ parameters.hanabackupsetup }}
-  backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  hanadbinst: ${{ parameters.hanadbinstallation }}
-  hanavmrg: ${{ parameters.rg }}
-  hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
-  containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
-  hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
-  hanavmid: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
-  subnetid: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
-  osvar: ${{ parameters.os }}
-  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
+  - group: "SAP-HANA-VM-Deployments"
+  - name: backuptype
+    value: ${{ parameters.hanabackupsetup }}
+  - name: backuptodo
+    value: $[ ne(variables['backuptype'], 'None') ]
+  - name: hanadbinst
+    value: ${{ parameters.hanadbinstallation }}
+  - name: hanavmrg
+    value: ${{ parameters.rg }}
+  - name:   hanavmfqdn
+    value: ${{ parameters.hostname }}.$(privatednszone)
+  - name: containersuffix
+    value: "$(hanavmrg);${{ parameters.vmname }}"
+  - name: hanabackupcontainer
+    value: "VMAppContainer;Compute;$(containersuffix)"
+  - name: hanavmid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  - name: subnetid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+  - name: osvar
+    value: ${{ parameters.os }}
+  - name: usepyth3
+    value: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -182,7 +194,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/hana-vm.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" '
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
@@ -197,20 +209,19 @@ stages:
           echo -e "$green--- Writing arm_output into the inventory ---$reset"
           echo $(arm_output)
           cd $(Build.Repository.LocalPath)
-          mkdir -p $(System.DefaultWorkingDirectory)/Inventory
-          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
-          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
-          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
-          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}
+          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
-          # git pull
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
@@ -227,13 +238,14 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f ~/.ssh/known_hosts -R $privateip
+          echo ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
+          ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
@@ -257,6 +269,10 @@ stages:
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
     - task: Ansible@0
       displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
@@ -267,9 +283,13 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv 
+        args:  '-vv -u $(adminuser)'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_HANA
   condition: eq(${{ parameters.hanadbinstallation }}, true)
@@ -279,7 +299,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -295,6 +315,10 @@ stages:
           $(privateip)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_XSA
   condition: eq(${{ parameters.xsasetup }}, true)
@@ -304,7 +328,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -320,6 +344,10 @@ stages:
           $(privateip)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Backup_Prerequesite
   condition: eq(variables.backuptodo, true)
@@ -329,7 +357,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -348,6 +376,10 @@ stages:
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Backup_Activation
   condition: eq(variables.backuptodo, true)
@@ -433,7 +465,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -446,9 +478,13 @@ stages:
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
-          10.111.96.4
-        args: -v 
+          $(privateip)
+        args: '-vv'
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
