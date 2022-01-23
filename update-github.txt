@@ -1,3 +1,0 @@
-git pull
-git pull remote-repo beta
-git push remote-repo beta
