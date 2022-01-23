@@ -249,7 +249,7 @@ stages:
           echo "No entry found, nothing to remove"
         fi
         echo "try login"
-        ssh -i  /home/$(adminuser)/.ssh/id_rsa azureadm@$privateip
+        ssh -i  /home/$(adminuser)/.ssh/id_rsa -o StrictHostKeyChecking=no azureadm@$privateip
         exit 0
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
