@@ -208,7 +208,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	
 	Variables:
 
-```
+	```
     * adminuser              azureadm
 	* advice.detachedHead        false
 	* Agent                      [Agent Pool Name]
@@ -226,7 +226,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* skipComponentGovernanceDetection true
 	* url-disk-cfg (if required) [url]
 	* vnet-rg                    [target vnet resource group]
-```
+	```
 
 	Example: <br />
 	
