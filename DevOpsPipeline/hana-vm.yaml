@@ -169,6 +169,8 @@ stages:
 - stage: Publish_Pipeline_Artifact
   jobs:
   - job: Publish_Pipeline_Artifact
+    workspace:
+      clean: all
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -266,7 +268,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        args: -vvvv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
       env:
@@ -283,7 +285,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args:  '-vv -u $(adminuser)'
+        args:  '-vvvv -u $(adminuser)'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
