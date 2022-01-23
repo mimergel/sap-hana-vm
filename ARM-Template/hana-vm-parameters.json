@@ -23,12 +23,6 @@
     "osType": {
       "value": "SLES 12 SP5"
     },
-    "Owner": {
-      "value": "SAP Team Contact"
-    },
-    "CostCenter": {
-      "value": "28007510"
-    },
     "subnetId": {
       "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/[SubnetRG]/providers/Microsoft.Network/virtualNetworks/[VNET]/subnets/[subnet]"
     }
