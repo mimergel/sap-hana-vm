@@ -226,7 +226,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* url-disk-cfg (if required)
 	* vnet-rg
 
-	Example:
+	Example: <br />
 	
 	![Variables](./Documentation/Images/variablegroup.jpg)
 
