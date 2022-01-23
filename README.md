@@ -205,6 +205,29 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 7. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
 8. [Create an azure resource manager service connection with an existing service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
 9. Create the variable group "**SAP-HANA-VM-Deployments** with the all required variables. Use the values corresponding to your target landing zone: <br />
+	
+	Variables:
+
+	* adminuser
+	* advice.detachedHead
+	* Agent
+	* ARM_CLIENT_ID
+	* ARM_CLIENT_SECRET
+	* ARM_SUBSCRIPTION_ID
+	* ARM_TENANT_ID
+	* AZURE_CONNECTION_NAME
+	* diagnosticsstorageaccountname
+	* hana-pw
+	* privatednszone
+	* pubsshkey
+	* rsv
+	* rsv-rg
+	* skipComponentGovernanceDetection
+	* url-disk-cfg (if required)
+	* vnet-rg
+
+	Example:
+	
 	![Variables](./Documentation/Images/variablegroup.jpg)
 
 # HANA VM Deployment - Run the Azure DevOps Pipeline 
