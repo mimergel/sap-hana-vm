@@ -233,7 +233,7 @@ stages:
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
+          ssh-keygen -f ~/.ssh/known_hosts -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
