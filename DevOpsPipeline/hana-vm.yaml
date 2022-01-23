@@ -282,7 +282,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vv --private_key_file /home/$(adminuser)/.ssh/id_rsa'
+        args: '-vv --private_key /home/$(adminuser)/.ssh/id_rsa'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
