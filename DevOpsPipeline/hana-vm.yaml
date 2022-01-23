@@ -158,7 +158,6 @@ stages:
   jobs:
   - job: Publish_Pipeline_Artifact
     steps:
-    - task: PostBuildCleanup@3
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
       inputs:
@@ -183,26 +182,27 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/hana-vm.json
         overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
-        deploymentMode: 'Complete'
+        deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
     - script: |
         #!/bin/bash
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
-        if [ -z $(arm_output) ]; then
-        echo "##vso[task.logissue type=error]Variable arm_output is empty"
+        if [[ -z $(arm_output) ]]; then
+          echo "##vso[task.logissue type=error]Variable arm_output is empty"
           exit 2
         else
           echo -e "$green--- Writing arm_output into the inventory ---$reset"
+          echo $(arm_output)
+          cd $(Build.Repository.LocalPath)
           mkdir -p $(System.DefaultWorkingDirectory)/Inventory
           echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
           echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanavmname
           echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
           echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
-          cd $(Build.Repository.LocalPath)
-          git checkout $(Build.SourceBranch)
+          git checkout $(Build.SourceBranchName)
           git pull
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
@@ -211,6 +211,7 @@ stages:
           git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.hanadbid
           git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+          # git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin HEAD:$(Build.SourceBranchName)
         fi
       displayName: Write Inventory JSON and add this information to the Azure DevOps repository
       env:
@@ -481,3 +482,11 @@ stages:
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
 
+- stage: Post_Installation_Steps
+  displayName: Post Installation Steps
+  jobs:
+    - job:                           Post_Installation_Steps
+      displayName:                   Post Installation Steps
+      steps:
+        - task:                      PostBuildCleanup@3
+        - checkout:                  none
