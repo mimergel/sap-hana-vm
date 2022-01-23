@@ -210,22 +210,22 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 ```
     * adminuser              azureadm
-	* advice.detachedHead    
-	* Agent
-	* ARM_CLIENT_ID
-	* ARM_CLIENT_SECRET
-	* ARM_SUBSCRIPTION_ID
-	* ARM_TENANT_ID
-	* AZURE_CONNECTION_NAME
-	* diagnosticsstorageaccountname
-	* hana-pw
-	* privatednszone
-	* pubsshkey
-	* rsv
-	* rsv-rg
-	* skipComponentGovernanceDetection
-	* url-disk-cfg (if required)
-	* vnet-rg 	<br />
+	* advice.detachedHead        false
+	* Agent                      [Agent Pool Name]
+	* ARM_CLIENT_ID              [SPN ID]
+	* ARM_CLIENT_SECRET          [SPN secret]
+	* ARM_SUBSCRIPTION_ID        [subscription id]
+	* ARM_TENANT_ID              [tenant id]
+	* AZURE_CONNECTION_NAME      [azure connection name as defined in devops service connections]]
+	* diagnosticsstorageaccount  [name of diagnostics storage account]
+	* hana-pw                    [password for the hana db]
+	* privatednszone             [e.g. contoso.com]
+	* pubsshkey                  rsa-ssh ABCxxxx...
+	* rsv                        [recovery service vault name]
+	* rsv-rg                     [resource group of the recovery service vault]
+	* skipComponentGovernanceDetection true
+	* url-disk-cfg (if required) [url]
+	* vnet-rg                    [target vnet resource group]
 ```
 
 	Example: <br />
