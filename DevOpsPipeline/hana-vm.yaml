@@ -139,18 +139,29 @@ pool:
   name: $(Agent)
 
 variables:
-  backuptype: ${{ parameters.hanabackupsetup }}
-  backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  hanadbinst: ${{ parameters.hanadbinstallation }}
-  hanavmrg: ${{ parameters.rg }}
-  hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
-  containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
-  hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
-  hanavmid: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
-  subnetid: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
-  osvar: ${{ parameters.os }}
-  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
   - group: "SAP-HANA-VM-Deployments"
+  - name: backuptype
+    value: ${{ parameters.hanabackupsetup }}
+  - name: backuptodo
+    value: $[ ne(variables['backuptype'], 'None') ]
+  - name: hanadbinst
+    value: ${{ parameters.hanadbinstallation }}
+  - name: hanavmrg
+    value: ${{ parameters.rg }}
+  - name:   hanavmfqdn
+    value: ${{ parameters.hostname }}.$(privatednszone)
+  - name: containersuffix
+    value: "$(hanavmrg);${{ parameters.vmname }}"
+  - name: hanabackupcontainer
+    value: "VMAppContainer;Compute;$(containersuffix)"
+  - name: hanavmid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  - name: subnetid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+  - name: osvar
+    value: ${{ parameters.os }}
+  - name: usepyth3
+    value: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
