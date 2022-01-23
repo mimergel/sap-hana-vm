@@ -204,7 +204,7 @@ stages:
           echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
-          git pull
+          # git pull
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
           git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.json
@@ -485,6 +485,7 @@ stages:
 
 - stage: Post_Installation_Steps
   displayName: Post Installation Steps
+  condition: always()
   jobs:
     - job:                           Post_Installation_Steps
       displayName:                   Post Installation Steps
