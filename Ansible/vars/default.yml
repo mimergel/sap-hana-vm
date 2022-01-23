@@ -8,18 +8,18 @@ sap_hostname:
 # -----------------------------URLs for HANA DB Installation--------------------------------------------------------------
 # Default URLs
 # SAPCAR_1010-70006178.EXE
-url_sapcar: https://softwaredownloads.sap.com/file/0020000002208852020
+# url_sapcar: https://softwaredownloads.sap.com/file/0020000002208852020
 # IMDB_SERVER20_060_0-80002031.SAR
-url_hdbserver: https://softwaredownloads.sap.com/file/0020000001739942021
+# url_hdbserver: https://softwaredownloads.sap.com/file/0020000001739942021
 # IMDB_SERVER20_059_0-80002031.SAR
 # url_hdbserver: https://softwaredownloads.sap.com/file/0020000001663222021
 # HCMT_059_0-80003261.SAR
-url_hcmt: https://softwaredownloads.sap.com/file/0020000001663012021
+# url_hcmt: https://softwaredownloads.sap.com/file/0020000001663012021
 #
 # using own accessible storage account:
-# url_sapcar: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
-# url_hdbserver: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/IMDB_SERVER20_055_0-80002031.SAR
-# url_hcmt: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/HCMT_055_0-80003261.SAR
+url_sapcar: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
+url_hdbserver: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/IMDB_SERVER20_060_0-80002031.SAR
+url_hcmt: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/HCMT_060_0-80003261.SAR
 
 
 url_xsa_media: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/51054859.ZIP

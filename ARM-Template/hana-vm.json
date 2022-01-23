@@ -4,12 +4,14 @@
     "parameters": {
       "vmNameInput": {
         "type": "string",
+        "defaultValue": "HANATEST",
         "metadata": {
           "description": "The VM Name in Azure that you want to deploy"
         }
       },
       "HostNameInput": {
         "type": "string",
+        "defaultValue": "hanatest",
         "metadata": {
           "description": "The Host Name on OS level that you want to deploy"
         }
@@ -28,13 +30,18 @@
         "allowedValues": [
           "RHEL 7.7",
           "RHEL 8.1",
-          "SLES 12 SP4",
           "SLES 12 SP5",
           "SLES 15 SP2"
         ],
-        "defaultValue": "SLES 12 SP4",
+        "defaultValue": "SLES 12 SP5",
         "metadata": {
           "description": "The type of the operating system you want to deploy."
+        }
+      },
+      "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password or ssh key for the Virtual Machine."
         }
       },
       "dbType": {
@@ -53,6 +60,7 @@
           "E16ds_v4_128_GB-Non-PRD",
           "E20ds_v4_160_GB-Non-PRD",
           "M32ts_192_GB",
+          "M32ts_192_GB_ZRS",
           "M32ls_256_GB",
           "E48ds_v4_384_GB-Non-PRD",
           "M64ls_512_GB",
@@ -65,37 +73,21 @@
           "M208ms_v2_5.700_GB",
           "M416ms_v2_11.400_GB"
         ],
-        "defaultValue": "M32ts_192_GB",
+        "defaultValue": "E16ds_v4_128_GB-Non-PRD",
         "metadata": {
           "description": "The size of the HANA System you want to deploy."
         }
       },
       "adminUsername": {
         "type": "string",
-        "defaultValue": "azureuser",
+        "defaultValue": "azureadm",
         "metadata": {
           "description": "Username for the Virtual Machine."
         }
       },
-      "authenticationType": {
-        "type": "string",
-        "defaultValue": "sshPublicKey",
-        "allowedValues": [
-          "password",
-          "sshPublicKey"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine."
-        }
-      },
-      "adminPasswordOrKey": {
-        "type": "securestring",
-        "metadata": {
-          "description": "Password or ssh key for the Virtual Machine."
-        }
-      },
       "subnetId": {
         "type": "string",
+        "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
         "metadata": {
           "description": "The id of the subnet you want to use."
         }
@@ -116,30 +108,9 @@
           "description": "Location for all resources."
         }
       },
-      "Owner": {
+      "diagnosticsStorageAccount": {
         "type": "string",
-        "defaultValue": "SAP Team Contact",
-        "metadata": {
-          "description": "Provide mandatory Owner Name"
-        }
-      },
-      "CostCenter": {
-        "type": "string",
-        "defaultValue": "28007510",
-        "metadata": {
-          "description": "Provide mandatory Cost Center ID"
-        }
-      },
-      "BackupTag": {
-        "type": "string",
-        "defaultValue": "Non-PRD",
-        "metadata": {
-          "description": "DeployIfNotExist: Configure backup on the VM with a given tag to an existing recovery services vault in the same location, expected Tag is HANABackup with value Non-PRD or PRD"
-        }
-      },
-      "diagnosticsStorageAccountName": {
-        "type": "string",
-        "defaultValue": "saponazuretrialdiag",
+        "defaultValue": "stdiagnosticsgermanywes",
         "metadata": {
           "description": "Name of the storage account for boot diagnostics"
         }
@@ -351,6 +322,120 @@
           }
         },
         "M32ts_192_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32ts",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32ts_192_GB_ZRS": {
           "HANA": {
             "vmSize": "Standard_M32ts",
             "disks": [
@@ -1364,17 +1449,6 @@
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
-      "linuxConfiguration": {
-        "disablePasswordAuthentication": true,
-        "ssh": {
-          "publicKeys": [
-            {
-              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-              "keyData": "[parameters('adminPasswordOrKey')]"
-            }
-          ]
-        }
-      },
       "subnets": {
         "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
         "false": "[parameters('subnetId')]"
@@ -1387,7 +1461,6 @@
         "name": "[variables('nicName')]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "properties": {
           "ipConfigurations": [
             {
@@ -1412,7 +1485,6 @@
         "zones": "[variables('selectedZones')]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd.", "HANABackup": "[parameters('BackupTag')]"},
         "properties": {
           "hardwareProfile": {
             "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
@@ -1420,8 +1492,17 @@
           "osProfile": {
             "computerName": "[variables('HostName')]",
             "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPasswordOrKey')]",
-            "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publicKeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
+                    "keyData": "[parameters('adminPasswordOrKey')]"
+                  }
+                ]
+              }
+            }
           },
           "storageProfile": {
             "imageReference": {
@@ -1450,7 +1531,7 @@
           "diagnosticsProfile": {
               "bootDiagnostics": {
                   "enabled": true,
-                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccount'), '.blob.core.windows.net/')]"
               }
           }
         }
@@ -1460,7 +1541,6 @@
         "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
         "apiVersion": "2018-10-01",
         "location": "[parameters('location')]",
-        "tags": {"cost-center": "[parameters('CostCenter')]","application": "SAP","owner": "[parameters('Owner')]", "cmdb-link": "https://tbd."},
         "dependsOn": [
           "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
         ],
