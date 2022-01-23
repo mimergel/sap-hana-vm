@@ -40,7 +40,7 @@ parameters:
 - name: rg
   displayName: Resource group
   type: string
-  default: "HANATEST"
+  default: "RG-HANATEST-HDB"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
