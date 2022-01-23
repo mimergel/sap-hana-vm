@@ -169,6 +169,8 @@ stages:
 - stage: Publish_Pipeline_Artifact
   jobs:
   - job: Publish_Pipeline_Artifact
+    workspace:
+      clean: all
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
