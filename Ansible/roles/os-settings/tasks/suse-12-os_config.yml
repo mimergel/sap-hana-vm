@@ -21,7 +21,20 @@
 
 - name: Task Tweak the Default System Settings for SAP HANA 1 
   command: "saptune solution apply HANA"
+  ignore_errors: yes
 
 - name: Task Tweak the Default System Settings for SAP HANA 2
   command: "saptune service takeover"
+  
+- name: Task Check saptune 1
+  command: "/usr/sbin/saptune_check"
+  ignore_errors: yes
+
+- name: Task Check saptune 
+  command: "systemctl reset-failed"
+  ignore_errors: yes
+
+- name: Task Check saptune 2
+  command: "/usr/sbin/saptune_check"
+  ignore_errors: yes
   
