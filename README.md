@@ -209,7 +209,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	Variables:
 
 	```
-    * adminuser              azureadm
+    * adminuser                  azureadm
 	* advice.detachedHead        false
 	* Agent                      [Agent Pool Name]
 	* ARM_CLIENT_ID              [SPN ID]
