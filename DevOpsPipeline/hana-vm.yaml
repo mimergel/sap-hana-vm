@@ -249,6 +249,8 @@ stages:
         else
           echo "No entry found, nothing to remove"
         fi
+        echo "what my environment?"
+        env
         exit 0
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
@@ -282,7 +284,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vv --private_key /home/$(adminuser)/.ssh/id_rsa'
+        args:  '-vv --private-key /home/$(adminuser)/.ssh/id_rsa'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
