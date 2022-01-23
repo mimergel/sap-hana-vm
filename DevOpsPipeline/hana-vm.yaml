@@ -170,6 +170,7 @@ stages:
   - job: Deploy_VM
     steps:
     - checkout: none
+      persistCredentials:        true
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'SAP HANA VM Deployment via ARM'
       inputs:
@@ -185,7 +186,6 @@ stages:
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
-
     - script: |
         #!/bin/bash
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
