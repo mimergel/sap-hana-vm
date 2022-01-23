@@ -283,12 +283,13 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vv --private_key_file /home/$(adminuser)/.ssh/id_rsa --host_key_checking no'
+        args: '-vv --private_key_file /home/$(adminuser)/.ssh/id_rsa'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
-        ANSIBLE_DISPLAY_SKIPPED_HOSTS: false
-        ANSIBLE_HOST_KEY_CHECKING: false
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_HANA
   condition: eq(${{ parameters.hanadbinstallation }}, true)
