@@ -208,7 +208,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	
 	Variables:
 
-	` - adminuser
+    * adminuser 
 	* advice.detachedHead
 	* Agent
 	* ARM_CLIENT_ID
@@ -224,7 +224,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* rsv-rg
 	* skipComponentGovernanceDetection
 	* url-disk-cfg (if required)
-	* vnet-rg 	`
+	* vnet-rg 	<br />
 	
 	Example: <br />
 	
