@@ -244,12 +244,11 @@ stages:
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f ~/.ssh/known_hosts -R $privateip
+          echo ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
+          ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
-        echo "try login"
-        ssh -i  /home/$(adminuser)/.ssh/id_rsa -o StrictHostKeyChecking=no azureadm@$privateip
         exit 0
       displayName: Remove known_hosts entries from former runs that used the same name
       failOnStderr: false
