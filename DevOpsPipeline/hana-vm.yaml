@@ -238,7 +238,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}-${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
