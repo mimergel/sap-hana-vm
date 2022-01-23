@@ -266,7 +266,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        args: -vvvv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
       env:
@@ -283,7 +283,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args:  '-vv -u $(adminuser)'
+        args:  '-vvvv -u $(adminuser)'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
