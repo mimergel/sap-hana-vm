@@ -19,7 +19,6 @@ Table of contents
 - [HANA VM Deployment - Run the Azure DevOps Pipeline](#hana-vm-deployment---run-the-azure-devops-pipeline)
 - [HANA Cloud Measurement Test Results](#hana-cloud-measurement-test-results)
 - [SAP VM Deployment](#sap-vm-deployment)
-- [Todo](#todo)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
 - [Disclaimer](#disclaimer)
