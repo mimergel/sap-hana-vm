@@ -141,6 +141,7 @@ pool:
 
 variables:
   - group: "SAP-HANA-VM-Deployments"
+  - group: "SAP-HANA-VM-Deployments-GEWC"
   - name: backuptype
     value: ${{ parameters.hanabackupsetup }}
   - name: backuptodo
