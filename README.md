@@ -5,6 +5,7 @@ Table of contents
 - [SAP HANA VM Deployments](#SAP-HANA-VM-Deployments)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
+- [Prerequesites for DevOps Deployments](#prerequesites-for-devops-deployments)
     + [Azure Subscription](#azure-subscription)
     + [Azure DevOps and Github account](#azure-devops-and-github-account)
     + [SAP User for the Software Downloads](#sap-user-for-the-software-downloads)
