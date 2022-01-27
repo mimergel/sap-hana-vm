@@ -75,6 +75,7 @@ parameters:
   - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
   - "SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
   - "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
+  - "MIM-GEWC-SAP04-vnet/subnets/MIM-GEWC-SAP04_db-subnet"
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
 
