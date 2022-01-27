@@ -35,12 +35,12 @@ parameters:
 - name: sid
   displayName: HANA System ID
   type: string
-  default: "HDB"
+  default: "ZRS"
 
 - name: rg
   displayName: Resource group
   type: string
-  default: "RG-HANATEST-HDB"
+  default: "RG-HANATEST-ZRS"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
@@ -50,7 +50,7 @@ parameters:
 - name: vmname
   displayName: HANA VM Name in Azure
   type: string
-  default: "HANATEST-VM"
+  default: "HANATEST-ZRS"
 
 - name: hostname
   displayName: HANA Host Name in the OS
@@ -69,7 +69,7 @@ parameters:
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
+  default: "MIM-GEWC-SAP04-vnet/subnets/MIM-GEWC-SAP04_db-subnet"
   values:
   - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
   - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
@@ -82,7 +82,7 @@ parameters:
 - name: availzone
   displayName: Availability Zone
   type: number
-  default: 0
+  default: 1
   values:
   - 0
   - 1
