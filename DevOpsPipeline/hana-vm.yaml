@@ -1,14 +1,15 @@
-# Azure DevOps Pipeline to deploy SAP HANA and subsequent tasks
+# Azure DevOps Pipeline to deploy SAP HANA and subsequent tasks Rev.02 - Jan 2022
 
 parameters:
 - name: size
   displayName: HANA VM Size
   type: string
-  default: M32ts_192_GB
+  default: E16ds_v4_128_GB-Non-PRD
   values:
   - E16ds_v4_128_GB-Non-PRD
   - E20ds_v4_160_GB-Non-PRD
   - M32ts_192_GB
+  - M32ts_192_GB_ZRS
   - M32ls_256_GB
   - E48ds_v4_384_GB-Non-PRD
   - M64ls_512_GB
@@ -24,11 +25,10 @@ parameters:
 - name: os
   displayName: Operating System
   type: string
-  default: "SLES 12 SP4"
+  default: "SLES 12 SP5"
   values:
   - "RHEL 7.7"
   - "RHEL 8.1"
-  - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
 
@@ -37,15 +37,20 @@ parameters:
   type: string
   default: "HDB"
 
+- name: rg
+  displayName: Resource group
+  type: string
+  default: "RG-HANATEST-HDB"
+
 - name: nr
   displayName: HANA Instance Number (00-99)
   type: string
-  default: "20"
+  default: "00"
 
 - name: vmname
   displayName: HANA VM Name in Azure
   type: string
-  default: "HANATEST"
+  default: "HANATEST-VM"
 
 - name: hostname
   displayName: HANA Host Name in the OS
@@ -55,20 +60,21 @@ parameters:
 - name: location
   displayName: Target Region
   type: string
-  default: "France Central"
+  default: "Germany West Central"
   values:
   - "West Europe"
-  - "France Central"
+  - "North Europe"
   - "Germany West Central"
 
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
+  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
-  - "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
   - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
+  - "SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
+  - "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
   # Adapt according to your target landing zone
   # "<VNET>/subnets/<subnet>"
 
@@ -85,22 +91,22 @@ parameters:
 - name: hanavmdeployment
   displayName: HANA VM Deployment
   type: boolean
-  default: true
+  default: True
 
 - name: osprep
   displayName: OS Preparations
   type: boolean
-  default: true
+  default: False
 
 - name: hanadbinstallation
   displayName: HANA DB Installation
   type: boolean
-  default: true
+  default: False
 
 - name: hanabackupsetup
   displayName: HANA Backup Setup
   type: string
-  default: "Non-PROD"
+  default: "None"
   values:
   - "Non-PROD"
   - "PROD"
@@ -109,13 +115,7 @@ parameters:
 - name: monitoringextsap
   displayName: Azure Monitoring Extension for SAP
   type: boolean
-  default: True
-
-#will be added soon
-#- name: qualitychecks
-#  displayName: HANA quality checks
-#  type: boolean
-#  default: False
+  default: False
 
 - name: xsasetup
   displayName: Install XSA components
@@ -128,7 +128,7 @@ parameters:
   default: False
 
 - name: cleanup
-  displayName: Remove everything at the end
+  displayName: Remove the deployment
   type: boolean
   default: False
 
@@ -136,20 +136,32 @@ trigger:
   none
 
 pool:
-  name: $(agent)
+  name: $(Agent)
 
 variables:
-  backuptype: ${{ parameters.hanabackupsetup }}
-  backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  hanadbinst: ${{ parameters.hanadbinstallation }}
-  hanavmrg: RG-HANA-${{ parameters.sid }}
-  hanavmfqdn: ${{ parameters.hostname }}.$(privatednszone)
-  containersuffix: "$(hanavmrg);${{ parameters.vmname }}"
-  hanabackupcontainer: "VMAppContainer;Compute;$(containersuffix)"
-  hanavmid: /subscriptions/$(subscription)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
-  subnetid: /subscriptions/$(subscription)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
-  osvar: ${{ parameters.os }}
-  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
+  - group: "SAP-HANA-VM-Deployments"
+  - name: backuptype
+    value: ${{ parameters.hanabackupsetup }}
+  - name: backuptodo
+    value: $[ ne(variables['backuptype'], 'None') ]
+  - name: hanadbinst
+    value: ${{ parameters.hanadbinstallation }}
+  - name: hanavmrg
+    value: ${{ parameters.rg }}
+  - name:   hanavmfqdn
+    value: ${{ parameters.hostname }}.$(privatednszone)
+  - name: containersuffix
+    value: "$(hanavmrg);${{ parameters.vmname }}"
+  - name: hanabackupcontainer
+    value: "VMAppContainer;Compute;$(containersuffix)"
+  - name: hanavmid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  - name: subnetid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+  - name: osvar
+    value: ${{ parameters.os }}
+  - name: usepyth3
+    value: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -157,6 +169,8 @@ stages:
 - stage: Publish_Pipeline_Artifact
   jobs:
   - job: Publish_Pipeline_Artifact
+    workspace:
+      clean: all
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -170,52 +184,52 @@ stages:
   - job: Deploy_VM
     steps:
     - checkout: none
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)'
-        artifact: hana
-
+      persistCredentials:        true
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'SAP HANA VM Deployment via ARM'
       inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
+        deploymentScope: Resource Group
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(hanavmrg)'
+        resourceGroupName: $(hanavmrg)
         location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/hana-vm.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -BackupTag "${{ parameters.hanabackupsetup }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
-        deploymentMode: 'Complete'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/hana-vm.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" '
+        deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
-    - task: PowerShell@2
-      displayName: 'Get ARM Output variables'
-      # https://www.timmerman.it/index.php/using-values-from-your-arm-template-across-your-azure-devops-pipeline-with-powershell/
-      inputs:
-        targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/Parse_ARM_Deployment_Output.ps1'
-        arguments: -ArmOutputString '$(arm_output)' -MakeOutput -ErrorAction Stop
-        errorActionPreference: stop
-        showWarnings: true
-
     - script: |
         #!/bin/bash
-        mkdir -p ~/Inventory
-        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
-      displayName: Write Inventory JSON
-      failOnStderr: false
-
-    - script: |
-        #!/bin/bash
-        mkdir -p ~/Inventory
-        echo $(arm_output.hanavmname.value)  > ~/Inventory/${{ parameters.vmname }}.hanavmname
-        echo $(arm_output.hanadbid.value)     > ~/Inventory/${{ parameters.vmname }}.hanadbid
-        echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
-      displayName: Write Inventory files
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        if [[ -z $(arm_output) ]]; then
+          echo "##vso[task.logissue type=error]Variable arm_output is empty"
+          exit 2
+        else
+          echo -e "$green--- Writing arm_output into the inventory ---$reset"
+          echo $(arm_output)
+          cd $(Build.Repository.LocalPath)
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}
+          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
+          echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
+          git checkout $(Build.SourceBranchName)
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
+          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
+          git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write Inventory JSON and add this information to the Azure DevOps repository
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
 
 - stage: Prepare_OS
@@ -226,13 +240,14 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
+          echo ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
+          ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
@@ -248,27 +263,35 @@ stages:
       displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        args: -vvvv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
     - task: Ansible@0
       displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv 
+        args:  '-vvvv -u $(adminuser)'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_HANA
   condition: eq(${{ parameters.hanadbinstallation }}, true)
@@ -278,7 +301,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -287,13 +310,17 @@ stages:
       displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/saphana-install_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/saphana-install_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
+        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_XSA
   condition: eq(${{ parameters.xsasetup }}, true)
@@ -303,7 +330,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -312,13 +339,17 @@ stages:
       displayName: 'XSA Setup (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/xsa-setup_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/xsa-setup_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)
+        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Backup_Prerequesite
   condition: eq(variables.backuptodo, true)
@@ -328,7 +359,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -338,15 +369,19 @@ stages:
       # https://docs.microsoft.com/en-us/azure/backup/backup-azure-sap-hana-database
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/backup_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/backup_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw) 
+        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Backup_Activation
   condition: eq(variables.backuptodo, true)
@@ -358,14 +393,14 @@ stages:
       displayName: 'Setup HANA Backup Container (ARM)'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(rsv-rg)'
         location: ${{ parameters.location }}
         templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(subscription)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        csmFileLink: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
+        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -432,7 +467,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -441,13 +476,17 @@ stages:
       displayName: 'Run HCMT (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/hcmt_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/hcmt_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -v 
+        args: '-vv'
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
@@ -477,7 +516,17 @@ stages:
       displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'DeleteRG'
         resourceGroupName: '$(hanavmrg)'
+
+- stage: Post_Installation_Steps
+  displayName: Post Installation Steps
+  condition: always()
+  jobs:
+    - job:                           Post_Installation_Steps
+      displayName:                   Post Installation Steps
+      steps:
+        - task:                      PostBuildCleanup@3
+        - checkout:                  none
