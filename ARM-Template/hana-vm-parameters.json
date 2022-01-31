@@ -15,7 +15,7 @@
       "value": "Europe West"
     },
     "osType": {
-      "value": "RHEL 8"
+      "value": "SLES 15 SP2"
     },
     "adminPasswordOrKey": {
       "value": "ssh-rsa xxx publickey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -28,6 +28,9 @@
     },
     "subnetId": {
       "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/[SubnetRG]/providers/Microsoft.Network/virtualNetworks/[VNET]/subnets/[subnet]"
+    },
+    "HostNameInput": {
+        "value": "hostname" 
     }
   }
 }
