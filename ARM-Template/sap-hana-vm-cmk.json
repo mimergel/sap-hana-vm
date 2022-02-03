@@ -86,11 +86,18 @@
           "description": "Enable double additional encryption with CMK"
         }
       },
-      "encryptionsetid": {
+      "encryptionset": {
         "type": "string",
         "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/diskEncryptionSets/SAPDiskEncryptionSetGEWC",
         "metadata": {
           "description": "Enable double additional encryption with CMK"
+        }
+      },
+      "encryptionsetrg": {
+        "type": "string",
+        "defaultValue": "SAPonAzureGermany",
+        "metadata": {
+          "description": "Resource group of the disk encryption set"
         }
       },
       "adminUsername": {
@@ -140,6 +147,9 @@
     },
     "variables": {
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
+      "encryptionid": {
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
+      },
       "images": {
         "RHEL 7.7": {
           "sku": "77sapha-gen2",
@@ -197,8 +207,7 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
-                "diskSizeGB": 64,
-                "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+                "diskSizeGB": 64
               },
               {
                 "lun": 1,
@@ -1532,7 +1541,8 @@
               "caching": "ReadWrite",
               "createOption": "FromImage",
               "managedDisk": {
-                "storageAccountType": "Premium_LRS"
+                "storageAccountType": "Premium_LRS",
+                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'false'), json('null'), variables('encryptionid'))]"
               }
             },
             "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
