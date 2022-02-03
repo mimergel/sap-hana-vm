@@ -199,7 +199,7 @@ variables:
   - name: hanavmid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(network-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
     value: ${{ parameters.os }}
   - name: usepyth3
