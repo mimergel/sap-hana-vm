@@ -1513,7 +1513,8 @@
             {
               "name": "ipconfig1",
               "properties": {
-                "privateIPAllocationMethod": "Dynamic",
+                "privateIPAddress": "10.110.96.14",
+                "privateIPAllocationMethod": "Static",
                 "subnet": {
                   "id": "[variables('selectedSubnetId')]"
                 }
