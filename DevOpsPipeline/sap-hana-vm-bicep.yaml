@@ -186,21 +186,33 @@ stages:
     steps:
     - checkout: none
       persistCredentials:        true
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'SAP HANA VM Deployment via ARM'
+    - task: AzureCLI@2
       inputs:
-        deploymentScope: Resource Group
-        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
-        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
-        action: 'Create Or Update Resource Group'
-        resourceGroupName: $(hanavmrg)
-        location: ${{ parameters.location }}
-        templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/Bicep-Template/sap-hana-vm.bicep
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" '
-        deploymentMode: 'Incremental'
-        deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
-        deploymentOutputs: 'arm_output'
+        azureSubscription: '$(AZURE_CONNECTION_NAME)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az deployment group create \
+            --name hana-vm-${{ parameters.sid }}-$(Build.BuildId) \
+            --resource-group $(hanavmrg) \
+            --template-file $(System.DefaultWorkingDirectory)/Bicep-Template/sap-hana-vm.bicep \
+            --parameters -adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)"
+
+#    - task: AzureResourceManagerTemplateDeployment@3
+#      displayName: 'SAP HANA VM Deployment via ARM'
+#      inputs:
+#        deploymentScope: Resource Group
+#        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+#        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+#        action: 'Create Or Update Resource Group'
+#        resourceGroupName: $(hanavmrg)
+#        location: ${{ parameters.location }}
+#        templateLocation: 'Linked artifact'
+#        csmFile: $(System.DefaultWorkingDirectory)/Bicep-Template/sap-hana-vm.bicep
+#        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" '
+#        deploymentMode: 'Incremental'
+#        deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
+#        deploymentOutputs: 'arm_output'
 
     - script: |
         #!/bin/bash
