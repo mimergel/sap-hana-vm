@@ -1521,7 +1521,7 @@
           "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
         ],
         "zones": "[variables('selectedZones')]",
-        "apiVersion": "2018-10-01",
+        "apiVersion": "2021-07-01",
         "location": "[parameters('location')]",
         "properties": {
           "hardwareProfile": {
