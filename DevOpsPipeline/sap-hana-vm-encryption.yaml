@@ -57,6 +57,21 @@ parameters:
   type: string
   default: "hanatestmim"
 
+- name: encryption
+  displayName: Enable double encryption with CMK
+  type: boolean
+  default: "true"
+
+- name: encryptionset
+  displayName: Disk encryption set name
+  type: string
+  default: "SAPDiskEncryptionSetGEWC"
+
+- name: encryptionsetrg
+  displayName: Resource grop of the disk encryption set
+  type: string
+  default: "SAPonAzureGermany"
+
 - name: location
   displayName: Target Region
   type: string
