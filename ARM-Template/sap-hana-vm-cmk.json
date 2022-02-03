@@ -146,9 +146,7 @@
     },
     "variables": {
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
-      "encryptionsetid": {
-        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
-      },
+      "diskEncryptionSetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
       "images": {
         "RHEL 7.7": {
           "sku": "77sapha-gen2",
@@ -1541,7 +1539,9 @@
               "createOption": "FromImage",
               "managedDisk": {
                 "storageAccountType": "Premium_LRS",
-                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'false'), json('null'), variables('encryptionsetid'))]"
+                "diskEncryptionSet": {
+                  "id": "[variables('diskEncryptionSetId')]"
+                }
               }
             },
             "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
