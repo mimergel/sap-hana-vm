@@ -1612,7 +1612,7 @@
         "type": "string"
       },
       "diskEncryptionSet": {
-        "value": "[variables('diskEncryptionSet')]",
+        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
         "type": "string"
       },
       "HANAVMNAME": {
