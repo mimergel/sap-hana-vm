@@ -3,9 +3,9 @@
     This script activates the SAP HANA Backups
 
 .DESCRIPTION
-	This script activates the SAP HANA Backups by registering the SAP HANA Instance, 
+    This script activates the SAP HANA Backups by registering the SAP HANA Instance, 
     enable protection and finally running the backups for the systemdb and tenant db.
-	The script requires as prerequesite a successfully finished pre-registration script, see links.
+    The script requires as prerequesite a successfully finished pre-registration script, see links.
     OS Backups will be enaled as well.
 
 .EXAMPLE
