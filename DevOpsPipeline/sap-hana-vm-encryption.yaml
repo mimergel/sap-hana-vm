@@ -79,6 +79,11 @@ parameters:
   type: string
   default: "hanatestmim"
 
+- name: ip-address
+  displayName: Provide a static IP address if required, e.g. 10.110.96.4
+  type: string
+  default: "dynamic"
+
 - name: location
   displayName: Target Region
   type: string
