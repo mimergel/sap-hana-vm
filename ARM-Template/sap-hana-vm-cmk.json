@@ -57,7 +57,7 @@
       "hanaSystemSize": {
         "type": "string",
         "allowedValues": [
-          "E8ds_v3",
+          "E8s_v3",
           "E16ds_v4_128_GB-Non-PRD",
           "E20ds_v4_160_GB-Non-PRD",
           "M32ts_192_GB",
@@ -196,9 +196,9 @@
         }
       },
       "sizes": {
-        "E8ds_v3": {
+        "E8s_v3": {
           "HANA": {
-            "vmSize": "Standard_E8ds_v3",
+            "vmSize": "Standard_E8s_v3",
             "disks": [
               {
                 "lun": 0,
