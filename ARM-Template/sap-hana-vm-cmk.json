@@ -215,7 +215,7 @@
               }
             ],
             "scriptArguments": {
-              "Linux": "[concat('-luns ''1'' -names ''usrsap'' -paths ''/usr/sap'' -sizes ''100''')]"
+              "Linux": "[concat('-luns ''0'' -names ''usrsap'' -paths ''/usr/sap'' -sizes ''100''')]"
             },
             "useFastNetwork": true
           }
