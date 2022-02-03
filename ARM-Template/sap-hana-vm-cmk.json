@@ -205,9 +205,15 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
-                "diskSizeGB": 64
+                "diskSizeGB": 64,
+                "diskEncryptionSet": {
+                  "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/diskEncryptionSets/SAPDiskEncryptionSetGEWC"
+                }
               }
             ],
+            "scriptArguments": {
+              "Linux": "[concat('-luns ''1'' -names ''usrsap'' -paths ''/usr/sap'' -sizes ''100''')]"
+            },
             "useFastNetwork": true
           }
         },
