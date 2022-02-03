@@ -1440,6 +1440,10 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 128
               },
               {
@@ -1447,6 +1451,10 @@
                 "name": "[concat(variables('vmName'), '-data1-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 512
               },
               {
@@ -1454,6 +1462,10 @@
                 "name": "[concat(variables('vmName'), '-data2-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 512
               },
               {
@@ -1461,6 +1473,10 @@
                 "name": "[concat(variables('vmName'), '-data3-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 512
               },
               {
@@ -1468,6 +1484,10 @@
                 "name": "[concat(variables('vmName'), '-data4-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 512
               },
               {
@@ -1476,6 +1496,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1484,6 +1508,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1492,6 +1520,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1499,6 +1531,10 @@
                 "name": "[concat(variables('vmName'), '-shared-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1506,6 +1542,10 @@
                 "name": "[concat(variables('vmName'), '-backup-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               }
             ],
@@ -1524,6 +1564,10 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 128
               },
               {
@@ -1531,6 +1575,10 @@
                 "name": "[concat(variables('vmName'), '-data1-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1538,6 +1586,10 @@
                 "name": "[concat(variables('vmName'), '-data2-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1545,6 +1597,10 @@
                 "name": "[concat(variables('vmName'), '-data3-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1552,6 +1608,10 @@
                 "name": "[concat(variables('vmName'), '-data4-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1560,6 +1620,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1568,6 +1632,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1576,6 +1644,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1583,6 +1655,10 @@
                 "name": "[concat(variables('vmName'), '-shared-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1590,6 +1666,10 @@
                 "name": "[concat(variables('vmName'), '-backup-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               }
             ],
@@ -1608,6 +1688,10 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 128
               },
               {
@@ -1615,6 +1699,10 @@
                 "name": "[concat(variables('vmName'), '-data1-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1622,6 +1710,10 @@
                 "name": "[concat(variables('vmName'), '-data2-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1629,6 +1721,10 @@
                 "name": "[concat(variables('vmName'), '-data3-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1636,6 +1732,10 @@
                 "name": "[concat(variables('vmName'), '-data4-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1643,6 +1743,10 @@
                 "name": "[concat(variables('vmName'), '-data5-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1651,6 +1755,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1659,6 +1767,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1667,6 +1779,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1674,6 +1790,10 @@
                 "name": "[concat(variables('vmName'), '-shared-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1681,6 +1801,10 @@
                 "name": "[concat(variables('vmName'), '-backup-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               }
             ],
@@ -1699,6 +1823,10 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 128
               },
               {
@@ -1706,6 +1834,10 @@
                 "name": "[concat(variables('vmName'), '-data1-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 2048
               },
               {
@@ -1713,6 +1845,10 @@
                 "name": "[concat(variables('vmName'), '-data2-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 2048
               },
               {
@@ -1720,6 +1856,10 @@
                 "name": "[concat(variables('vmName'), '-data3-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 2048
               },
               {
@@ -1727,6 +1867,10 @@
                 "name": "[concat(variables('vmName'), '-data4-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 2048
               },
               {
@@ -1735,6 +1879,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1743,6 +1891,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1751,6 +1903,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1758,6 +1914,10 @@
                 "name": "[concat(variables('vmName'), '-shared-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1765,6 +1925,10 @@
                 "name": "[concat(variables('vmName'), '-backup-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               }
             ],
@@ -1783,6 +1947,10 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 128
               },
               {
@@ -1790,6 +1958,10 @@
                 "name": "[concat(variables('vmName'), '-data1-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 4095
               },
               {
@@ -1797,6 +1969,10 @@
                 "name": "[concat(variables('vmName'), '-data2-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 4095
               },
               {
@@ -1804,6 +1980,10 @@
                 "name": "[concat(variables('vmName'), '-data3-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 4095
               },
               {
@@ -1811,6 +1991,10 @@
                 "name": "[concat(variables('vmName'), '-data4-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 4095
               },
               {
@@ -1819,6 +2003,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1827,6 +2015,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1835,6 +2027,10 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": "true",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 256
               },
               {
@@ -1842,6 +2038,10 @@
                 "name": "[concat(variables('vmName'), '-shared-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               },
               {
@@ -1849,6 +2049,10 @@
                 "name": "[concat(variables('vmName'), '-backup-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
                 "diskSizeGB": 1024
               }
             ],
