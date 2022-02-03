@@ -86,6 +86,13 @@
           "description": "Enable double additional encryption with CMK"
         }
       },
+      "encryptionset": {
+        "type": "string",
+        "defaultValue": "enter id here",
+        "metadata": {
+          "description": "Enable double additional encryption with CMK"
+        }
+      },
       "adminUsername": {
         "type": "string",
         "defaultValue": "azureadm",
@@ -1455,6 +1462,7 @@
       "vmName": "[parameters('vmNameInput')]",
       "HostName": "[toLower(parameters('HostNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "encryption_set_id": "[concat("/subscriptions/", variables('vmName'), parameters('encryptionset'))]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
       "subnets": {
