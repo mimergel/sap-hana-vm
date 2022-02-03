@@ -1614,7 +1614,8 @@
        "diskEncryptionSet": {
         "value": "[variables('diskEncryptionSet')]",
         "type": "string"
-      },       "HANAVMNAME": {
+      },
+       "HANAVMNAME": {
         "value": "[variables('vmName')]",
         "type": "string"
       },
