@@ -197,46 +197,47 @@
                 "name": "[concat(variables('vmName'), '-usrsap-disk')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
-                "diskSizeGB": 64
+                "diskSizeGB": 64,
+                "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
               },
               {
                 "lun": 1,
-                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "name": "[concat(variables('vmName'), '-data01')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 64
               },
               {
                 "lun": 2,
-                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "name": "[concat(variables('vmName'), '-data02')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 64
               },
               {
                 "lun": 3,
-                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "name": "[concat(variables('vmName'), '-data03')]",
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 64
               },
               {
                 "lun": 4,
-                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "name": "[concat(variables('vmName'), '-log01')]",
                 "caching": "None",
                 "createOption": "Empty",
                 "diskSizeGB": 128
               },
               {
                 "lun": 5,
-                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "name": "[concat(variables('vmName'), '-log02')]",
                 "caching": "None",
                 "createOption": "Empty",
                 "diskSizeGB": 128
               },
               {
                 "lun": 6,
-                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "name": "[concat(variables('vmName'), '-log03')]",
                 "caching": "None",
                 "createOption": "Empty",
                 "diskSizeGB": 128
