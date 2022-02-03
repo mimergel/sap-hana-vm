@@ -32,6 +32,27 @@ parameters:
   - "SLES 12 SP5"
   - "SLES 15 SP2"
 
+- name: encryption
+  displayName: Enable double encryption with CMK
+  type: boolean
+  default: "true"
+
+- name: encryptionset
+  displayName: Disk encryption set name
+  type: string
+  default: "SAPDiskEncryptionSetGEWC"
+
+- name: encryptionsetrg
+  displayName: Resource grop of the disk encryption set
+  type: string
+  default: "SAPonAzureGermany"
+  values:
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
+
 - name: sid
   displayName: HANA System ID
   type: string
@@ -57,21 +78,6 @@ parameters:
   type: string
   default: "hanatestmim"
 
-- name: encryption
-  displayName: Enable double encryption with CMK
-  type: boolean
-  default: "true"
-
-- name: encryptionset
-  displayName: Disk encryption set name
-  type: string
-  default: "SAPDiskEncryptionSetGEWC"
-
-- name: encryptionsetrg
-  displayName: Resource grop of the disk encryption set
-  type: string
-  default: "SAPonAzureGermany"
-
 - name: location
   displayName: Target Region
   type: string
@@ -81,18 +87,39 @@ parameters:
   - "North Europe"
   - "Germany West Central"
 
-- name: vnet_subnet
-  displayName: Target VNET & Subnet
+- name: vnet
+  displayName: Target VNET
   type: string
-  default: "MIM-GEWC-SAP04-vnet/subnets/MIM-GEWC-SAP04_db-subnet"
+  default: "MIM-GEWC-SAP04-vnet"
   values:
-  - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
-  - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
-  - "SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
-  - "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
-  - "MIM-GEWC-SAP04-vnet/subnets/MIM-GEWC-SAP04_db-subnet"
-  # Adapt according to your target landing zone
-  # "<VNET>/subnets/<subnet>"
+  - "vnet-sap-prod-westeurope-001"
+  - "vnet-sap-prod-germanywestcentral-001"
+  - "SAPDemoEnvironmentNetwork"
+  - "DEV-NOEU-SAP02-vnet"
+  - "MIM-GEWC-SAP04-vnet"
+
+- name: subnet
+  displayName: Target subnet
+  type: string
+  default: "MIM-GEWC-SAP04_db-subnet"
+  values:
+  - "snet-sap-prod-westeurope-001"
+  - "snet-sap-prod-germanywestcentral-001"
+  - "sapprdsubnet"
+  - "DEV-NOEU-SAP02_db-subnet"
+  - "MIM-GEWC-SAP04_db-subnet"
+
+- name: vnetrg
+  displayName: VNET resource group
+  type: string
+  default: "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  values:
+  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
 
 - name: availzone
   displayName: Availability Zone
@@ -173,9 +200,7 @@ variables:
   - name: hanavmid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
-  - name: encryptionsetid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(encryptionsetrg)/providers/Microsoft.Compute/diskEncryptionSets/${{ parameters.encryptionset }}
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.vnetrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
     value: ${{ parameters.os }}
   - name: usepyth3
@@ -214,7 +239,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm-cmk.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption $(encryption) -encryptionsetid "$(encryptionsetid)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
