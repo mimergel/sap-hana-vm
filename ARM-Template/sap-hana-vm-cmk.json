@@ -80,16 +80,16 @@
       },
       "encryption": {
         "type": "bool",
-        "defaultValue": "false",
+        "defaultValue": false,
         "metadata": {
-          "description": "Enable double additional encryption with CMK"
+          "description": "Enable double encryption with CMK"
         }
       },
       "encryptionset": {
         "type": "string",
         "defaultValue": "SAPDiskEncryptionSetGEWC",
         "metadata": {
-          "description": "Enable double additional encryption with CMK"
+          "description": "Disk encryption set name"
         }
       },
       "encryptionsetrg": {
