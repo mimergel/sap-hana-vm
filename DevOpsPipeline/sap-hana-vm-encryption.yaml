@@ -112,8 +112,9 @@ parameters:
 - name: vnetrg
   displayName: VNET resource group
   type: string
-  default: "SAPonAzureGermany"
+  default: "MIM-GEWC-SAP04-INFRASTRUCTURE"
   values:
+  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
   - "SAPonAzureGermany"
