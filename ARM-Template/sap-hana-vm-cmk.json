@@ -81,7 +81,6 @@
       "encryption": {
         "type": "bool",
         "defaultValue": "false",
-        "value": "[and(bool('true'), bool('false'))]",
         "metadata": {
           "description": "Enable double additional encryption with CMK"
         }
@@ -148,7 +147,7 @@
     "variables": {
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
       "encryptionid": {
-        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
       },
       "images": {
         "RHEL 7.7": {
