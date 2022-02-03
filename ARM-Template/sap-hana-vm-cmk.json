@@ -1607,15 +1607,15 @@
       }
     ],
     "outputs": {
-       "encryption": {
+      "encryption": {
         "value": "[parameters('encryption')]",
         "type": "string"
       },
-       "diskEncryptionSet": {
+      "diskEncryptionSet": {
         "value": "[variables('diskEncryptionSet')]",
         "type": "string"
       },
-       "HANAVMNAME": {
+      "HANAVMNAME": {
         "value": "[variables('vmName')]",
         "type": "string"
       },
