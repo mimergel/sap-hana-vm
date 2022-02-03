@@ -110,7 +110,7 @@ parameters:
   - "MIM-GEWC-SAP04_db-subnet"
 
 - name: vnetrg
-  displayName: Network resource group
+  displayName: VNET resource group
   type: string
   default: "SAPonAzureGermany"
   values:
