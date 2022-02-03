@@ -147,7 +147,9 @@
     },
     "variables": {
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
-      "diskEncryptionSetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
+      "diskEncryptionSet": {
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
+      },
       "images": {
         "RHEL 7.7": {
           "sku": "77sapha-gen2",
@@ -208,9 +210,7 @@
                 "diskSizeGB": 64,
                 "managedDisk": {
                   "storageAccountType": "Premium_LRS",
-                  "diskEncryptionSet": {
-                    "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/diskEncryptionSets/SAPDiskEncryptionSetGEWC"
-                  }
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
                 }
               }
             ],
@@ -1564,9 +1564,7 @@
               "createOption": "FromImage",
               "managedDisk": {
                 "storageAccountType": "Premium_LRS",
-                "diskEncryptionSet": {
-                  "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/diskEncryptionSets/SAPDiskEncryptionSetGEWC"
-                }
+                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
               }
             },
             "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
