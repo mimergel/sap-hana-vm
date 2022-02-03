@@ -114,6 +114,13 @@
           "description": "The id of the subnet you want to use."
         }
       },
+      "ipaddress": {
+        "type": "string",
+        "defaultValue": "dynamic",
+        "metadata": {
+          "description": "Static IP address if required"
+        }
+      },
       "availabilityZone": {
         "type": "int",
         "defaultValue": 0,
@@ -149,6 +156,19 @@
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
       "diskEncryptionSet": {
         "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
+      },
+      "ippropertiesstatic": {
+        "privateIPAddress": "10.110.96.14",
+        "privateIPAllocationMethod": "Static",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
+      },
+      "ippropertiesdynamic": {
+        "privateIPAllocationMethod": "Dynamic",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
       },
       "images": {
         "RHEL 7.7": {
@@ -1512,13 +1532,7 @@
           "ipConfigurations": [
             {
               "name": "ipconfig1",
-              "properties": {
-                "privateIPAddress": "10.110.96.14",
-                "privateIPAllocationMethod": "Static",
-                "subnet": {
-                  "id": "[variables('selectedSubnetId')]"
-                }
-              }
+              "properties": "[if(equals(parameters('ipaddress'), 'dynamic'), variables('ippropertiesdynamic'), variables('ippropertiesstatic'))]"
             }
           ],
           "enableAcceleratedNetworking": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].useFastNetwork]"
