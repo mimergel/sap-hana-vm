@@ -86,9 +86,9 @@
           "description": "Enable double additional encryption with CMK"
         }
       },
-      "encryptionset": {
+      "encryptionsetid": {
         "type": "string",
-        "defaultValue": "enter id here",
+        "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/diskEncryptionSets/SAPDiskEncryptionSetGEWC",
         "metadata": {
           "description": "Enable double additional encryption with CMK"
         }
