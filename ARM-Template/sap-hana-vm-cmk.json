@@ -79,8 +79,8 @@
         }
       },
       "encryption": {
-        "type": "bool",
-        "defaultValue": false,
+        "type": "string",
+        "defaultValue": "false",
         "metadata": {
           "description": "Enable double encryption with CMK"
         }
@@ -146,7 +146,7 @@
     },
     "variables": {
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
-      "encryptionid": {
+      "encryptionsetid": {
         "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
       },
       "images": {
@@ -1541,7 +1541,7 @@
               "createOption": "FromImage",
               "managedDisk": {
                 "storageAccountType": "Premium_LRS",
-                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'false'), json('null'), variables('encryptionid'))]"
+                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'false'), json('null'), variables('encryptionsetid'))]"
               }
             },
             "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
