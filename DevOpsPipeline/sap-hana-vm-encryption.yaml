@@ -239,7 +239,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm-cmk.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption $(encryption) -encryptionset "$(encryptionset)" -encryptionsetrg "$(encryptionsetrg)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
