@@ -1462,7 +1462,6 @@
       "vmName": "[parameters('vmNameInput')]",
       "HostName": "[toLower(parameters('HostNameInput'))]",
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
-      "encryption_set_id": "[concat("/subscriptions/", variables('vmName'), parameters('encryptionset'))]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
       "subnets": {
