@@ -80,12 +80,9 @@ parameters:
   default: "hanatestmim"
 
 - name: ip-address
-  displayName: Provide a static IP adress if required
+  displayName: Provide a static IP adress if required, e.g. 10.110.96.4
   type: string
   default: "dynamic"
-  values:
-  - "dynamic"
-  - "10.110.96.4"
 
 - name: location
   displayName: Target Region
