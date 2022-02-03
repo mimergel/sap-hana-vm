@@ -321,7 +321,7 @@
             "useFastNetwork": true
           }
         },
-        "M32ts_192_GB": {
+        "M32ts_192_GB_ZRS": {
           "HANA": {
             "vmSize": "Standard_M32ts",
             "disks": [
@@ -435,7 +435,7 @@
             "useFastNetwork": true
           }
         },
-        "M32ts_192_GB_ZRS": {
+        "M32ts_192_GB": {
           "HANA": {
             "vmSize": "Standard_M32ts",
             "disks": [
