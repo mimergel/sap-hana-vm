@@ -44,7 +44,7 @@ parameters:
   default: "SAPDiskEncryptionSetGEWC"
 
 - name: encryptionsetrg
-  displayName: Resource grop of the disk encryption set
+  displayName: Disk encryption set resource group
   type: string
   default: "SAPonAzureGermany"
   values:
@@ -60,9 +60,9 @@ parameters:
   default: "MM1"
 
 - name: rg
-  displayName: Resource group
+  displayName: HANA VM resource group
   type: string
-  default: "RG-HANATEST-MIM"
+  default: "RG-HANATEST"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
@@ -70,14 +70,14 @@ parameters:
   default: "00"
 
 - name: vmname
-  displayName: HANA VM Name in Azure
+  displayName: HANA Azure VM Name 
   type: string
-  default: "HANATEST-MIM"
+  default: "HANATEST"
 
 - name: hostname
-  displayName: HANA Host Name in the OS
+  displayName: HANA OS hostname
   type: string
-  default: "hanatestmim"
+  default: "hanatest"
 
 - name: ipaddress
   displayName: Provide a static IP address if required, e.g. 10.110.96.4
@@ -85,7 +85,7 @@ parameters:
   default: "dynamic"
 
 - name: location
-  displayName: Target Region
+  displayName: Target region
   type: string
   default: "Germany West Central"
   values:
@@ -128,7 +128,7 @@ parameters:
   - "SAPonAzureWestUS"
 
 - name: availzone
-  displayName: Availability Zone
+  displayName: Availability zone
   type: number
   default: 0
   values:
@@ -138,22 +138,22 @@ parameters:
   - 3
 
 - name: hanavmdeployment
-  displayName: HANA VM Deployment
+  displayName: HANA VM deployment
   type: boolean
   default: True
 
 - name: osprep
-  displayName: OS Preparations
+  displayName: OS preparations
   type: boolean
   default: False
 
 - name: hanadbinstallation
-  displayName: HANA DB Installation
+  displayName: HANA DB installation
   type: boolean
   default: False
 
 - name: hanabackupsetup
-  displayName: HANA Backup Setup
+  displayName: HANA backup setup
   type: string
   default: "None"
   values:
