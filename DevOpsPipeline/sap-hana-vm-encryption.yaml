@@ -59,15 +59,15 @@ parameters:
   type: string
   default: "MM1"
 
-- name: rg
-  displayName: HANA VM resource group
-  type: string
-  default: "RG-HANATEST"
-
 - name: nr
   displayName: HANA Instance Number (00-99)
   type: string
   default: "00"
+
+- name: rg
+  displayName: HANA VM resource group
+  type: string
+  default: "RG-HANATEST"
 
 - name: vmname
   displayName: HANA Azure VM Name 
