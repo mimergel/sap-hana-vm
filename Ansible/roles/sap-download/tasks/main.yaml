@@ -28,7 +28,7 @@
       ansible.builtin.get_url:
         url:                           "{{ url_sapcar }}"
         dest:                          "/usr/sap/install/{{ sapcar }}"
-        mode:                          '755'
+        mode:                          "u=rwx,g=rx,o=rx"
         tmp_dest:                      "/usr/sap/install/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
