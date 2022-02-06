@@ -28,8 +28,8 @@
         force_basic_auth:              true
         http_agent:                    'SAP Software Download'
 
-#      become:                          true
-#      become_user:                     root
+      become:                          true
+      become_user:                     root
       register:                        result
       until:                           result is succeeded or not result.changed
       retries:                         "{{ url_retries_cnt }}"
