@@ -364,28 +364,28 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }}'
+        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e s_user=$(S-Username) -e s_password==$(S-Password)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
-#    - task: Ansible@0
-#      displayName: 'HANA Installation (Ansible)'
-#      inputs:
-#        ansibleInterface: 'agentMachine'
-#        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/saphana-install_playbook.yml'
-#        inventoriesAgentMachine: inlineContent
-#        inventoryInlineContentAgentMachine: |
-#          [hana]
-#          $(privateip)
-#        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
-#        failOnStdErr: false
-#      env:
-#        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
-#        ANSIBLE_HOST_KEY_CHECKING: False
-#        ANSIBLE_SSH_HOST_KEY_CHECKING: False
+    - task: Ansible@0
+      displayName: 'HANA Installation (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/saphana-install_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(privateip)
+        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
+        failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_XSA
   condition: eq(${{ parameters.xsasetup }}, true)
