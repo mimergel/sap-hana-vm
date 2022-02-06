@@ -15,14 +15,19 @@
     - path: "{{ download_directory }}/bom"
     - path: "{{ download_directory }}/files"
 
+- name: create target_media_location
+  file:
+    path:                              "{{ target_media_location }}"
+    state:                             directory
+
 - name:                                "Download {{ sapcar }}"
   block:
     - name:                            "Download {{ sapcar }}"
       ansible.builtin.get_url:
         url:                           "{{ url_sapcar }}"
-        dest:                          "{{ download_directory }}/{{ sapcar }}"
+        dest:                          "{{ target_media_location }}/{{ sapcar }}"
         mode:                          "u=rwx,g=rx,o=rx"
-        tmp_dest:                      "{{ download_directory }}/tmp"
+        tmp_dest:                      "{{ target_media_location }}/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true
@@ -41,8 +46,8 @@
     - name:                            "Download {{ hdbserver }}"
       ansible.builtin.get_url:
         url:                           "{{ url_hdbserver }}"
-        dest:                          "{{ download_directory }}/{{ hdbserver }}"
-        tmp_dest:                      "{{ download_directory }}/tmp"
+        dest:                          "{{ target_media_location }}/{{ hdbserver }}"
+        tmp_dest:                      "{{ target_media_location }}/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true
@@ -62,8 +67,8 @@
     - name:                            "Download {{ hcmt }}"
       ansible.builtin.get_url:
         url:                           "{{ url_hcmt }}"
-        dest:                          "{{ download_directory }}/{{ hcmt }}"
-        tmp_dest:                      "{{ download_directory }}/tmp"
+        dest:                          "{{ target_media_location }}/{{ hcmt }}"
+        tmp_dest:                      "{{ target_media_location }}/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true

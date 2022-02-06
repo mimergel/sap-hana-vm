@@ -1,33 +1,50 @@
 ---
 
+- name:                                "SAP HANA: Create run flag directory"
+  ansible.builtin.file:
+    path:                              /etc/sap_deployment_automation
+    state:                             directory
+    mode:                              0755
+
+- name:                                "SAP HANA: Install reset"
+  ansible.builtin.file:
+    path:                              /etc/sap_deployment_automation/sap_deployment_hdb.txt
+    state:                             absent
+  when: reinstall
+
 - name: create install dir
   file:
-    path: "{{ download_directory }}"
-    state: directory
+    path:                          "{{ target_media_location }}"
+    state:                         directory
 
 - name: deploy hdblcm install template
   template:
-    src: "{{ 'hdbserver_hana2.j2' }}"
-    dest: "{{ download_directory }}/hdbserver_{{ sap_sid }}_install.cfg"
+    src:                           "{{ 'hdbserver_hana2.j2' }}"
+    dest:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_install.cfg"
 
 - name: deploy hdblcm password file
   template:
-    src: "{{ 'hdbserver_passwords.j2' }}"
-    dest: "{{ download_directory }}/hdbserver_{{ sap_sid }}_passwords.xml"
+    src:                           "{{ 'hdbserver_passwords.j2' }}"
+    dest:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
 
 - name: Enter provided password into password file
   replace:
-    path: "{{ download_directory }}/hdbserver_{{ sap_sid }}_passwords.xml"
-    regexp: '\*\*\*'
-    replace: "{{ pw_db_system }}"
+    path:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
+    regexp:                        '\*\*\*'
+    replace:                       "{{ pw_db_system }}"
 
 - name: extract hdbserver
-  command: "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}"
+  command:                         "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}"
   args:
-    chdir: "{{ download_directory }}"
-    creates: "{{ download_directory }}/SAP_HANA_DATABASE/hdblcm"
+    chdir:                         "{{ target_media_location }}"
+    creates:                       "{{ target_media_location }}/SAP_HANA_DATABASE/hdblcm"
 
 - name: run hdblcm
-  shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
+  shell:                           "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
   args:
-    chdir: "{{ download_directory }}/SAP_HANA_DATABASE"
+    chdir:                         "{{ target_media_location }}/SAP_HANA_DATABASE"
+
+- name:                            "REMOVE password file "
+  ansible.builtin.file:
+    path:                           "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
+    state:                         absent

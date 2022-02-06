@@ -4,7 +4,8 @@ sap_sid:
 sap_instancenum: 
 sap_hostname: 
 
-download_directory: /usr/sap/install
+target_media_location:        "/usr/sap/install"
+download_directory:           "/mnt/downloads"
 
 # ------------------------------------------------------------------------------------------------------------------------
 # -----------------------------URLs for HANA DB Installation--------------------------------------------------------------
