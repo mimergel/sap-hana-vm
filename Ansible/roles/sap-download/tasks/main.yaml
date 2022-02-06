@@ -5,11 +5,11 @@
 # +------------------------------------4--------------------------------------*/
 ---
 # -------------------------------------+---------------------------------------8
-#
-# Description:  Create BOM download directories".
-#
 
-- name:                                "BOM: Create BOM download directories"
+
+# add later check if binaries are already available in storage account
+
+- name:                                "Create download directories"
   ansible.builtin.file:
     path:                              "{{ item.path }}"
     state:                             directory
@@ -17,20 +17,18 @@
   become:                              true
   become_user:                         root
   loop:
-    - path: "{{ download_directory }}"
-    - path: "{{ download_directory }}/tmp"
-    - path: "{{ download_directory }}/bom"
-    - path: "{{ download_directory }}/files"
+    - path: "/usr/sap/install/"
+    - path: "/usr/sap/install/tmp"
+    - path: "/usr/sap/install/bom"
+    - path: "/usr/sap/install/files"
 
-# -------------------------------------+---------------------------------------8
-#
-- name:                                "BOM: Download File {{ item.archive }}"
+- name:                                "Download files"
   block:
-    - name:                            "BOM: {{ bom_name }} Download File {{ item.archive }}"
+    - name:                            "Download {{ sapcar }}"
       ansible.builtin.get_url:
-        url:                           "{{ item.url  | trim }}"
-        dest:                          "{{ download_directory }}/files/{{ item.archive }}"
-        tmp_dest:                      "{{ download_directory }}/tmp"
+        url:                           "{{ url_sapcar }}"
+        dest:                          "/usr/sap/install/{{ sapcar }}"
+        tmp_dest:                      "/usr/sap/install/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true
@@ -40,14 +38,71 @@
       become_user:                     root
       register:                        result
       until:                           result is succeeded or not result.changed
-      retries:                         2
-      delay:                           1
+      retries:                         "{{ url_retries_cnt }}"
+      delay:                           "{{ url_retries_delay }}"
       no_log:                          false
 
-    - name:                            "BOM: {{ bom_name }} Download File {{ item.archive }}"
-      ansible.builtin.debug:
-        var:                           result
-        verbosity:                     2
+  block:
+    - name:                            "Download {{ hdbserver }}"
+      ansible.builtin.get_url:
+        url:                           "{{ url_hdbserver }}"
+        dest:                          "/usr/sap/install/{{ hdbserver }}"
+        tmp_dest:                      "/usr/sap/install/tmp"
+        url_username:                  "{{ s_user }}"
+        url_password:                  "{{ s_password }}"
+        force_basic_auth:              true
+        http_agent:                    'SAP Software Download'
+
+      become:                          true
+      become_user:                     root
+      register:                        result
+      until:                           result is succeeded or not result.changed
+      retries:                         "{{ url_retries_cnt }}"
+      delay:                           "{{ url_retries_delay }}"
+      no_log:                          false
+
+  block:
+    - name:                            "Download {{ hcmt }}"
+      ansible.builtin.get_url:
+        url:                           "{{ url_hcmt }}"
+        dest:                          "/usr/sap/install/{{ hcmt }}"
+        tmp_dest:                      "/usr/sap/install/tmp"
+        url_username:                  "{{ s_user }}"
+        url_password:                  "{{ s_password }}"
+        force_basic_auth:              true
+        http_agent:                    'SAP Software Download'
+
+      become:                          true
+      become_user:                     root
+      register:                        result
+      until:                           result is succeeded or not result.changed
+      retries:                         "{{ url_retries_cnt }}"
+      delay:                           "{{ url_retries_delay }}"
+      no_log:                          false
+
+
+# add later optional upload to storage account
+#
+# - name:                                "BOM: Download Files"
+#   ansible.builtin.get_url:
+#     url:                               "{{ sapbits_location_base_path }}/{{ sapbits_bom_files }}/archives/{{ item.archive }}\
+#                                        {% if sapbits_sas_token is not undefined %}{{ sapbits_sas_token }}{% endif %}"
+#     dest:                              "{{ target_media_location }}/{% if item.path is undefined %}downloads{% else %}{{ item.path }}{% endif %}/\
+#                                        {% if item.filename is undefined %}{{ item.archive }}{% else %}{{ item.filename }}{% endif %}"
+#     mode:                              "{% if item.permissions is undefined %}0644{% else %}{{ item.permissions }}{% endif %}"
+#     tmp_dest:                          "{{ target_media_location }}/tmp"
+#     checksum:                          "sha256:{{ item.checksum | upper }}"
+#     validate_certs:                    true
+#   register:                            result
+#   until:                               result is succeeded
+#   retries:                             2
+#   delay:                               5
+#   loop:                                "{{ bom.materials.media|flatten(levels=1) }}"
+#   vars:
+#     ansible_python_interpreter:        "{{ python_version }}"
+#   when:
+#     - item.download is undefined or item.download
+#     - "distro_id == 'suse15' or distro_id == 'redhat82'"
 
 
 # /*---------------------------------------------------------------------------8
