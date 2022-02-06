@@ -364,7 +364,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e s_user=$(S-Username) -e s_password==$(S-Password)'
+        args: '-e s_user=$(S-Username) -e s_password=$(S-Password)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
