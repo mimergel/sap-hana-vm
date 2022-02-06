@@ -24,7 +24,7 @@
 - name: extract hdbserver
   command: "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}"
   args:
-    chdir: "{{ download_directory }}""
+    chdir: "{{ download_directory }}"
     creates: "{{ download_directory }}/SAP_HANA_DATABASE/hdblcm"
 
 - name: run hdblcm
