@@ -22,7 +22,7 @@
     replace: "{{ pw_db_system }}"
 
 - name: extract hdbserver
-  command: ./SAPCAR_LINUX.EXE -manifest SIGNATURE.SMF -xvf IMDB_SERVER_LINUX.SAR
+  command: ./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}
   args:
     chdir: /hana/shared/install
     creates: /hana/shared/install/SAP_HANA_DATABASE/hdblcm
