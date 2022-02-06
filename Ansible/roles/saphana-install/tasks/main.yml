@@ -2,7 +2,7 @@
 
 - name: create install dir
   file:
-    path: {{ download_directory }}
+    path: "{{ download_directory }}"
     state: directory
 
 - name: deploy hdblcm install template
