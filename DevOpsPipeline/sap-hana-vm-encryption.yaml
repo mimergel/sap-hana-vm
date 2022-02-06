@@ -28,8 +28,9 @@ parameters:
   type: string
   default: "SLES 15 SP2"
   values:
+  - "CUSTOM"
   - "RHEL 7.7"
-  - "RHEL 8.1"
+  - "RHEL 8.2"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
 
