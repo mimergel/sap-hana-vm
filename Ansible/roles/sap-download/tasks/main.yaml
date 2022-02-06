@@ -1,11 +1,4 @@
-# /*---------------------------------------------------------------------------8
-# |                                                                            |
-# |                          Role to download the binaries                     |
-# |                                                                            |
-# +------------------------------------4--------------------------------------*/
 ---
-# -------------------------------------+---------------------------------------8
-
 
 # add later check if binaries are already available in storage account
 
@@ -17,19 +10,19 @@
   become:                              true
   become_user:                         root
   loop:
-    - path: "/usr/sap/install/"
-    - path: "/usr/sap/install/tmp"
-    - path: "/usr/sap/install/bom"
-    - path: "/usr/sap/install/files"
+    - path: "{{ download_directory }}"
+    - path: "{{ download_directory }}/tmp"
+    - path: "{{ download_directory }}/bom"
+    - path: "{{ download_directory }}/files"
 
 - name:                                "Download {{ sapcar }}"
   block:
     - name:                            "Download {{ sapcar }}"
       ansible.builtin.get_url:
         url:                           "{{ url_sapcar }}"
-        dest:                          "/usr/sap/install/{{ sapcar }}"
+        dest:                          "{{ download_directory }}/{{ sapcar }}"
         mode:                          "u=rwx,g=rx,o=rx"
-        tmp_dest:                      "/usr/sap/install/tmp"
+        tmp_dest:                      "{{ download_directory }}/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true
@@ -48,8 +41,8 @@
     - name:                            "Download {{ hdbserver }}"
       ansible.builtin.get_url:
         url:                           "{{ url_hdbserver }}"
-        dest:                          "/usr/sap/install/{{ hdbserver }}"
-        tmp_dest:                      "/usr/sap/install/tmp"
+        dest:                          "{{ download_directory }}/{{ hdbserver }}"
+        tmp_dest:                      "{{ download_directory }}/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true
@@ -69,8 +62,8 @@
     - name:                            "Download {{ hcmt }}"
       ansible.builtin.get_url:
         url:                           "{{ url_hcmt }}"
-        dest:                          "/usr/sap/install/{{ hcmt }}"
-        tmp_dest:                      "/usr/sap/install/tmp"
+        dest:                          "{{ download_directory }}/{{ hcmt }}"
+        tmp_dest:                      "{{ download_directory }}/tmp"
         url_username:                  "{{ s_user }}"
         url_password:                  "{{ s_password }}"
         force_basic_auth:              true

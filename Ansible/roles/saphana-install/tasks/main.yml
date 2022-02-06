@@ -2,32 +2,32 @@
 
 - name: create install dir
   file:
-    path: /hana/shared/install
+    path: {{ download_directory }}
     state: directory
 
 - name: deploy hdblcm install template
   template:
     src: "{{ 'hdbserver_hana2.j2' }}"
-    dest: /hana/shared/install/hdbserver_{{ sap_sid }}_install.cfg
+    dest: {{ download_directory }}/hdbserver_{{ sap_sid }}_install.cfg
 
 - name: deploy hdblcm password file
   template:
     src: hdbserver_passwords.j2
-    dest: /hana/shared/install/hdbserver_{{ sap_sid }}_passwords.xml
+    dest: {{ download_directory }}/hdbserver_{{ sap_sid }}_passwords.xml
 
 - name: Enter provided password into password file
   replace:
-    path: /hana/shared/install/hdbserver_{{ sap_sid }}_passwords.xml
+    path: {{ download_directory }}/hdbserver_{{ sap_sid }}_passwords.xml
     regexp: '\*\*\*'
     replace: "{{ pw_db_system }}"
 
 - name: extract hdbserver
   command: ./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}
   args:
-    chdir: /hana/shared/install
-    creates: /hana/shared/install/SAP_HANA_DATABASE/hdblcm
+    chdir: {{ download_directory }}
+    creates: {{ download_directory }}/SAP_HANA_DATABASE/hdblcm
 
 - name: run hdblcm
   shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
   args:
-    chdir: /hana/shared/install/SAP_HANA_DATABASE
+    chdir: {{ download_directory }}/SAP_HANA_DATABASE
