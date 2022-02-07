@@ -1,33 +1,9 @@
 ---
 # https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/
 
-- name: Create a directory if it does not exist
-  ansible.builtin.file:
-    path: "{{ target_media_location }}"
-    state: directory
-    mode: '0755'
-    
-- name: download sapcar
-  get_url:
-    url: "{{ url_sapcar }}"
-    dest: "{{ target_media_location }}/{{ sapcar }}"
-    mode: 0755
-    timeout: "{{ url_timeout }}"
-  register: result
-  until: result is succeeded
-  retries: "{{ url_retries_cnt }}"
-  delay: "{{ url_retries_delay }}"
 
-- name: download HCMT 
-  get_url:
-    url: "{{ url_hcmt }}"
-    dest: "{{ target_media_location }}/{{ hcmt }}"
-    mode: 0750
-    timeout: "{{ url_timeout }}"
-  register: result
-  until: result is succeeded
-  retries: "{{ url_retries_cnt }}"
-  delay: "{{ url_retries_delay }}"
+- include_role:
+    name: sap-download
 
 - name: extract HCMT 
   command: "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hcmt }}"
