@@ -4,9 +4,8 @@ parameters:
 - name: size
   displayName: HANA VM Size
   type: string
-  default: E8s_v3
+  default: E16ds_v4_128_GB-Non-PRD
   values:
-  - E8s_v3
   - E16ds_v4_128_GB-Non-PRD
   - E20ds_v4_160_GB-Non-PRD
   - M32ts_192_GB
