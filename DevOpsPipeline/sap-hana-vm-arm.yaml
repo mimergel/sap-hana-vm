@@ -525,8 +525,8 @@ stages:
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: HCMT
-    timeoutInMinutes: 360
-    cancelTimeoutInMinutes: 5
+    # timeoutInMinutes: 0
+    # cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
     steps:
     - checkout: none
