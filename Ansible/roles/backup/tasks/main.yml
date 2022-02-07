@@ -21,14 +21,21 @@
   # become_user not yet working as expected on RHEL7
 
 - name: Setup SYSTEM user for Backup integration
-  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
+  shell: >
+            set -o pipefail
+            /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
   when:  ansible_os_family == "Suse" or
          ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
 
-- name: Run integration script
-  command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+- name: Backup integration script
+  block:
+    - name: Run integration script msawb-plugin-config
+      command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+  rescue:
+    - name: Run integration script msawb-plugin-config again
+      command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
 
 - name: Delete SYSTEM user after Backup integration
   command: su - "{{ sap_sid|lower }}adm" -c '/usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM'
@@ -38,6 +45,8 @@
 - name: Delete SYSTEM user after Backup integration
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
-  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
+  shell: >
+            set -o pipefail
+            /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
   when:  ansible_os_family == "Suse" or
          ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"

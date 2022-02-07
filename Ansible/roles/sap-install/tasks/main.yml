@@ -2,13 +2,13 @@
 
 - name: create install dir
   file:
-    path: /usr/sap/install
+    path: {{ download_directory }}
     state: directory
 
 - name: download sapcar
   get_url:
     url: "{{ url_sapcar }}"
-    dest: /usr/sap/install/SAPCAR_LINUX.EXE
+    dest: {{ download_directory }}/SAPCAR_LINUX.EXE
     mode: 0755
     timeout: "{{ url_timeout }}"
   register: result

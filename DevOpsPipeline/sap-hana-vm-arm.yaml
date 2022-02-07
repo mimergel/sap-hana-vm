@@ -25,40 +25,67 @@ parameters:
 - name: os
   displayName: Operating System
   type: string
-  default: "SLES 12 SP5"
+  default: "SLES 15 SP2"
   values:
+  - "CUSTOM"
   - "RHEL 7.7"
-  - "RHEL 8.1"
+  - "RHEL 8.2"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
+
+- name: encryption
+  displayName: Enable double encryption with CMK
+  type: boolean
+  default: "true"
+
+- name: encryptionset
+  displayName: Disk encryption set name
+  type: string
+  default: "SAPDiskEncryptionSetGEWC"
+
+- name: encryptionsetrg
+  displayName: Disk encryption set resource group
+  type: string
+  default: "SAPonAzureGermany"
+  values:
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
 
 - name: sid
   displayName: HANA System ID
   type: string
-  default: "HDB"
-
-- name: rg
-  displayName: Resource group
-  type: string
-  default: "RG-HANATEST-HDB"
+  default: "MM1"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
   type: string
   default: "00"
 
-- name: vmname
-  displayName: HANA VM Name in Azure
+- name: rg
+  displayName: HANA VM resource group
   type: string
-  default: "HANATEST-VM"
+  default: "RG-HANATEST"
+
+- name: vmname
+  displayName: HANA Azure VM Name 
+  type: string
+  default: "HANATEST"
 
 - name: hostname
-  displayName: HANA Host Name in the OS
+  displayName: HANA OS hostname
   type: string
   default: "hanatest"
 
+- name: ipaddress
+  displayName: Provide a static IP address if required, e.g. 10.110.96.4
+  type: string
+  default: "dynamic"
+
 - name: location
-  displayName: Target Region
+  displayName: Target region
   type: string
   default: "Germany West Central"
   values:
@@ -66,20 +93,42 @@ parameters:
   - "North Europe"
   - "Germany West Central"
 
-- name: vnet_subnet
-  displayName: Target VNET & Subnet
+- name: vnet
+  displayName: Target VNET
   type: string
-  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
+  default: "MIM-GEWC-SAP04-vnet"
   values:
-  - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
-  - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
-  - "SAPDemoEnvironmentNetwork/subnets/sapprdsubnet"
-  - "DEV-NOEU-SAP02-vnet/subnets/DEV-NOEU-SAP02_db-subnet"
-  # Adapt according to your target landing zone
-  # "<VNET>/subnets/<subnet>"
+  - "vnet-sap-prod-westeurope-001"
+  - "vnet-sap-prod-germanywestcentral-001"
+  - "SAPDemoEnvironmentNetwork"
+  - "DEV-NOEU-SAP02-vnet"
+  - "MIM-GEWC-SAP04-vnet"
+
+- name: subnet
+  displayName: Target subnet
+  type: string
+  default: "MIM-GEWC-SAP04_db-subnet"
+  values:
+  - "snet-sap-prod-westeurope-001"
+  - "snet-sap-prod-germanywestcentral-001"
+  - "sapprdsubnet"
+  - "DEV-NOEU-SAP02_db-subnet"
+  - "MIM-GEWC-SAP04_db-subnet"
+
+- name: vnetrg
+  displayName: VNET resource group
+  type: string
+  default: "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  values:
+  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
 
 - name: availzone
-  displayName: Availability Zone
+  displayName: Availability zone
   type: number
   default: 0
   values:
@@ -89,22 +138,22 @@ parameters:
   - 3
 
 - name: hanavmdeployment
-  displayName: HANA VM Deployment
+  displayName: HANA VM deployment
   type: boolean
   default: True
 
 - name: osprep
-  displayName: OS Preparations
+  displayName: OS preparations
   type: boolean
   default: False
 
 - name: hanadbinstallation
-  displayName: HANA DB Installation
+  displayName: HANA DB installation
   type: boolean
   default: False
 
 - name: hanabackupsetup
-  displayName: HANA Backup Setup
+  displayName: HANA backup setup
   type: string
   default: "None"
   values:
@@ -157,7 +206,7 @@ variables:
   - name: hanavmid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.vnetrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
     value: ${{ parameters.os }}
   - name: usepyth3
@@ -195,8 +244,8 @@ stages:
         resourceGroupName: $(hanavmrg)
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/hana-vm.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" '
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
@@ -220,10 +269,10 @@ stages:
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
-          git add $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
@@ -268,7 +317,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: -vvvv -e 'ansible_python_interpreter=/usr/bin/python3'
+        args: '-e ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
       env:
@@ -285,7 +334,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args:  '-vvvv -u $(adminuser)'
+        args:  '-u $(adminuser)'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
@@ -307,6 +356,22 @@ stages:
       displayName: Get private IP for following ansible tasks 
       failOnStderr: false
     - task: Ansible@0
+      displayName: 'HANA binary download (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/sap-download-playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(privateip)
+        args: '-e s_user=$(S-Username) -e s_password=$(S-Password)'
+        failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
+
+    - task: Ansible@0
       displayName: 'HANA Installation (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
@@ -315,7 +380,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
+        args: '-e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
@@ -344,7 +409,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
+        args: '-e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
@@ -374,7 +439,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vvvv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
+        args: '-e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
@@ -460,8 +525,8 @@ stages:
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: HCMT
-    timeoutInMinutes: 360
-    cancelTimeoutInMinutes: 5
+    # timeoutInMinutes: 0
+    # cancelTimeoutInMinutes: 5
     # HCMT runs very loooooooooooooooooong
     steps:
     - checkout: none
