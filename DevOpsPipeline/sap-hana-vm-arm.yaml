@@ -82,7 +82,7 @@ parameters:
 - name: ipaddress
   displayName: Provide a static IP address if required, e.g. 10.110.96.4
   type: string
-  default: "dynamic"
+  default: "10.12.10.13"
 
 - name: location
   displayName: Target region
