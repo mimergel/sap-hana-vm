@@ -4,7 +4,7 @@
 
 - name:                                "Create download directories"
   ansible.builtin.file:
-    path:                              "{{ target_media_location }}"
+    path:                              "{{ item.path }}"
     state:                             directory
     mode:                              0755
   become:                              true
@@ -14,11 +14,6 @@
     - path: "{{ target_media_location }}/tmp"
     - path: "{{ target_media_location }}/bom"
     - path: "{{ target_media_location }}/files"
-
-- name: create target_media_location
-  file:
-    path:                              "{{ target_media_location }}"
-    state:                             directory
 
 - name:                                "Download {{ sapcar }}"
   block:
