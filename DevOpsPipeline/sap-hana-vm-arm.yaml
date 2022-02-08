@@ -416,10 +416,10 @@ stages:
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
-- stage: Backup_Prerequesite
+- stage: HANA_backup_setup
   condition: eq(variables.backuptodo, true)
   jobs:
-  - job: Backup_Prerequesite
+  - job: Backup_prerequesite
     steps:
     - checkout: none
     - script: |
@@ -440,20 +440,12 @@ stages:
           [hana]
           $(privateip)
         args: -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system='$(hana-pw)'
-        timeoutInMinutes: 5
-        showWarnings: true
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
-- stage: Backup_Activation
-  condition: eq(variables.backuptodo, true)
-  jobs:
-  - job: Backup_Activation
-    steps:
-    - checkout: none
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Setup HANA Backup Container (ARM)'
       inputs:
@@ -463,14 +455,14 @@ stages:
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(rsv-rg)'
         location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
         overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
     - task: PowerShell@2
-      displayName: 'HANA Backup Registration and Execution (PWSH)'
+      displayName: 'HANA backup registration and execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         targetType: 'filePath'
@@ -486,6 +478,11 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
+      env:
+        ARM_CLIENT_ID:         $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET:     $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID:   $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID:         $(ARM_TENANT_ID)
 
     - task: PowerShell@2
       displayName: 'Selective Disk OS Backup (PWSH)'
@@ -501,6 +498,11 @@ stages:
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
+      env:
+        ARM_CLIENT_ID:         $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET:     $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID:   $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID:         $(ARM_TENANT_ID)
 
 - stage: Monitoring_EXT_SAP
   condition: eq(${{ parameters.monitoringextsap }}, true)
