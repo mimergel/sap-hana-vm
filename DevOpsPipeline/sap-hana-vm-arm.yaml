@@ -145,17 +145,17 @@ parameters:
 - name: osprep
   displayName: OS preparations
   type: boolean
-  default: False
+  default: True
 
 - name: hanadbinstallation
   displayName: HANA DB installation
   type: boolean
-  default: False
+  default: True
 
 - name: hanabackupsetup
   displayName: HANA backup setup
   type: string
-  default: "None"
+  default: "Non-PROD"
   values:
   - "Non-PROD"
   - "PROD"
@@ -164,7 +164,7 @@ parameters:
 - name: monitoringextsap
   displayName: Azure Monitoring Extension for SAP
   type: boolean
-  default: False
+  default: True
 
 - name: xsasetup
   displayName: Install XSA components
@@ -174,7 +174,7 @@ parameters:
 - name: hcmt
   displayName: HANA performance checks
   type: boolean
-  default: False
+  default: True
 
 - name: cleanup
   displayName: Remove the deployment
