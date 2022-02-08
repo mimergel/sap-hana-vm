@@ -426,7 +426,7 @@ stages:
         #!/bin/bash
         privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
-        echo $(hana-pw)
+        echo $(hana-pw) > $(System.DefaultWorkingDirectory)/password.txt
         exit 0
       displayName: Get private IP for following ansible tasks 
       failOnStderr: false
