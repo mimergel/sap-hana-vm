@@ -1,16 +1,17 @@
 ---
 
-- name:                                "SAP HANA: Create run flag directory"
-  ansible.builtin.file:
-    path:                              /etc/sap_deployment_automation
-    state:                             directory
-    mode:                              0755
-
-- name:                                "SAP HANA: Install reset"
-  ansible.builtin.file:
-    path:                              /etc/sap_deployment_automation/sap_deployment_hdb.txt
-    state:                             absent
-  when: reinstall
+# add later reinstall possibility
+#- name:                                "SAP HANA: Create run flag directory"
+#  ansible.builtin.file:
+#    path:                              /etc/sap_deployment_automation
+#    state:                             directory
+#    mode:                              0755
+#
+#- name:                                "SAP HANA: Install reset"
+#  ansible.builtin.file:
+#    path:                              /etc/sap_deployment_automation/sap_deployment_hdb.txt
+#    state:                             absent
+#  when: reinstall
 
 - name: create install dir
   file:
