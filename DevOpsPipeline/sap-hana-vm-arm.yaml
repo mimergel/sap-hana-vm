@@ -439,7 +439,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
+        args: -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system='$(hana-pw)'
         timeoutInMinutes: 5
         showWarnings: true
         failOnStdErr: false
@@ -515,11 +515,16 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
         arguments: >
-          -VM "${{ parameters.vmname }}"
+          -VM   "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
+      env:
+        ARM_CLIENT_ID:         $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET:     $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID:   $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID:         $(ARM_TENANT_ID)
 
 - stage: Testing
   condition: eq(${{ parameters.hcmt }}, true)
