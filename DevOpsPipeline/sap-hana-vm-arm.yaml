@@ -515,10 +515,8 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
         arguments: >
-          -VM "${{ parameters.vmname }}"
+          -VM   "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
-          -ARM_CLIENT_ID
-          -ARM_CLIENT_SECRET --tenant $
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
