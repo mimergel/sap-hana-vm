@@ -31,7 +31,11 @@ param(
     [Parameter(Mandatory = $true)][string]$RSV,
     [Parameter(Mandatory = $true)][string]$VM,
     [Parameter(Mandatory = $true)][string]$VMRG,
-    [Parameter(Mandatory = $true)][string]$POL
+    [Parameter(Mandatory = $true)][string]$POL,
+    [Parameter(Mandatory = $true)][string]$ARM_CLIENT_ID,
+    [Parameter(Mandatory = $true)][string]$ARM_CLIENT_SECRET,
+    [Parameter(Mandatory = $true)][string]$ARM_TENANT_ID,
+    [Parameter(Mandatory = $true)][string]$ARM_SUBSCRIPTION_ID
 )
 
 $vmrg=$VMRG.ToLower()
