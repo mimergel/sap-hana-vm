@@ -34,3 +34,17 @@
   args:
     chdir: "{{ target_media_location }}/setup"
     
+- name:                            Find HCMT test result file
+  ansible.builtin.find: 
+    paths:                         "{{ target_media_location }}/hcmt/setup"
+    patterns:                      "hcmtresult-*.zip"
+    recurse:                       false
+  register:                        file_2_fetch
+
+- name:                            Fetch the HCMT result
+  ansible.builtin.fetch:
+    src:                           "{{ item.path }}"
+    dest:                          "{{ _workspace_directory }}/logs"
+    flat:                          true
+    fail_on_missing:               false
+  with_items: "{{ file_2_fetch.files }}"
