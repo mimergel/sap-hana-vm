@@ -158,7 +158,7 @@
         "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
       },
       "ippropertiesstatic": {
-        "privateIPAddress": "10.110.96.14",
+        "privateIPAddress": "[parameters('ipaddress')]",
         "privateIPAllocationMethod": "Static",
         "subnet": {
           "id": "[variables('selectedSubnetId')]"
