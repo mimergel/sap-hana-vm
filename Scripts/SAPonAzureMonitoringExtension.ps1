@@ -26,7 +26,6 @@ Write-Host "-----------------------------------------------------"
 Write-Host "----Login to Azure ----------------------------------"
 
 az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-Write-Host "az account set --subscription $ARM_SUBSCRIPTION_ID"
 az account set --subscription $ARM_SUBSCRIPTION_ID
 
 Write-Host "-----------------------------------------------------"
