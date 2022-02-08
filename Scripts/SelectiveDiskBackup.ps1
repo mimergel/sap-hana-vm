@@ -33,6 +33,13 @@ param(
 $CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
 Write-Host "Expected Backup Container Name is: $CONTAINER1"
 
+
+Write-Host "-----------------------------------------------------"
+Write-Host "----Login to Azure ----------------------------------"
+
+az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+az account set --subscription $ARM_SUBSCRIPTION_ID
+
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
 Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" 

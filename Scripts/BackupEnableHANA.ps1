@@ -51,6 +51,13 @@ $pol=$POL.ToLower()
 $OSPOL="pol-sapos-$pol"
 $HANAPOL="pol-saphana-$pol"
 
+
+Write-Host "-----------------------------------------------------"
+Write-Host "----Login to Azure ----------------------------------"
+
+az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+az account set --subscription $ARM_SUBSCRIPTION_ID
+
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
 Write-Host "VMID=az vm show -g $VMRG -n $VM --query id --output tsv" 

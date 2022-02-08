@@ -43,6 +43,12 @@ $ITEMTEN="saphanadatabase;$SID;$SID"
 
 
 Write-Host "-----------------------------------------------------"
+Write-Host "----Login to Azure ----------------------------------"
+
+az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+az account set --subscription $ARM_SUBSCRIPTION_ID
+
+Write-Host "-----------------------------------------------------"
 Write-Host "----------Disable existing HANA backup items---------"
 Write-Host "az backup protectable-item  list -c '$CONTAINER2' -g $RGV -v $RSV --workload-type SAPHANA --output tsv"
 $PROTECT=az backup protectable-item  list -c "$CONTAINER2" -g $RGV -v $RSV --workload-type SAPHANA --output tsv
