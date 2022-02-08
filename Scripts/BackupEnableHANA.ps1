@@ -130,14 +130,14 @@ Write-Host ""
 Write-Host "Uncomment following lines to activate immediate initial OS & HANA backups"
 Write-Host "-----------------------------------------------------"
 Write-Host "-------------------Run OS Backups------------------" 
-Write-Host "az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM"
+Write-Host "# az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM"
 # az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM
 Write-Host ""
 Write-Host "-----------------------------------------------------"
 Write-Host "-------------------Run HANA Backups------------------" 
-Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
+Write-Host "# az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMSYS" --container-name "$CONTAINER" --backup-type full
-Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
+Write-Host "# az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
 Write-Host ""
 
