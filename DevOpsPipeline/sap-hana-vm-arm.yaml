@@ -96,7 +96,7 @@ parameters:
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "MIM-GEWC-SAP04-vnet"
+  default: "vnet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-prod-germanywestcentral-001"
@@ -107,7 +107,7 @@ parameters:
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "MIM-GEWC-SAP04_db-subnet"
+  default: "snet-sap-prod-germanywestcentral-001"
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-prod-germanywestcentral-001"
@@ -118,7 +118,7 @@ parameters:
 - name: vnetrg
   displayName: VNET resource group
   type: string
-  default: "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  default: "SAPonAzureGermany"
   values:
   - "MIM-GEWC-SAP04-INFRASTRUCTURE"
   - "SAPonAzureWestEurope"
@@ -130,7 +130,7 @@ parameters:
 - name: availzone
   displayName: Availability zone
   type: number
-  default: 0
+  default: 1
   values:
   - 0
   - 1
