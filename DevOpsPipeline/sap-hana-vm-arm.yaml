@@ -82,7 +82,7 @@ parameters:
 - name: ipaddress
   displayName: Provide a static IP address if required, e.g. 10.110.96.4
   type: string
-  default: "dynamic"
+  default: "10.12.10.13"
 
 - name: location
   displayName: Target region
@@ -96,7 +96,7 @@ parameters:
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "MIM-GEWC-SAP04-vnet"
+  default: "vnet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-prod-germanywestcentral-001"
@@ -107,7 +107,7 @@ parameters:
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "MIM-GEWC-SAP04_db-subnet"
+  default: "snet-sap-prod-germanywestcentral-001"
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-prod-germanywestcentral-001"
@@ -118,7 +118,7 @@ parameters:
 - name: vnetrg
   displayName: VNET resource group
   type: string
-  default: "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  default: "SAPonAzureGermany"
   values:
   - "MIM-GEWC-SAP04-INFRASTRUCTURE"
   - "SAPonAzureWestEurope"
@@ -130,7 +130,7 @@ parameters:
 - name: availzone
   displayName: Availability zone
   type: number
-  default: 0
+  default: 1
   values:
   - 0
   - 1
@@ -145,17 +145,17 @@ parameters:
 - name: osprep
   displayName: OS preparations
   type: boolean
-  default: False
+  default: True
 
 - name: hanadbinstallation
   displayName: HANA DB installation
   type: boolean
-  default: False
+  default: True
 
 - name: hanabackupsetup
   displayName: HANA backup setup
   type: string
-  default: "None"
+  default: "Non-PROD"
   values:
   - "Non-PROD"
   - "PROD"
@@ -164,7 +164,7 @@ parameters:
 - name: monitoringextsap
   displayName: Azure Monitoring Extension for SAP
   type: boolean
-  default: False
+  default: True
 
 - name: xsasetup
   displayName: Install XSA components
@@ -174,7 +174,7 @@ parameters:
 - name: hcmt
   displayName: HANA performance checks
   type: boolean
-  default: False
+  default: True
 
 - name: cleanup
   displayName: Remove the deployment
@@ -546,7 +546,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vv'
+        args: '-e s_user=$(S-Username) -e s_password=$(S-Password)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
