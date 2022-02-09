@@ -18,7 +18,7 @@ parameters:
 - name: os
   displayName: Operating System
   type: string
-  default: "SLES 12 SP4"
+  default: "RHEL 8.1"
   values:
   - "RHEL 7.7"
   - "RHEL 8.1"
