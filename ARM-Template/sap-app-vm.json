@@ -58,18 +58,7 @@
       },
       "sapSystemSize": {
         "type": "string",
-        "allowedValues": [
-          "Standard_E2ds_v4",
-          "E4ds_v4_(32GB)",
-          "E8ds_v4_(64GB)",
-          "E16ds_v4_(128GB)",
-          "E20ds_v4_(160GB)",
-          "E32ds_v4_(256GB)",
-          "E48ds_v4_(384GB)",
-          "E64ds_v4_(504GB)",
-          "E80ids_v4_(504GB)"
-        ],
-        "defaultValue": "E2ds_v4_(16GB)",
+        "defaultValue": "Standard_E4ds_v4",
         "metadata": {
           "description": "The size of the SAP System"
         }
