@@ -126,7 +126,6 @@
       }
     },
     "variables": {
-      "sapvmsku": "parameters('sapSystemSize')",
       "sidlower": "[toLower(parameters('sapSystemId'))]",
       "vmName": "[parameters('vmNameInput')]",
       "HostName": "[toLower(parameters('HostNameInput'))]",
@@ -209,7 +208,7 @@
       },
       "sizes": {
         "Standard_E2ds_v4": {
-            "vmSize": "variables('sapvmsku')",
+            "vmSize": "[parameters('sapSystemSize')]",
             "disks": [
               {
                 "lun": 0,
