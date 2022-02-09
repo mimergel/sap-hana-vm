@@ -416,10 +416,10 @@ stages:
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
-- stage: Backup_Prerequesite
+- stage: HANA_backup_setup
   condition: eq(variables.backuptodo, true)
   jobs:
-  - job: Backup_Prerequesite
+  - job: HANA_backup_setup
     steps:
     - checkout: none
     - script: |
@@ -439,21 +439,13 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(hana-pw)'
-        timeoutInMinutes: 5
-        showWarnings: true
+        args: -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system='$(hana-pw)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
-- stage: Backup_Activation
-  condition: eq(variables.backuptodo, true)
-  jobs:
-  - job: Backup_Activation
-    steps:
-    - checkout: none
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Setup HANA Backup Container (ARM)'
       inputs:
@@ -463,14 +455,14 @@ stages:
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(rsv-rg)'
         location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
         overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
     - task: PowerShell@2
-      displayName: 'HANA Backup Registration and Execution (PWSH)'
+      displayName: 'HANA backup registration and execution (PWSH)'
       # https://docs.microsoft.com/en-us/azure/backup/tutorial-sap-hana-backup-cli 
       inputs:
         targetType: 'filePath'
@@ -483,6 +475,10 @@ stages:
           -SERVER "${{ parameters.hostname }}"
           -VMRG "$(hanavmrg)"
           -POL "$(backuptype)"
+          -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
+          -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
+          -ARM_SUBSCRIPTION_ID    "$(ARM_SUBSCRIPTION_ID)"
+          -ARM_TENANT_ID          "$(ARM_TENANT_ID)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -498,6 +494,10 @@ stages:
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
           -VMRG "$(hanavmrg)"
+          -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
+          -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
+          -ARM_SUBSCRIPTION_ID    "$(ARM_SUBSCRIPTION_ID)"
+          -ARM_TENANT_ID          "$(ARM_TENANT_ID)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -515,19 +515,20 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
         arguments: >
-          -VM "${{ parameters.vmname }}"
-          -VMRG "$(hanavmrg)"
+          -VM                     "${{ parameters.vmname }}"
+          -VMRG                   "$(hanavmrg)"
+          -ARM_CLIENT_ID          $(ARM_CLIENT_ID)
+          -ARM_CLIENT_SECRET      $(ARM_CLIENT_SECRET)
+          -ARM_SUBSCRIPTION_ID    $(ARM_SUBSCRIPTION_ID)
+          -ARM_TENANT_ID          $(ARM_TENANT_ID)
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
 
-- stage: Testing
+- stage: Performance_testing
   condition: eq(${{ parameters.hcmt }}, true)
   jobs:
   - job: HCMT
-    # timeoutInMinutes: 0
-    # cancelTimeoutInMinutes: 5
-    # HCMT runs very loooooooooooooooooong
     steps:
     - checkout: none
     - script: |
@@ -546,12 +547,34 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e s_user=$(S-Username) -e s_password=$(S-Password)'
+        args: '-e sap_sid=${{ parameters.sid }} -e s_user=$(S-Username) -e s_password=$(S-Password)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
+
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        cd $(Build.Repository.LocalPath)
+        if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/hcmtresult-*.zip ]; then
+          echo "##vso[task.logissue type=error]No HCMT result found "
+          exit 2
+        else
+          echo -e "$green--- Adding HCMT test result to the inventory ---$reset"
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}
+          git checkout $(Build.SourceBranchName)
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/hcmtresult-*.zip
+          git commit -m "Added HCMT test result $(Build.DefinitionName) [skip ci]"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write HCMT test result to inventory
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
+      failOnStderr: false
 
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
@@ -565,12 +588,16 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupDisable.ps1'
         arguments: >
-          -SID "${{ parameters.sid }}"
-          -RSV "$(rsv)"
-          -RGV "$(rsv-rg)"
-          -VM "${{ parameters.vmname }}"
-          -VMRG "$(hanavmrg)"
-          -POL "NA"
+          -SID                     "${{ parameters.sid }}"
+          -RSV                     "$(rsv)"
+          -RGV                     "$(rsv-rg)"
+          -VM                      "${{ parameters.vmname }}"
+          -VMRG                    "$(hanavmrg)"
+          -POL                    "NA"
+          -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
+          -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
+          -ARM_SUBSCRIPTION_ID    "$(ARM_SUBSCRIPTION_ID)"
+          -ARM_TENANT_ID          "$(ARM_TENANT_ID)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false

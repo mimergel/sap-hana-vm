@@ -21,9 +21,7 @@
   # become_user not yet working as expected on RHEL7
 
 - name: Setup SYSTEM user for Backup integration
-  shell: >
-            set -o pipefail
-            /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
+  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
   when:  ansible_os_family == "Suse" or
@@ -45,8 +43,6 @@
 - name: Delete SYSTEM user after Backup integration
   become: yes
   become_user: "{{ sap_sid|lower }}adm"
-  shell: >
-            set -o pipefail
-            /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
+  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
   when:  ansible_os_family == "Suse" or
          ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"

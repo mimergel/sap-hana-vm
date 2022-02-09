@@ -10,15 +10,10 @@
   become:                              true
   become_user:                         root
   loop:
-    - path: "{{ download_directory }}"
-    - path: "{{ download_directory }}/tmp"
-    - path: "{{ download_directory }}/bom"
-    - path: "{{ download_directory }}/files"
-
-- name: create target_media_location
-  file:
-    path:                              "{{ target_media_location }}"
-    state:                             directory
+    - path: "{{ target_media_location }}"
+    - path: "{{ target_media_location }}/tmp"
+    - path: "{{ target_media_location }}/bom"
+    - path: "{{ target_media_location }}/files"
 
 - name:                                "Download {{ sapcar }}"
   block:

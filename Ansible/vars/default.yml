@@ -47,6 +47,8 @@ install_cockpit: false
 install_shine: false
 install_xsa: false
 
+reinstall: false
+
 email_shine: "shinedemo@microsoft.com"
 
 # ------------------------------------------------------------------------------------------------------------------------

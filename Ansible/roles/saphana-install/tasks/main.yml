@@ -12,39 +12,50 @@
     state:                             absent
   when: reinstall
 
-- name: create install dir
-  file:
-    path:                          "{{ target_media_location }}"
-    state:                         directory
+- name:                                "SAP HANA: check if installed"
+  ansible.builtin.stat:
+    path:                              /etc/sap_deployment_automation/sap_deployment_hdb.txt
+  register:                            hana_installed
 
-- name: deploy hdblcm install template
-  template:
-    src:                           "{{ 'hdbserver_hana2.j2' }}"
-    dest:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_install.cfg"
+- name:                                "HANA Install"
+  block:
 
-- name: deploy hdblcm password file
-  template:
-    src:                           "{{ 'hdbserver_passwords.j2' }}"
-    dest:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
+    - name: create install dir
+      file:
+        path:                          "{{ target_media_location }}"
+        state:                         directory
 
-- name: Enter provided password into password file
-  replace:
-    path:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
-    regexp:                        '\*\*\*'
-    replace:                       "{{ pw_db_system }}"
+    - name: deploy hdblcm install template
+      template:
+        src:                           "{{ 'hdbserver_hana2.j2' }}"
+        dest:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_install.cfg"
 
-- name: extract hdbserver
-  command:                         "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}"
-  args:
-    chdir:                         "{{ target_media_location }}"
-    creates:                       "{{ target_media_location }}/SAP_HANA_DATABASE/hdblcm"
+    - name: deploy hdblcm password file
+      template:
+        src:                           "{{ 'hdbserver_passwords.j2' }}"
+        dest:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
 
-- name: run hdblcm
-  shell:                           "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
-  args:
-    chdir:                         "{{ target_media_location }}/SAP_HANA_DATABASE"
+    - name: Enter provided password into password file
+      replace:
+        path:                          "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
+        regexp:                        '\*\*\*'
+        replace:                       "{{ pw_db_system }}"
 
-- name:                            "REMOVE password file "
-  ansible.builtin.file:
-    path:                           "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
-    state:                         absent
+    - name: extract hdbserver
+      command:                         "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hdbserver }}"
+      args:
+        chdir:                         "{{ target_media_location }}"
+        creates:                       "{{ target_media_location }}/SAP_HANA_DATABASE/hdblcm"
+
+    - name: run hdblcm
+      shell:                           "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
+      args:
+        chdir:                         "{{ target_media_location }}/SAP_HANA_DATABASE"
+
+    - name:                            "REMOVE password file "
+      ansible.builtin.file:
+        path:                           "{{ target_media_location }}/hdbserver_{{ sap_sid }}_passwords.xml"
+        state:                         absent
+
+  when:
+    - not hana_installed.stat.exists

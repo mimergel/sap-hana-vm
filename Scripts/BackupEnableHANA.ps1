@@ -40,7 +40,11 @@ param(
     [Parameter(Mandatory = $true)][string]$VM,
     [Parameter(Mandatory = $true)][string]$SERVER,
     [Parameter(Mandatory = $true)][string]$VMRG,
-    [Parameter(Mandatory = $true)][string]$POL
+    [Parameter(Mandatory = $true)][string]$POL,
+    [Parameter(Mandatory = $true)][string]$ARM_CLIENT_ID,
+    [Parameter(Mandatory = $true)][string]$ARM_CLIENT_SECRET,
+    [Parameter(Mandatory = $true)][string]$ARM_TENANT_ID,
+    [Parameter(Mandatory = $true)][string]$ARM_SUBSCRIPTION_ID
 )
 
 $CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
@@ -50,6 +54,13 @@ $ITEMTEN="saphanadatabase;$SID;$SID"
 $pol=$POL.ToLower()
 $OSPOL="pol-sapos-$pol"
 $HANAPOL="pol-saphana-$pol"
+
+
+Write-Host "-----------------------------------------------------"
+Write-Host "----Login to Azure ----------------------------------"
+
+az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+az account set --subscription $ARM_SUBSCRIPTION_ID
 
 Write-Host "-----------------------------------------------------"
 Write-Host "-----------Get VM ID---------------------------------" 
@@ -119,14 +130,14 @@ Write-Host ""
 Write-Host "Uncomment following lines to activate immediate initial OS & HANA backups"
 Write-Host "-----------------------------------------------------"
 Write-Host "-------------------Run OS Backups------------------" 
-Write-Host "az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM"
+Write-Host "# az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM"
 # az backup protection backup-now -g $RGV -v $RSV -c $CONTAINER1 --item-name $VM
 Write-Host ""
 Write-Host "-----------------------------------------------------"
 Write-Host "-------------------Run HANA Backups------------------" 
-Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
+Write-Host "# az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMSYS' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMSYS" --container-name "$CONTAINER" --backup-type full
-Write-Host "az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
+Write-Host "# az backup protection backup-now -g $RGV -v $RSV --item-name '$ITEMTEN' --container-name '$CONTAINER' --backup-type full" 
 # az backup protection backup-now -g $RGV -v $RSV --item-name "$ITEMTEN" --container-name "$CONTAINER" --backup-type full
 Write-Host ""
 
