@@ -258,17 +258,17 @@ stages:
           cd $(Build.Repository.LocalPath)
           mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}
           echo $(arm_output)                       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.json
-          echo $(arm_output.hanavmname.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
-          echo $(arm_output.hanadbid.value)        > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
-          echo $(arm_output.hanaprivateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanaprivateip
+          echo $(arm_output.hanavmname.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)        > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.hanaprivateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanaprivateip
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.json
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanavmname
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanadbid
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
@@ -285,7 +285,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanaprivateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
@@ -346,7 +346,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -391,7 +391,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -420,7 +420,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
@@ -529,7 +529,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip`
+        privateip=`cat$(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         exit 0
       displayName: Get private IP for following ansible tasks 
