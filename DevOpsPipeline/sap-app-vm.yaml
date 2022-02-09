@@ -50,7 +50,7 @@ parameters:
 - name: location
   displayName: Target Region
   type: string
-  default: "France Central"
+  default: "Germany West Central"
   values:
   - "West Europe"
   - "France Central"
@@ -59,7 +59,7 @@ parameters:
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
+  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
   - "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
@@ -70,7 +70,7 @@ parameters:
 - name: availzone
   displayName: Availability Zone
   type: number
-  default: 0
+  default: 1
   values:
   - 0
   - 1
@@ -115,7 +115,7 @@ trigger:
   none
 
 pool:
-  name: $(agent)
+  name: $(Agent)
 
 variables:
   backuptype: ${{ parameters.sapbackupsetup }}
