@@ -18,14 +18,35 @@ parameters:
 - name: os
   displayName: Operating System
   type: string
-  default: "SLES 12 SP4"
+  default: "SLES 15 SP2"
   values:
   - "RHEL 7.7"
   - "RHEL 8.1"
   - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
-  - "Custom RHEL 8.1"
+  - "CUSTOM"
+
+- name: encryption
+  displayName: Enable double encryption with CMK
+  type: boolean
+  default: "true"
+
+- name: encryptionset
+  displayName: Disk encryption set name
+  type: string
+  default: "SAPDiskEncryptionSetGEWC"
+
+- name: encryptionsetrg
+  displayName: Disk encryption set resource group
+  type: string
+  default: "SAPonAzureGermany"
+  values:
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
 
 - name: sid
   displayName: SAP System ID
@@ -37,6 +58,11 @@ parameters:
   type: string
   default: "00"
 
+- name: rg
+  displayName: HANA VM resource group
+  type: string
+  default: "RG-SAPTEST"
+
 - name: vmname
   displayName: SAP VM Name in Azure
   type: string
@@ -47,25 +73,54 @@ parameters:
   type: string
   default: "saptest"
 
+- name: ipaddress
+  displayName: Provide a static IP address if required, e.g. 10.110.96.4
+  type: string
+  default: "10.12.10.13"
+
 - name: location
   displayName: Target Region
   type: string
   default: "Germany West Central"
   values:
   - "West Europe"
+  - "North Europe"
   - "France Central"
   - "Germany West Central"
 
-- name: vnet_subnet
-  displayName: Target VNET & Subnet
+- name: vnet
+  displayName: Target VNET
   type: string
-  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
+  default: "vnet-sap-prod-germanywestcentral-001"
   values:
-  - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
-  - "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
-  - "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
-  # Adapt according to your target landing zone
-  # "<VNET>/subnets/<subnet>"
+  - "vnet-sap-prod-westeurope-001"
+  - "vnet-sap-prod-germanywestcentral-001"
+  - "SAPDemoEnvironmentNetwork"
+  - "DEV-NOEU-SAP02-vnet"
+  - "MIM-GEWC-SAP04-vnet"
+
+- name: subnet
+  displayName: Target subnet
+  type: string
+  default: "snet-sap-prod-germanywestcentral-001"
+  values:
+  - "snet-sap-prod-westeurope-001"
+  - "snet-sap-prod-germanywestcentral-001"
+  - "sapprdsubnet"
+  - "DEV-NOEU-SAP02_db-subnet"
+  - "MIM-GEWC-SAP04_db-subnet"
+
+- name: vnetrg
+  displayName: VNET resource group
+  type: string
+  default: "SAPonAzureGermany"
+  values:
+  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
 
 - name: availzone
   displayName: Availability Zone
@@ -80,22 +135,22 @@ parameters:
 - name: sapvmdeployment
   displayName: SAP VM Deployment
   type: boolean
-  default: true
+  default: True
 
 - name: osprep
   displayName: OS Preparations
   type: boolean
-  default: true
+  default: True
 
-- name: sapinstallation
+- name: installation
   displayName: SAP Installation
   type: boolean
-  default: true
+  default: false
 
-- name: sapbackupsetup
+- name: backupsetup
   displayName: SAP Backup Setup
   type: string
-  default: "Non-PROD"
+  default: "None"
   values:
   - "Non-PROD"
   - "PROD"
@@ -104,7 +159,7 @@ parameters:
 - name: monitoringextsap
   displayName: Azure Monitoring Extension for SAP
   type: boolean
-  default: True
+  default: False
 
 - name: cleanup
   displayName: Remove everything at the end
@@ -118,15 +173,25 @@ pool:
   name: $(Agent)
 
 variables:
-  backuptype: ${{ parameters.sapbackupsetup }}
-  backuptodo: $[ ne(variables['backuptype'], 'None') ]
-  sapvmrg: RG-SAP-${{ parameters.sid }}
-  sapvmfqdn: ${{ parameters.hostname }}.$(privatednszone)
-  containersuffix: "$(sapvmrg);${{ parameters.vmname }}"
-  sapvmid: /subscriptions/$(subscription)/resourceGroups/$(sapvmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
-  subnetid: /subscriptions/$(subscription)/resourceGroups/$(vnet-rg)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
-  osvar: ${{ parameters.os }}
-  usepyth3: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8')) ]
+  - group: "SAP-HANA-VM-Deployments"
+  - name: backuptype
+    value: ${{ parameters.backupsetup }}
+  - name: backuptodo
+    value: $[ ne(variables['backuptype'], 'None') ]
+  - name: vmrg
+    value: ${{ parameters.rg }}
+  - name: containersuffix
+    value: "$(vmrg);${{ parameters.vmname }}"
+  - name: backupcontainer
+    value: "VMAppContainer;Compute;$(containersuffix)"
+  - name: vmid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  - name: subnetid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.vnetrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
+  - name: osvar
+    value: ${{ parameters.os }}
+  - name: usepyth3
+    value: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
 
 name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -162,39 +227,43 @@ stages:
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(sapvmrg)'
         location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(gituser)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/sap-vm.json'
-        overrideParameters: '-adminUsername "$(adminuser)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -adminPasswordOrKey "$(pubsshkey)" -subnetId "$(subnetid)" -availabilityZone "${{ parameters.availzone }}" -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccountName "$(diagnosticsstorageaccountname)" '
-        deploymentMode: 'Complete'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" '
+        deploymentMode: 'Incremental'
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
-    - task: PowerShell@2
-      displayName: 'Get ARM Output variables'
-      # https://www.timmerman.it/index.php/using-values-from-your-arm-template-across-your-azure-devops-pipeline-with-powershell/
-      inputs:
-        targetType: 'filePath'
-        filePath: '$(System.DefaultWorkingDirectory)/Scripts/Parse_ARM_Deployment_Output.ps1'
-        arguments: -ArmOutputString '$(arm_output)' -MakeOutput -ErrorAction Stop
-        errorActionPreference: stop
-        showWarnings: true
-
     - script: |
         #!/bin/bash
-        mkdir -p ~/Inventory
-        echo $(arm_output) > ~/Inventory/${{ parameters.vmname }}.json
-      displayName: Write Inventory JSON
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        if [[ -z $(arm_output) ]]; then
+          echo "##vso[task.logissue type=error]Variable arm_output is empty"
+          exit 2
+        else
+          echo -e "$green--- Writing arm_output into the inventory ---$reset"
+          echo $(arm_output)
+          cd $(Build.Repository.LocalPath)
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}
+          echo $(arm_output)                    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          echo $(arm_output.sapvmname.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapvmname
+          echo $(arm_output.sapsid.value)       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapsid
+          echo $(arm_output.sapprivateip.value) > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapprivateip
+          echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
+          git checkout $(Build.SourceBranchName)
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapvmname
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapsid
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapprivateip
+          git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write Inventory JSON and add this information to the Azure DevOps repository
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
-
-    - script: |
-        #!/bin/bash
-        mkdir -p ~/Inventory
-        echo $(arm_output.sapvmname.value)  > ~/Inventory/${{ parameters.vmname }}.sapvmname
-        echo $(arm_output.sapsid.value)     > ~/Inventory/${{ parameters.vmname }}.sapsid
-        echo $(arm_output.privateip.value)  > ~/Inventory/${{ parameters.vmname }}.privateip
-      displayName: Write Inventory files
-      failOnStderr: false
-
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
   jobs:
@@ -244,7 +313,7 @@ stages:
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
 
 - stage: Install_SAP
-  condition: eq(${{ parameters.sapinstallation }}, true)
+  condition: eq(${{ parameters.installation }}, true)
   jobs:
   - job: Install_SAP
     steps:

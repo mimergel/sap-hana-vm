@@ -27,11 +27,12 @@ parameters:
   type: string
   default: "SLES 15 SP2"
   values:
-  - "CUSTOM"
   - "RHEL 7.7"
-  - "RHEL 8.2"
+  - "RHEL 8.1"
+  - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
+  - "CUSTOM"
 
 - name: encryption
   displayName: Enable double encryption with CMK
@@ -57,7 +58,7 @@ parameters:
 - name: sid
   displayName: HANA System ID
   type: string
-  default: "MM1"
+  default: "HDB"
 
 - name: nr
   displayName: HANA Instance Number (00-99)
@@ -91,6 +92,7 @@ parameters:
   values:
   - "West Europe"
   - "North Europe"
+  - "France Central"
   - "Germany West Central"
 
 - name: vnet
@@ -137,7 +139,7 @@ parameters:
   - 2
   - 3
 
-- name: hanavmdeployment
+- name: vmdeployment
   displayName: HANA VM deployment
   type: boolean
   default: True
@@ -147,15 +149,15 @@ parameters:
   type: boolean
   default: True
 
-- name: hanadbinstallation
+- name: installation
   displayName: HANA DB installation
   type: boolean
   default: True
 
-- name: hanabackupsetup
+- name: backupsetup
   displayName: HANA backup setup
   type: string
-  default: "Non-PROD"
+  default: "None"
   values:
   - "Non-PROD"
   - "PROD"
@@ -190,21 +192,17 @@ pool:
 variables:
   - group: "SAP-HANA-VM-Deployments"
   - name: backuptype
-    value: ${{ parameters.hanabackupsetup }}
+    value: ${{ parameters.backupsetup }}
   - name: backuptodo
     value: $[ ne(variables['backuptype'], 'None') ]
-  - name: hanadbinst
-    value: ${{ parameters.hanadbinstallation }}
-  - name: hanavmrg
+  - name: vmrg
     value: ${{ parameters.rg }}
-  - name:   hanavmfqdn
-    value: ${{ parameters.hostname }}.$(privatednszone)
   - name: containersuffix
-    value: "$(hanavmrg);${{ parameters.vmname }}"
-  - name: hanabackupcontainer
+    value: "$(vmrg);${{ parameters.vmname }}"
+  - name: backupcontainer
     value: "VMAppContainer;Compute;$(containersuffix)"
-  - name: hanavmid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(hanavmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+  - name: vmid
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.vnetrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
@@ -228,7 +226,7 @@ stages:
         artifact: hana
 
 - stage: Deploy_VM
-  condition: eq(${{ parameters.hanavmdeployment }}, true)
+  condition: eq(${{ parameters.vmdeployment }}, true)
   jobs:
   - job: Deploy_VM
     steps:
@@ -241,7 +239,7 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: $(hanavmrg)
+        resourceGroupName: $(vmrg)
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm.json
@@ -261,10 +259,10 @@ stages:
           echo $(arm_output)
           cd $(Build.Repository.LocalPath)
           mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}
-          echo $(arm_output)                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
-          echo $(arm_output.hanavmname.value)  > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
-          echo $(arm_output.hanadbid.value)    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
-          echo $(arm_output.privateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
+          echo $(arm_output)                       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
+          echo $(arm_output.hanavmname.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)        > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.hanaprivateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanaprivateip
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
@@ -272,7 +270,7 @@ stages:
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.json
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanavmname
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanadbid
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.privateip
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.hanaprivateip
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
@@ -343,7 +341,7 @@ stages:
         ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_HANA
-  condition: eq(${{ parameters.hanadbinstallation }}, true)
+  condition: eq(${{ parameters.installation }}, true)
   jobs:
   - job: Install_HANA
     steps:
@@ -457,7 +455,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(hanabackupcontainer)"] -sourceResourceIds ["$(hanavmid)"]'
+        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -473,7 +471,7 @@ stages:
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
           -SERVER "${{ parameters.hostname }}"
-          -VMRG "$(hanavmrg)"
+          -VMRG "$(vmrg)"
           -POL "$(backuptype)"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
           -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
@@ -493,7 +491,7 @@ stages:
           -RSV "$(rsv)"
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
-          -VMRG "$(hanavmrg)"
+          -VMRG "$(vmrg)"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
           -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
           -ARM_SUBSCRIPTION_ID    "$(ARM_SUBSCRIPTION_ID)"
@@ -516,7 +514,7 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
         arguments: >
           -VM                     "${{ parameters.vmname }}"
-          -VMRG                   "$(hanavmrg)"
+          -VMRG                   "$(vmrg)"
           -ARM_CLIENT_ID          $(ARM_CLIENT_ID)
           -ARM_CLIENT_SECRET      $(ARM_CLIENT_SECRET)
           -ARM_SUBSCRIPTION_ID    $(ARM_SUBSCRIPTION_ID)
@@ -592,7 +590,7 @@ stages:
           -RSV                     "$(rsv)"
           -RGV                     "$(rsv-rg)"
           -VM                      "${{ parameters.vmname }}"
-          -VMRG                    "$(hanavmrg)"
+          -VMRG                    "$(vmrg)"
           -POL                    "NA"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
           -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
@@ -611,7 +609,7 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'DeleteRG'
-        resourceGroupName: '$(hanavmrg)'
+        resourceGroupName: '$(vmrg)'
 
 - stage: Post_Installation_Steps
   displayName: Post Installation Steps

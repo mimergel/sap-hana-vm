@@ -339,7 +339,7 @@
         "value": "[parameters('sapSystemId')]",
         "type": "string"
       },
-      "PRIVATEIP": {
+      "SAPPRIVATEIP": {
         "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]",
         "type": "string"
       }

@@ -2150,14 +2150,6 @@
       }
     ],
     "outputs": {
-      "encryption": {
-        "value": "[parameters('encryption')]",
-        "type": "string"
-      },
-      "diskEncryptionSet": {
-        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
-        "type": "string"
-      },
       "HANAVMNAME": {
         "value": "[variables('vmName')]",
         "type": "string"
@@ -2166,7 +2158,7 @@
         "value": "[parameters('hanaSystemId')]",
         "type": "string"
       },
-      "PRIVATEIP": {
+      "HANAPRIVATEIP": {
         "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]",
         "type": "string"
       }
