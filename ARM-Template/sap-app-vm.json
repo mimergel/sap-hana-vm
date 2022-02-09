@@ -207,7 +207,7 @@
         }
       },
       "sizes": {
-        "parameters('sapSystemSize')": {
+        "Standard_E4ds_v4": {
             "vmSize": "parameters('sapSystemSize')",
             "disks": [
               {
