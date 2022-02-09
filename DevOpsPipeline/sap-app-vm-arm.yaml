@@ -177,14 +177,12 @@ variables:
     value: ${{ parameters.backupsetup }}
   - name: backuptodo
     value: $[ ne(variables['backuptype'], 'None') ]
-  - name: vmrg
-    value: ${{ parameters.rg }}
   - name: containersuffix
-    value: "$(vmrg);${{ parameters.vmname }}"
+    value: "${{ parameters.rg }};${{ parameters.vmname }}"
   - name: backupcontainer
     value: "VMAppContainer;Compute;$(containersuffix)"
   - name: vmid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(vmrg)/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.rg }}/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.vnetrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
@@ -224,7 +222,7 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(vmrg)'
+        resourceGroupName: '${{ parameters.rg }}'
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm.json
@@ -360,7 +358,7 @@ stages:
           -RGV "$(rsv-rg)"
           -VM "${{ parameters.vmname }}"
           -SERVER "${{ parameters.hostname }}"
-          -VMRG "$(vmrg)"
+          -VMRG "${{ parameters.rg }}"
           -POL "$(backuptype)"
         errorActionPreference: continue
         showWarnings: true
@@ -380,7 +378,7 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
         arguments: >
           -VM                     "${{ parameters.vmname }}"
-          -VMRG                   "$(vmrg)"
+          -VMRG                   "${{ parameters.rg }}"
           -ARM_CLIENT_ID          $(ARM_CLIENT_ID)
           -ARM_CLIENT_SECRET      $(ARM_CLIENT_SECRET)
           -ARM_SUBSCRIPTION_ID    $(ARM_SUBSCRIPTION_ID)
@@ -405,7 +403,7 @@ stages:
           -RSV                     "$(rsv)"
           -RGV                     "$(rsv-rg)"
           -VM                      "${{ parameters.vmname }}"
-          -VMRG                    "$(vmrg)"
+          -VMRG                    "${{ parameters.rg }}"
           -POL                    "NA"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
           -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
@@ -424,4 +422,4 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'DeleteRG'
-        resourceGroupName: '$(vmrg)'
+        resourceGroupName: '${{ parameters.rg }}'
