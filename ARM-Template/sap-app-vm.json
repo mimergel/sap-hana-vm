@@ -208,7 +208,7 @@
         }
       },
       "sizes": {
-        "[variables('sapvmsku')]": {
+        "Standard_E4ds_v4": {
             "vmSize": "variables('sapvmsku')",
             "disks": [
               {
