@@ -45,7 +45,7 @@
 - name:                            Fetch the HCMT result
   ansible.builtin.fetch:
     src:                           "{{ item.path }}"
-    dest:                          "Inventory/{{ sap_sid }}/"
+    dest:                          "../Inventory/{{ sap_sid }}/"
     flat:                          true
     fail_on_missing:               false
   with_items: "{{ file_2_fetch.files }}"
