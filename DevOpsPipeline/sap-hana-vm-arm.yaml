@@ -419,7 +419,7 @@ stages:
 - stage: HANA_backup_setup
   condition: eq(variables.backuptodo, true)
   jobs:
-  - job: Backup_prerequesite
+  - job: HANA_backup_setup
     steps:
     - checkout: none
     - script: |
@@ -547,7 +547,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e s_user=$(S-Username) -e s_password=$(S-Password)'
+        args: '-e sap_sid=${{ parameters.sid }} -e s_user=$(S-Username) -e s_password=$(S-Password)'
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
