@@ -22,6 +22,7 @@ parameters:
   values:
   - "RHEL 7.7"
   - "RHEL 8.1"
+  - "SLES 12 SP4"
   - "SLES 12 SP5"
   - "SLES 15 SP2"
   - "CUSTOM"
@@ -68,7 +69,7 @@ parameters:
   default: "SAPTEST"
 
 - name: hostname
-  displayName: SAP Host Name in the OS
+  displayName: SAP OS hostname
   type: string
   default: "saptest"
 
@@ -78,7 +79,7 @@ parameters:
   default: "dynamic"
 
 - name: location
-  displayName: Target Region
+  displayName: Target region
   type: string
   default: "Germany West Central"
   values:
@@ -122,7 +123,7 @@ parameters:
   - "SAPonAzureWestUS"
 
 - name: availzone
-  displayName: Availability Zone
+  displayName: Availability zone
   type: number
   default: 1
   values:
@@ -131,23 +132,23 @@ parameters:
   - 2
   - 3
 
-- name: sapvmdeployment
-  displayName: SAP VM Deployment
+- name: vmdeployment
+  displayName: SAP VM deployment
   type: boolean
   default: True
 
 - name: osprep
-  displayName: OS Preparations
+  displayName: OS preparations
   type: boolean
   default: True
 
 - name: installation
-  displayName: SAP Installation
+  displayName: SAP installation
   type: boolean
   default: false
 
 - name: backupsetup
-  displayName: SAP Backup Setup
+  displayName: SAP backup setup
   type: string
   default: "None"
   values:
@@ -161,7 +162,7 @@ parameters:
   default: False
 
 - name: cleanup
-  displayName: Remove everything at the end
+  displayName: Remove the deployment
   type: boolean
   default: False
 
@@ -196,6 +197,8 @@ stages:
 - stage: Publish_Pipeline_Artifact
   jobs:
   - job: Publish_Pipeline_Artifact
+      workspace:
+      clean: all
     steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
@@ -204,21 +207,16 @@ stages:
         artifact: sap
 
 - stage: Deploy_VM
-  condition: eq(${{ parameters.sapvmdeployment }}, true)
+  condition: eq(${{ parameters.vmdeployment }}, true)
   jobs:
   - job: Deploy_VM
     steps:
     - checkout: none
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)'
-        artifact: sap
-
+      persistCredentials:        true
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'SAP VM Deployment via ARM'
       inputs:
-        deploymentScope: 'Resource Group'
+        deploymentScope: Resource Group
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
@@ -261,6 +259,7 @@ stages:
       env:
         SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
+
 - stage: Prepare_OS
   condition: eq(${{ parameters.osprep }}, true)
   jobs:
@@ -275,7 +274,8 @@ stages:
         if [[ -n $entry ]]
         then
           echo "Known host entry will be removed"
-          ssh-keygen -f "~/.ssh/known_hosts" -R $privateip
+          echo ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
+          ssh-keygen -f /home/$(adminuser)/.ssh/known_hosts -R $privateip
         else
           echo "No entry found, nothing to remove"
         fi
@@ -283,16 +283,20 @@ stages:
       displayName: Remove known_hosts entries from former runs that used the same name or ip
       failOnStderr: false
 
+    - script: until ping -c1 $(privateip) >/dev/null 2>&1; do :; done
+      displayName: Wait until IP is accessible $(privateip)
+      failOnStderr: false
+
     - task: Ansible@0
       displayName: 'OS Preparations RHEL8 / SLES 15(Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
           $(privateip)
-        args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
+        args: '-e ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
       env:
@@ -304,12 +308,12 @@ stages:
       displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
       inputs:
         ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'Ansible/os-settings_playbook.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/os-settings_playbook.yml'
         inventoriesAgentMachine: inlineContent
         inventoryInlineContentAgentMachine: |
           [sap]
           $(privateip)
-        args: -vv 
+        args:  '-u $(adminuser)'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
       env:
@@ -341,6 +345,10 @@ stages:
           $(privateip)
         args: -vv -e sap_sid=${{ parameters.sid }} -e sap_hostname=${{ parameters.hostname }} -e sap_instancenum=${{ parameters.nr }} -e pw_db_system=$(sap-pw) -e sapbits_storage=${sapbitssstorageaccountname}
         failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: OS_Backup
   condition: eq(variables.backuptodo, true)
@@ -360,6 +368,10 @@ stages:
           -SERVER "${{ parameters.hostname }}"
           -VMRG "${{ parameters.rg }}"
           -POL "$(backuptype)"
+          -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
+          -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
+          -ARM_SUBSCRIPTION_ID    "$(ARM_SUBSCRIPTION_ID)"
+          -ARM_TENANT_ID          "$(ARM_TENANT_ID)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -423,3 +435,13 @@ stages:
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'DeleteRG'
         resourceGroupName: '${{ parameters.rg }}'
+
+- stage: Post_Installation_Steps
+  displayName: Post Installation Steps
+  condition: always()
+  jobs:
+    - job:                           Post_Installation_Steps
+      displayName:                   Post Installation Steps
+      steps:
+        - task:                      PostBuildCleanup@3
+        - checkout:                  none
