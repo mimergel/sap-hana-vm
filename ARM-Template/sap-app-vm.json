@@ -39,17 +39,6 @@
           "description": "The type of the operating system you want to deploy."
         }
       },
-      "authenticationType": {
-        "type": "string",
-        "defaultValue": "password",
-        "allowedValues": [
-          "password",
-          "sshPublicKey"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine."
-        }
-      },
       "adminPasswordOrKey": {
         "type": "securestring",
         "metadata": {
@@ -166,6 +155,11 @@
         }
       },
       "images": {
+        "CUSTOM": {
+          "publisher": "CUSTOM",
+          "OSType": "Linux",
+          "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPImages/images/12-sp4-gen2/versions/0.0.1"
+        },
         "RHEL 7.7": {
           "sku": "77sapha-gen2",
           "offer": "RHEL-SAP-HA",
@@ -175,6 +169,13 @@
         },
         "RHEL 8.1": {
           "sku": "81sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "RHEL 8.2": {
+          "sku": "82sapha-gen2",
           "offer": "RHEL-SAP-HA",
           "publisher": "RedHat",
           "OSType": "Linux",
@@ -193,11 +194,6 @@
           "publisher": "SUSE",
           "OSType": "Linux",
           "version": "latest"
-        },
-        "CUSTOM": {
-          "publisher": "CUSTOM",
-          "OSType": "Linux",
-          "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPImages/images/12-sp4-gen2/versions/0.0.1"
         }
       },
       "internalOSType": "[variables('images')[parameters('osType')].OSType]",
@@ -256,7 +252,7 @@
           "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
         ],
         "zones": "[variables('selectedZones')]",
-        "apiVersion": "2018-10-01",
+        "apiVersion": "2021-07-01",
         "location": "[parameters('location')]",
         "properties": {
           "hardwareProfile": {
@@ -270,7 +266,7 @@
               "ssh": {
                 "publicKeys": [
                   {
-                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
                     "keyData": "[parameters('adminPasswordOrKey')]"
                   }
                 ]
