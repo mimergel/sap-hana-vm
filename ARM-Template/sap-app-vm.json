@@ -229,11 +229,11 @@
                 "lun": 0,
                 "name": "[concat(variables('vmName'), '-sapexe-disk')]",
                 "caching": "ReadOnly",
+                "createOption": "Empty",
                 "managedDisk": {
                   "storageAccountType": "Premium_LRS",
                   "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
                 },
-                "createOption": "Empty",
                 "diskSizeGB": 128
               }
             ],
