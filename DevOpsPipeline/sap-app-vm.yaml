@@ -4,17 +4,16 @@ parameters:
 - name: size
   displayName: SAP VM Size
   type: string
-  default: E2ds_v4_(16GB)
+  default: Standard_E2ds_v4
   values:
-  - E2ds_v4_(16GB)
-  - E4ds_v4_(32GB)
-  - E8ds_v4_(64GB)
-  - E16ds_v4_(128GB)
-  - E20ds_v4_(160GB)
-  - E32ds_v4_(256GB)
-  - E48ds_v4_(384GB)
-  - E64ds_v4_(504GB)
-  - E80ids_v4_(504GB)
+  - Standard_E2ds_v4
+  - Standard_E4ds_v4
+  - Standard_E8ds_v4
+  - Standard_E16ds_v4
+  - Standard_E32ds_v4
+  - Standard_E48ds_v4
+  - Standard_E64ds_v4
+  - Standard_E80ids_v4
 
 - name: os
   displayName: Operating System
