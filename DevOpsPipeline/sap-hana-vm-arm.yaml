@@ -68,22 +68,22 @@ parameters:
 - name: rg
   displayName: HANA VM resource group
   type: string
-  default: "RG-HANATEST"
+  default: "RG-HANATEST-HDB"
 
 - name: vmname
   displayName: HANA Azure VM Name 
   type: string
-  default: "HANATEST"
+  default: "HANATESTHDB"
 
 - name: hostname
   displayName: HANA OS hostname
   type: string
-  default: "hanatest"
+  default: "hanatesthdb"
 
 - name: ipaddress
   displayName: Provide a static IP address if required, e.g. 10.110.96.4
   type: string
-  default: "10.12.10.13"
+  default: "dynamic"
 
 - name: location
   displayName: Target region
@@ -147,12 +147,12 @@ parameters:
 - name: osprep
   displayName: OS preparations
   type: boolean
-  default: True
+  default: False
 
 - name: installation
   displayName: HANA DB installation
   type: boolean
-  default: True
+  default: False
 
 - name: backupsetup
   displayName: HANA backup setup
@@ -166,7 +166,7 @@ parameters:
 - name: monitoringextsap
   displayName: Azure Monitoring Extension for SAP
   type: boolean
-  default: True
+  default: False
 
 - name: xsasetup
   displayName: Install XSA components
@@ -176,7 +176,7 @@ parameters:
 - name: hcmt
   displayName: HANA performance checks
   type: boolean
-  default: True
+  default: False
 
 - name: cleanup
   displayName: Remove the deployment
