@@ -4,12 +4,14 @@
     "parameters": {
       "vmNameInput": {
         "type": "string",
+        "defaultValue": "HANATEST",
         "metadata": {
-          "description": "The VM Name in Azure and OS level that you want to deploy"
+          "description": "The VM Name in Azure that you want to deploy"
         }
       },
       "HostNameInput": {
         "type": "string",
+        "defaultValue": "hanatest",
         "metadata": {
           "description": "The Host Name on OS level that you want to deploy"
         }
@@ -26,16 +28,28 @@
       "osType": {
         "type": "string",
         "allowedValues": [
+          "CUSTOM",
           "RHEL 7.7",
-          "RHEL 8.1",
-          "SLES 12 SP4",
+          "RHEL 8.2",
           "SLES 12 SP5",
-          "SLES 15 SP2",
-          "Custom RHEL 8.1"
+          "SLES 15 SP2"
         ],
-        "defaultValue": "Custom RHEL 8.1",
+        "defaultValue": "SLES 12 SP5",
         "metadata": {
           "description": "The type of the operating system you want to deploy."
+        }
+      },
+      "authenticationType": {
+        "type": "string",
+        "defaultValue": "password",
+        "allowedValues": [
+          "password",
+          "sshPublicKey"
+        ],
+      "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password or ssh key for the Virtual Machine."
         }
       },
       "sapSystemSize": {
@@ -53,38 +67,49 @@
         ],
         "defaultValue": "E2ds_v4_(16GB)",
         "metadata": {
-          "description": "The size of the SAP System you want to deploy."
+          "description": "The size of the HANA System you want to deploy."
+        }
+      },
+      "encryption": {
+        "type": "string",
+        "defaultValue": "false",
+        "metadata": {
+          "description": "Enable double encryption with CMK"
+        }
+      },
+      "encryptionset": {
+        "type": "string",
+        "defaultValue": "SAPDiskEncryptionSetGEWC",
+        "metadata": {
+          "description": "Disk encryption set name"
+        }
+      },
+      "encryptionsetrg": {
+        "type": "string",
+        "defaultValue": "SAPonAzureGermany",
+        "metadata": {
+          "description": "Resource group of the disk encryption set"
         }
       },
       "adminUsername": {
         "type": "string",
-        "defaultValue": "azureuser",
+        "defaultValue": "azureadm",
         "metadata": {
           "description": "Username for the Virtual Machine."
         }
       },
-      "authenticationType": {
-        "type": "string",
-        "defaultValue": "sshPublicKey",
-        "allowedValues": [
-          "password",
-          "sshPublicKey"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine."
-        }
-      },
-      "adminPasswordOrKey": {
-        "type": "securestring",
-        "metadata": {
-          "description": "Password or ssh key for the Virtual Machine."
-        }
-      },
       "subnetId": {
         "type": "string",
-        "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
+        "defaultValue": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
         "metadata": {
           "description": "The id of the subnet you want to use."
+        }
+      },
+      "ipaddress": {
+        "type": "string",
+        "defaultValue": "dynamic",
+        "metadata": {
+          "description": "Static IP address if required"
         }
       },
       "availabilityZone": {
@@ -103,7 +128,7 @@
           "description": "Location for all resources."
         }
       },
-      "diagnosticsStorageAccountName": {
+      "diagnosticsStorageAccount": {
         "type": "string",
         "defaultValue": "stdiagnosticsgermanywes",
         "metadata": {
@@ -119,6 +144,28 @@
       }
     },
     "variables": {
+      "sidlower": "[toLower(parameters('sapSystemId'))]",
+      "vmName": "[parameters('vmNameInput')]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
+      "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "nicName": "[concat(variables('vmName'), '-nic')]",
+      "subnetName": "Subnet",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": true,
+        "ssh": {
+          "publicKeys": [
+            {
+              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "keyData": "[parameters('adminPasswordOrKey')]"
+            }
+          ]
+        }
+      },
+      "subnets": {
+        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
+        "false": "[parameters('subnetId')]"
+      },
+      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]",
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
       "images": {
         "RHEL 7.7": {
@@ -226,29 +273,7 @@
             },
             "useFastNetwork": true
         }
-      },
-      "sidlower": "[toLower(parameters('sapSystemId'))]",
-      "vmName": "[parameters('vmNameInput')]",
-      "HostName": "[toLower(parameters('HostNameInput'))]",
-      "vnetName": "[concat(variables('vmName'), '-vnet')]",
-      "nicName": "[concat(variables('vmName'), '-nic')]",
-      "subnetName": "Subnet",
-      "linuxConfiguration": {
-        "disablePasswordAuthentication": true,
-        "ssh": {
-          "publicKeys": [
-            {
-              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-              "keyData": "[parameters('adminPasswordOrKey')]"
-            }
-          ]
-        }
-      },
-      "subnets": {
-        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
-        "false": "[parameters('subnetId')]"
-      },
-      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]"
+      }
     },
     "resources": [
       {
