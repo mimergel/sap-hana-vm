@@ -4,14 +4,14 @@
     "parameters": {
       "vmNameInput": {
         "type": "string",
-        "defaultValue": "HANATEST",
+        "defaultValue": "SAPTEST",
         "metadata": {
           "description": "The VM Name in Azure that you want to deploy"
         }
       },
       "HostNameInput": {
         "type": "string",
-        "defaultValue": "hanatest",
+        "defaultValue": "saptest",
         "metadata": {
           "description": "The Host Name on OS level that you want to deploy"
         }
@@ -46,6 +46,10 @@
           "password",
           "sshPublicKey"
         ],
+        "metadata": {
+          "description": "Type of authentication to use on the Virtual Machine."
+        }
+      },
       "adminPasswordOrKey": {
         "type": "securestring",
         "metadata": {
@@ -55,7 +59,7 @@
       "sapSystemSize": {
         "type": "string",
         "allowedValues": [
-          "E2ds_v4_(16GB)",
+          "Standard_E2ds_v4",
           "E4ds_v4_(32GB)",
           "E8ds_v4_(64GB)",
           "E16ds_v4_(128GB)",
@@ -67,7 +71,7 @@
         ],
         "defaultValue": "E2ds_v4_(16GB)",
         "metadata": {
-          "description": "The size of the HANA System you want to deploy."
+          "description": "The size of the SAP System"
         }
       },
       "encryption": {
@@ -150,6 +154,9 @@
       "vnetName": "[concat(variables('vmName'), '-vnet')]",
       "nicName": "[concat(variables('vmName'), '-nic')]",
       "subnetName": "Subnet",
+      "diskEncryptionSet": {
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
+      },
       "linuxConfiguration": {
         "disablePasswordAuthentication": true,
         "ssh": {
@@ -159,6 +166,19 @@
               "keyData": "[parameters('adminPasswordOrKey')]"
             }
           ]
+        }
+      },
+      "ippropertiesstatic": {
+        "privateIPAddress": "[parameters('ipaddress')]",
+        "privateIPAllocationMethod": "Static",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
+      },
+      "ippropertiesdynamic": {
+        "privateIPAllocationMethod": "Dynamic",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
         }
       },
       "subnets": {
@@ -180,13 +200,6 @@
           "offer": "RHEL-SAP-HA",
           "publisher": "RedHat",
           "OSType": "Linux",
-          "version": "8.1.2021040902"
-        },
-        "SLES 12 SP4": {
-          "sku": "12-sp4-gen2",
-          "offer": "SLES-SAP",
-          "publisher": "SUSE",
-          "OSType": "Linux",
           "version": "latest"
         },
         "SLES 12 SP5": {
@@ -203,15 +216,10 @@
           "OSType": "Linux",
           "version": "latest"
         },
-        "Custom RHEL 8.1": {
-          "publisher": "RedHat",
+        "CUSTOM": {
+          "publisher": "CUSTOM",
           "OSType": "Linux",
-          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPHANAImages/images/rhel-81-sapha-g2/versions/0.0.1"
-        },
-        "Custom SLES 12 SP5": {
-          "publisher": "SUSE",
-          "OSType": "Linux",
-          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPHANAImages/images/12-sp4-gen2/versions/0.0.1"
+          "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPImages/images/12-sp4-gen2/versions/0.0.1"
         }
       },
       "internalOSType": "[variables('images')[parameters('osType')].OSType]",
@@ -225,8 +233,8 @@
         }
       },
       "sizes": {
-        "E2ds_v4_(16GB)": {
-            "vmSize": "Standard_E2ds_v4",
+        "[parameters('sapSystemSize')]": {
+            "vmSize": "[parameters('sapSystemSize')]",
             "disks": [
               {
                 "lun": 0,
@@ -234,38 +242,6 @@
                 "caching": "ReadOnly",
                 "createOption": "Empty",
                 "diskSizeGB": 128
-              }
-            ],
-            "scriptArguments": {
-                "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
-            },
-            "useFastNetwork": true
-        },
-        "E4ds_v4_(16GB)": {
-            "vmSize": "Standard_E4ds_v4",
-            "disks": [
-              {
-                "lun": 0,
-                "name": "[concat(variables('vmName'), '-sapexe-disk')]",
-                "caching": "ReadOnly",
-                "createOption": "Empty",
-                "diskSizeGB": 256
-              }
-            ],
-            "scriptArguments": {
-                "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
-            },
-            "useFastNetwork": true
-        },
-        "E8ds_v4_(16GB)": {
-            "vmSize": "Standard_E8ds_v4",
-            "disks": [
-              {
-                "lun": 0,
-                "name": "[concat(variables('vmName'), '-sapexe-disk')]",
-                "caching": "ReadOnly",
-                "createOption": "Empty",
-                "diskSizeGB": 512
               }
             ],
             "scriptArguments": {
@@ -285,12 +261,7 @@
           "ipConfigurations": [
             {
               "name": "ipconfig1",
-              "properties": {
-                "privateIPAllocationMethod": "Dynamic",
-                "subnet": {
-                  "id": "[variables('selectedSubnetId')]"
-                }
-              }
+              "properties": "[if(equals(parameters('ipaddress'), 'dynamic'), variables('ippropertiesdynamic'), variables('ippropertiesstatic'))]"
             }
           ],
           "enableAcceleratedNetworking": "[variables('sizes')[parameters('sapSystemSize')].useFastNetwork]"
@@ -317,14 +288,18 @@
           },
           "storageProfile": {
             "imageReference": {
-              "id": "[variables('images')[parameters('osType')].id]"
+              "publisher": "[variables('images')[parameters('osType')].publisher]",
+              "offer": "[variables('images')[parameters('osType')].offer]",
+              "sku": "[variables('images')[parameters('osType')].sku]",
+              "version": "[variables('images')[parameters('osType')].version]"
             },
             "osDisk": {
-              "name": "[concat(variables('vmName'), '-osdisk')]",
+              "name": "[concat(variables('vmName'), '-os-disk')]",
               "caching": "ReadWrite",
               "createOption": "FromImage",
               "managedDisk": {
-                "storageAccountType": "Premium_LRS"
+                "storageAccountType": "Premium_LRS",
+                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
               }
             },
             "dataDisks": "[variables('sizes')[parameters('sapSystemSize')].disks]"
@@ -339,7 +314,7 @@
           "diagnosticsProfile": {
               "bootDiagnostics": {
                   "enabled": true,
-                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccount'), '.blob.core.windows.net/')]"
               }
           }
         }

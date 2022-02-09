@@ -186,17 +186,17 @@
           "OSType": "Linux",
           "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/(rg)/providers/Microsoft.Compute/galleries/(gallery-name)/images/(image-name)/versions/1.0.0"
         },
-        "RHEL 8.2": {
-          "sku": "82sapha-gen2",
+        "RHEL 7.7": {
+          "sku": "77sapha-gen2",
           "offer": "RHEL-SAP-HA",
           "publisher": "RedHat",
           "OSType": "Linux",
           "version": "latest"
         },
-        "SLES 12 SP4": {
-          "sku": "12-sp4-gen2",
-          "offer": "SLES-SAP",
-          "publisher": "SUSE",
+        "RHEL 8.2": {
+          "sku": "82sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
           "OSType": "Linux",
           "version": "latest"
         },
@@ -226,28 +226,6 @@
         }
       },
       "sizes": {
-        "E8s_v3": {
-          "HANA": {
-            "vmSize": "Standard_E8s_v3",
-            "disks": [
-              {
-                "lun": 0,
-                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
-                "caching": "ReadOnly",
-                "createOption": "Empty",
-                "diskSizeGB": 64,
-                "managedDisk": {
-                  "storageAccountType": "Premium_LRS",
-                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
-                }
-              }
-            ],
-            "scriptArguments": {
-              "Linux": "[concat('-luns ''0'' -names ''usrsap'' -paths ''/usr/sap'' -sizes ''100''')]"
-            },
-            "useFastNetwork": true
-          }
-        },
         "E16ds_v4_128_GB-Non-PRD": {
           "HANA": {
             "vmSize": "Standard_E16ds_v4",
