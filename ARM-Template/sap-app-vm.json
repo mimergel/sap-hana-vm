@@ -207,8 +207,8 @@
         }
       },
       "sizes": {
-        "Standard_E2ds_v4": {
-            "vmSize": "Standard_E2ds_v4",
+        "parameters('sapSystemSize')": {
+            "vmSize": "parameters('sapSystemSize')",
             "disks": [
               {
                 "lun": 0,
