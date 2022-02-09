@@ -2,16 +2,7 @@
 
 - name: create install dir
   file:
-    path: {{ download_directory }}
+    path: "{{ target_media_location }}"
     state: directory
 
-- name: download sapcar
-  get_url:
-    url: "{{ url_sapcar }}"
-    dest: {{ download_directory }}/SAPCAR_LINUX.EXE
-    mode: 0755
-    timeout: "{{ url_timeout }}"
-  register: result
-  until: result is succeeded
-  retries: "{{ url_retries_cnt }}"
-  delay: "{{ url_retries_delay }}"
+# sap installation to be added herafter
