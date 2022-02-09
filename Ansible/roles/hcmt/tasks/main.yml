@@ -30,8 +30,7 @@
     replace: '"Value": "1"'
 
 - name: run hcmt
-  shell: ls
-  # ./hcmt -v -p config/executionplan.json
+  shell: ./hcmt -v -p config/executionplan.json
   args:
     chdir: "{{ target_media_location }}/setup"
     
