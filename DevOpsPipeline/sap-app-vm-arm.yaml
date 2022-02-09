@@ -221,8 +221,8 @@ stages:
       displayName: 'SAP VM Deployment via ARM'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(sapvmrg)'
         location: ${{ parameters.location }}
@@ -271,7 +271,7 @@ stages:
     - checkout: none
     - script: |
         #!/bin/bash
-        privateip=`cat ~/Inventory/${{ parameters.vmname }}.privateip`
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.sid }}/${{ parameters.vmname }}.sapprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
         entry=`ssh-keygen -F $privateip`
         if [[ -n $entry ]]
@@ -297,6 +297,10 @@ stages:
         args: -vv -e 'ansible_python_interpreter=/usr/bin/python3'
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, true))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
     - task: Ansible@0
       displayName: 'OS Preparations RHEL7 / SLES 12 (Ansible)'
@@ -310,6 +314,10 @@ stages:
         args: -vv 
         failOnStdErr: false
       condition: and(eq(${{ parameters.osprep }}, true), eq(variables.usepyth3, false))
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
 
 - stage: Install_SAP
   condition: eq(${{ parameters.installation }}, true)
@@ -371,8 +379,12 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SAPonAzureMonitoringExtension.ps1'
         arguments: >
-          -VM "${{ parameters.vmname }}"
-          -VMRG "$(sapvmrg)"
+          -VM                     "${{ parameters.vmname }}"
+          -VMRG                   "$(vmrg)"
+          -ARM_CLIENT_ID          $(ARM_CLIENT_ID)
+          -ARM_CLIENT_SECRET      $(ARM_CLIENT_SECRET)
+          -ARM_SUBSCRIPTION_ID    $(ARM_SUBSCRIPTION_ID)
+          -ARM_TENANT_ID          $(ARM_TENANT_ID)
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -389,12 +401,16 @@ stages:
         targetType: 'filePath'
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/BackupDisable.ps1'
         arguments: >
-          -SID "${{ parameters.sid }}"
-          -RSV "$(rsv)"
-          -RGV "$(rsv-rg)"
-          -VM "${{ parameters.vmname }}"
-          -VMRG "$(sapvmrg)"
-          -POL "NA"
+          -SID                     "${{ parameters.sid }}"
+          -RSV                     "$(rsv)"
+          -RGV                     "$(rsv-rg)"
+          -VM                      "${{ parameters.vmname }}"
+          -VMRG                    "$(vmrg)"
+          -POL                    "NA"
+          -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
+          -ARM_CLIENT_SECRET      "$(ARM_CLIENT_SECRET)"
+          -ARM_SUBSCRIPTION_ID    "$(ARM_SUBSCRIPTION_ID)"
+          -ARM_TENANT_ID          "$(ARM_TENANT_ID)"
         errorActionPreference: continue
         showWarnings: true
         failOnStderr: false
@@ -405,7 +421,7 @@ stages:
       displayName: 'Remove Resource Group'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'DeleteRG'
-        resourceGroupName: '$(sapvmrg)'
+        resourceGroupName: '$(vmrg)'
