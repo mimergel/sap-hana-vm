@@ -4,17 +4,16 @@ parameters:
 - name: size
   displayName: SAP VM Size
   type: string
-  default: E2ds_v4_(16GB)
+  default: Standard_E2ds_v4
   values:
-  - E2ds_v4_(16GB)
-  - E4ds_v4_(32GB)
-  - E8ds_v4_(64GB)
-  - E16ds_v4_(128GB)
-  - E20ds_v4_(160GB)
-  - E32ds_v4_(256GB)
-  - E48ds_v4_(384GB)
-  - E64ds_v4_(504GB)
-  - E80ids_v4_(504GB)
+  - Standard_E2ds_v4
+  - Standard_E4ds_v4
+  - Standard_E8ds_v4
+  - Standard_E16ds_v4
+  - Standard_E32ds_v4
+  - Standard_E48ds_v4
+  - Standard_E64ds_v4
+  - Standard_E80ids_v4
 
 - name: os
   displayName: Operating System
@@ -51,7 +50,7 @@ parameters:
 - name: location
   displayName: Target Region
   type: string
-  default: "France Central"
+  default: "Germany West Central"
   values:
   - "West Europe"
   - "France Central"
@@ -60,7 +59,7 @@ parameters:
 - name: vnet_subnet
   displayName: Target VNET & Subnet
   type: string
-  default: "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
+  default: "vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001/subnets/snet-sap-prod-westeurope-001"
   - "vnet-sap-prod-francecentral-001/subnets/snet-sap-prod-francecentral-001"
@@ -71,7 +70,7 @@ parameters:
 - name: availzone
   displayName: Availability Zone
   type: number
-  default: 0
+  default: 1
   values:
   - 0
   - 1
@@ -116,7 +115,7 @@ trigger:
   none
 
 pool:
-  name: $(agent)
+  name: $(Agent)
 
 variables:
   backuptype: ${{ parameters.sapbackupsetup }}
