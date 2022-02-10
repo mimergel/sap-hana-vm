@@ -241,7 +241,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 
 	```
-	**Tip: In case you plan to deploy into differen landing zones / regions / subscription you might want to create a separate variable group with variables specific to the landing zone**
+	Tip: In case you plan to deploy into differen landing zones / regions / subscription you might want to create a separate variable group with variables specific to the landing zone
 	```
 	
 	Example: Variable group **SAP-deployments-germany**  <br />
