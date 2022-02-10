@@ -69,8 +69,8 @@ parameters:
   - "ZoneRedundant"
   - "GeoRedundant"
 
-- name: rsvtype
-  displayName: Recovery Service Vault Type
+- name: crr
+  displayName: Recovery Service Vault Cross Region Restore enabled
   type: boolean
   default: False
 
