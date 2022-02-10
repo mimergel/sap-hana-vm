@@ -11,10 +11,10 @@ parameters:
   - "Germany West Central"
   - "eastus2euap"
 
-- name: adminrg
+- name: mgmt-rg
   displayName: Resource group for the landing zone
   type: string
-  default: "rg-devopsagent"
+  default: "SAPonAzure ${{ parameters.location }}"
 
 - name: deployervmname
   displayName: DevOps Deployment Agent VM Name
