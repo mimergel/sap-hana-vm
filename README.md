@@ -219,19 +219,27 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* AZURE_CONNECTION_NAME      [azure connection name as defined in devops service connections]]
 	* diagnosticsstorageaccount  [name of diagnostics storage account]
 	* hana-pw                    [password for the hana db]
-	* sap-pw                     [password for sap login]
-	* privatednszone             [e.g. contoso.com]
+	* keyvault                   [not yet used]
+	* sap-pw                     [password for sap login, not yet used]
+	* privatednszone             [e.g. sap.contoso.net]
 	* pubsshkey                  rsa-ssh ABCxxxx...
 	* rsv                        [recovery service vault name]
 	* rsv-rg                     [resource group of the recovery service vault]
 	* skipComponentGovernanceDetection true
-	* url-disk-cfg (if required) [url]
-	* vnet-rg                    [target vnet resource group]
+	* url-disk-cfg               [url to diskconfig.sh script]
+	* 
 	```
 
 	Example: <br />
 	
 	![Variables](./Documentation/Images/variablegroup.jpg)
+
+	Tip: In case you plan to deploy into differen landing zones / regions / subscription you might want to create a separate variable group with variables specific to the landing zone
+	
+	Example: Variable group "**SAP-deployments-germany**
+	
+	![Variables](./Documentation/Images/variablegroup-landingzone.jpg)
+
 
 # HANA VM Deployment - Run the Azure DevOps Pipeline 
 
