@@ -207,26 +207,24 @@
         }
       },
       "sizes": {
-        "Standard_E2ds_v4": {
-            "vmSize": "[parameters('sapSystemSize')]",
-            "disks": [
-              {
-                "lun": 0,
-                "name": "[concat(variables('vmName'), '-sapexe-disk')]",
-                "caching": "ReadOnly",
-                "createOption": "Empty",
-                "managedDisk": {
-                  "storageAccountType": "Premium_LRS",
-                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
-                },
-                "diskSizeGB": 128
-              }
-            ],
-            "scriptArguments": {
-                "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
+        "vmSize": "[parameters('sapSystemSize')]",
+        "disks": [
+          {
+            "lun": 0,
+            "name": "[concat(variables('vmName'), '-sapexe-disk')]",
+            "caching": "ReadOnly",
+            "createOption": "Empty",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS",
+              "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
             },
-            "useFastNetwork": true
-        }
+            "diskSizeGB": 128
+          }
+        ],
+        "scriptArguments": {
+            "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
+        },
+        "useFastNetwork": true
       }
     },
     "resources": [
@@ -242,7 +240,7 @@
               "properties": "[if(equals(parameters('ipaddress'), 'dynamic'), variables('ippropertiesdynamic'), variables('ippropertiesstatic'))]"
             }
           ],
-          "enableAcceleratedNetworking": "[variables('sizes')[parameters('sapSystemSize')].useFastNetwork]"
+          "enableAcceleratedNetworking": "[variables('sizes').useFastNetwork]"
         }
       },
       {
@@ -256,7 +254,7 @@
         "location": "[parameters('location')]",
         "properties": {
           "hardwareProfile": {
-            "vmSize": "[variables('sizes')[parameters('sapSystemSize')].vmSize]"
+            "vmSize": "[variables('sizes').vmSize]"
           },
           "osProfile": {
             "computerName": "[variables('HostName')]",
@@ -289,7 +287,7 @@
                 "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
               }
             },
-            "dataDisks": "[variables('sizes')[parameters('sapSystemSize')].disks]"
+            "dataDisks": "[variables('sizes').disks]"
           },
           "networkProfile": {
             "networkInterfaces": [
@@ -323,7 +321,7 @@
             "fileUris": [
               "[variables('csExtension')[variables('internalOSType')].script]"
             ],
-            "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes')[parameters('sapSystemSize')].scriptArguments[variables('internalOSType')])]"
+            "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes').scriptArguments[variables('internalOSType')])]"
           }
         }
       }
