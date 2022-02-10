@@ -51,7 +51,7 @@ parameters:
 - name: sid
   displayName: SAP System ID
   type: string
-  default: "SID"
+  default: "TST"
 
 - name: nr
   displayName: SAP Instance Number (00-99)
