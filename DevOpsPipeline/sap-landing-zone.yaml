@@ -19,22 +19,22 @@ parameters:
 - name: deployervmname
   displayName: DevOps Deployment Agent VM Name
   type: string
-  default: "devopsagent"
+  default: "devopsagent(parameters.location)"
 
 - name: deployerhostname
   displayName: DevOps Deployment Agent Hostname
   type: string
-  default: "devopsagent"
+  default: "devopsagent(parameters.location)"
 
 - name: winvmname
-  displayName: DevOps Deployment Agent VM Name
+  displayName: Windows Admin VM name
   type: string
-  default: "devopsagent"
+  default: "winadmin(parameters.location)"
 
 - name: winhostname
-  displayName: DevOps Deployment Agent Hostname
+  displayName: Windows Admin hostname
   type: string
-  default: "devopsagent"
+  default: "winadmin(parameters.location)"
 
 - name: winpw
   displayName: Windows user password
