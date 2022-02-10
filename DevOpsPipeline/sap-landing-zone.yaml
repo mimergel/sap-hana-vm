@@ -22,23 +22,19 @@ parameters:
   default: "devopsagent-"
 
 - name: deployerhostname
-  displayName: DevOps Deployment Agent Hostname
+  displayName: DevOps Deployment Agent hostname prefix, location will be added (e.g. devopsagent-westeurope)
   type: string
-  default: "devopsagent(parameters.location)"
+  default: "devopsagent-"
 
 - name: winvmname
-  displayName: Windows Admin VM name
+  displayName: Windows Admin VM name prefix
   type: string
-  default: "winadmin(parameters.location)"
+  default: "winadmin-"
 
 - name: winhostname
-  displayName: Windows Admin hostname
+  displayName: Windows Admin hostname prefix
   type: string
-  default: "winadmin(parameters.location)"
-
-- name: winpw
-  displayName: Windows user password
-  type: string
+  default: "winadmin-"
 
 - name: vnetrange
   displayName: VNET range
