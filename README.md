@@ -252,9 +252,9 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 # HANA VM Deployment - Run the Azure DevOps Pipeline 
 
-Now you're ready to deploy the SAP HANA VM including subsequent tasks.
-* Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)
-* Provide inputs as required ![Pipeline Inputs](./Documentation/Images/hana-pipeline-inputs.jpg)
+Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
+* Run the pipeline ![Run Pipeline](./Documentation/Images/run-pipeline.jpg)<br />
+* Provide inputs as required ![Pipeline Inputs](./Documentation/Images/hana-pipeline-inputs.jpg)<br />
 
 # HANA Cloud Measurement Test Results
 * The tests run a couple of hours. Once the execution is completed it will create a file here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
