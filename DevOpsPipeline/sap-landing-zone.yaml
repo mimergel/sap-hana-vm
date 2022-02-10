@@ -12,7 +12,7 @@ parameters:
   - "eastus2euap"
 
 - name: mgmt-rg
-  displayName: Resource group for the landing zone
+  displayName: Resource group prefix for landing zone resources, location will be added
   type: string
   default: "SAPonAzure(parameters.location)"
 
