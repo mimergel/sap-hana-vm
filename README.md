@@ -234,11 +234,19 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	
 	![Variables](./Documentation/Images/variablegroup.jpg)
 
+	Add pipeline permissions:
+	![Pipeline permissions](./Documentation/Images/pipeline-permissions.jpg)
+	
+	![Pipeline permissions](./Documentation/Images/pipeline-permissions2.jpg)
+
+	```
 	Tip: In case you plan to deploy into differen landing zones / regions / subscription you might want to create a separate variable group with variables specific to the landing zone
+	```
 	
 	Example: Variable group "**SAP-deployments-germany**
 	
-	![Variables](./Documentation/Images/variablegroup-landingzone.jpg)
+	![Landing Zone sepcific variables group](./Documentation/Images/variablegroup-landingzone.jpg)<br />
+
 
 
 # HANA VM Deployment - Run the Azure DevOps Pipeline 
