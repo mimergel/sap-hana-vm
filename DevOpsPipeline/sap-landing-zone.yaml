@@ -1,6 +1,16 @@
 # Pipeline to deploy an Azure DevopsDeployment Agent
 
 parameters:
+- name: location
+  displayName: Region
+  type: string
+  default: "eastus2euap"
+  values:
+  - "West Europe"
+  - "North Europe"
+  - "Germany West Central"
+  - "eastus2euap"
+
 - name: vmname
   displayName: DevOps Deployment Agent VM Name
   type: string
@@ -11,29 +21,71 @@ parameters:
   type: string
   default: "devopsagent"
 
-- name: rg
-  displayName: Target Resource Group
+- name: adminrg
+  displayName: Resource group for the landing zone
   type: string
   default: "rg-devopsagent"
 
-- name: location
-  displayName: Target Region
+- name: vnetnameprefix
+  displayName: VNET name prefix (location  will be added to the name and a 3 digit int.)
   type: string
-  default: "West Europe"
-  values:
-  - "West Europe"
-  - "North Europe"
-  - "Germany West Central"
+  default: "vnet-sap-prod-"
 
-- name: vnet_subnet
-  displayName: Target VNET & Subnet
+- name: vnetrange
+  displayName: VNET range
   type: string
-  default: "HUBWEU/subnets/admin-subnet"
+  default: "10.10.0.0/16"
+
+- name: sapsubnetnameprefix
+  displayName: SAP subnet name prefix (location  will be added to the name and a 3 digit int.)
+  type: string
+  default: "sn-sap-prod-"
+
+- name: sapsubnetrange
+  displayName: SAP subnet range
+  type: string
+  default: "10.10.10.0/24"
+
+- name: adminsubnetnameprefix
+  displayName: Admin subnet name prefix (location  will be added to the name and a 3 digit int.)
+  type: string
+  default: "sn-sap-prod-"
+
+- name: adminsubnetrange
+  displayName: Admin subnet range
+  type: string
+  default: "10.10.10.0/24"
+
+- name: subnet
+  displayName: Target subnet
+  type: string
+  default: "snet-sap-prod-germanywestcentral-001"
   values:
-  - "HUBWEU/subnets/admin-subnet"
-  - "HUBNEU/subnets/admin-subnet"
-  # Adapt according to your target landing zone
-  # "<VNET>/subnets/<subnet>"
+  - "snet-sap-prod-westeurope-001"
+  - "snet-sap-prod-germanywestcentral-001"
+  - "sapprdsubnet"
+  - "DEV-NOEU-SAP02_db-subnet"
+  - "MIM-GEWC-SAP04_db-subnet"
+
+- name: vnetrg
+  displayName: VNET resource group
+  type: string
+  default: "SAPonAzureGermany"
+  values:
+  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFrance"
+  - "SAPonAzureWestUS"
+
+- name: winpw
+  displayName: Windows user password
+  type: string
+
+- name: winpw
+  displayName: Windows user password
+  type: string
 
 trigger:
 - none
