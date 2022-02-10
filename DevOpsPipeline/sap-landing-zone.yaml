@@ -14,7 +14,7 @@ parameters:
 - name: mgmt-rg
   displayName: Resource group for the landing zone
   type: string
-  default: "SAPonAzure ${{ parameters.location }}"
+  default: "SAPonAzure(parameters.location)"
 
 - name: deployervmname
   displayName: DevOps Deployment Agent VM Name
