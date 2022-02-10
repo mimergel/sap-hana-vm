@@ -29,6 +29,8 @@
         "type": "string",
         "allowedValues": [
           "CUSTOM",
+          "RHEL 7.7",
+          "RHEL 8.1",
           "RHEL 8.2",
           "SLES 12 SP5",
           "SLES 15 SP2"
@@ -109,7 +111,7 @@
       },
       "subnetId": {
         "type": "string",
-        "defaultValue": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
+        "defaultValue": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
         "metadata": {
           "description": "The id of the subnet you want to use."
         }
@@ -153,6 +155,16 @@
       }
     },
     "variables": {
+      "vmName": "[parameters('vmNameInput')]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
+      "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "nicName": "[concat(variables('vmName'), '-nic')]",
+      "subnetName": "Subnet",
+      "subnets": {
+        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
+        "false": "[parameters('subnetId')]"
+      },
+      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]",
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
       "diskEncryptionSet": {
         "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
@@ -174,19 +186,26 @@
         "CUSTOM": {
           "publisher": "CUSTOM",
           "OSType": "Linux",
-          "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/(rg)/providers/Microsoft.Compute/galleries/(gallery-name)/images/(image-name)/versions/1.0.0"
+          "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPImages/images/12-sp4-gen2/versions/0.0.1"
         },
-        "RHEL 8.2": {
-          "sku": "82sapha-gen2",
+        "RHEL 7.7": {
+          "sku": "77sapha-gen2",
           "offer": "RHEL-SAP-HA",
           "publisher": "RedHat",
           "OSType": "Linux",
           "version": "latest"
         },
-        "SLES 12 SP4": {
-          "sku": "12-sp4-gen2",
-          "offer": "SLES-SAP",
-          "publisher": "SUSE",
+        "RHEL 8.1": {
+          "sku": "81sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "RHEL 8.2": {
+          "sku": "82sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
           "OSType": "Linux",
           "version": "latest"
         },
@@ -216,28 +235,6 @@
         }
       },
       "sizes": {
-        "E8s_v3": {
-          "HANA": {
-            "vmSize": "Standard_E8s_v3",
-            "disks": [
-              {
-                "lun": 0,
-                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
-                "caching": "ReadOnly",
-                "createOption": "Empty",
-                "diskSizeGB": 64,
-                "managedDisk": {
-                  "storageAccountType": "Premium_LRS",
-                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
-                }
-              }
-            ],
-            "scriptArguments": {
-              "Linux": "[concat('-luns ''0'' -names ''usrsap'' -paths ''/usr/sap'' -sizes ''100''')]"
-            },
-            "useFastNetwork": true
-          }
-        },
         "E16ds_v4_128_GB-Non-PRD": {
           "HANA": {
             "vmSize": "Standard_E16ds_v4",
@@ -2060,17 +2057,7 @@
             "useFastNetwork": true
           }
         }
-      },
-      "vmName": "[parameters('vmNameInput')]",
-      "HostName": "[toLower(parameters('HostNameInput'))]",
-      "vnetName": "[concat(variables('vmName'), '-vnet')]",
-      "nicName": "[concat(variables('vmName'), '-nic')]",
-      "subnetName": "Subnet",
-      "subnets": {
-        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
-        "false": "[parameters('subnetId')]"
-      },
-      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]"
+      }
     },
     "resources": [
       {
@@ -2172,14 +2159,6 @@
       }
     ],
     "outputs": {
-      "encryption": {
-        "value": "[parameters('encryption')]",
-        "type": "string"
-      },
-      "diskEncryptionSet": {
-        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]",
-        "type": "string"
-      },
       "HANAVMNAME": {
         "value": "[variables('vmName')]",
         "type": "string"
@@ -2188,7 +2167,7 @@
         "value": "[parameters('hanaSystemId')]",
         "type": "string"
       },
-      "PRIVATEIP": {
+      "HANAPRIVATEIP": {
         "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]",
         "type": "string"
       }

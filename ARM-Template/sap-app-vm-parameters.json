@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "azureadm"
+    },
+    "vmNameInput": {
+      "value": "SAPTEST"
+    },
+    "HostNameInput": {
+      "value": "saptest"
+    },
+    "adminPasswordOrKey": {
+      "value": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ=="
+    },
+    "sapSystemSize": {
+      "value": "Standard_E2ds_v4"
+    },
+    "location": {
+      "value": "Europe West"
+    },
+    "osType": {
+      "value": "SLES 12 SP5"
+    },
+    "subnetId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/[SubnetRG]/providers/Microsoft.Network/virtualNetworks/[VNET]/subnets/[subnet]"
+    }
+  }
+}
