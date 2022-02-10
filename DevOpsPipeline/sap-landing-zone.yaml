@@ -12,14 +12,14 @@ parameters:
   - "eastus2euap"
 
 - name: mgmt-rg
-  displayName: Resource group prefix for landing zone resources, location will be added
+  displayName: Resource group prefix for landing zone resources, location will be added (e.g. saponazure-westeurope)
   type: string
-  default: "SAPonAzure(parameters.location)"
+  default: "SAPonAzure-"
 
 - name: deployervmname
-  displayName: DevOps Deployment Agent VM Name
+  displayName: DevOps Deployment Agent VM name prefix, location will be added (e.g. devopsagent-westeurope)
   type: string
-  default: "devopsagent(parameters.location)"
+  default: "devopsagent-"
 
 - name: deployerhostname
   displayName: DevOps Deployment Agent Hostname
