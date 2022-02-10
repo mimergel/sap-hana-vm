@@ -9,7 +9,7 @@ Table of contents
     + [Azure DevOps and Github account](#azure-devops-and-github-account)
     + [SAP User for the Software Downloads](#sap-user-for-the-software-downloads)
     + [Basic Resources](#basic-resources)
-      - [Deploy the Basic Resources](#deploy-the-basic-resources)
+      - [Deploy the basic resources (landing zone)](#deploy-the-basic-resources-landing-zone)
     + [Setup the Deployment Agent in an existing landing zone](#setup-the-deployment-agent-in-an-existing-landing-zone)
       - [Option A With this ARM-Template](#option-a-with-this-arm-template)
       - [Option B Manually](#option-b-manually)
@@ -148,10 +148,10 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* DevOps Deployment Agent 
 	* Windows 10 Admin Host (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 
-	#### Deploy the Basic Resources
+	#### Deploy the basic resources (landing zone)
 	Use this button to setup all of the above for a basic landing zone. When done continue with 5.iii
 
-	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fbasic-resources.json) 
+	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-landing-zone.json) 
 
 	**For more complex architectures including ANF, AFS, clustering, etc. use the [Microsoft Cloud Adoption Framework to build the SAP landing zone](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/sap/enterprise-scale-landing-zone)**
 

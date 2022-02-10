@@ -41,14 +41,14 @@
         },
         "PrivateDNSZoneName": {
             "type": "string",
-            "defaultValue": "sap.contoso.com",
+            "defaultValue": "sap.contoso.net",
             "metadata": {
                 "description": "Enter your private DNS zone"
             }
         },
         "SetupDeploymentAgentScriptURL": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/setup-deployment-agent.sh",
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/setup-deployment-agent.sh",
             "metadata": {
                 "description": "Enter your own script location if required"
             }
