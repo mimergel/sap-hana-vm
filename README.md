@@ -219,6 +219,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* AZURE_CONNECTION_NAME      [azure connection name as defined in devops service connections]]
 	* diagnosticsstorageaccount  [name of diagnostics storage account]
 	* hana-pw                    [password for the hana db]
+	* sap-pw                     [password for sap login]
 	* privatednszone             [e.g. contoso.com]
 	* pubsshkey                  rsa-ssh ABCxxxx...
 	* rsv                        [recovery service vault name]
