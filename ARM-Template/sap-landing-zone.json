@@ -766,7 +766,7 @@
             ],
             "properties": {
                 "StorageModelType": "[parameters('VaultStorageType')]",
-                "CrossRegionRestoreFlag": "[parameters('VaultEnableCRR')]"
+                "CrossRegionRestoreFlag": "[if(equals(parameters('VaultEnableCRR'),'False'), bool('false'), bool('true'))]"
             }
         },
         {
