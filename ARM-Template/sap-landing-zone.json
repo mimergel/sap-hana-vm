@@ -24,7 +24,7 @@
             }
         },
         "WindowsPassword": {
-            "defaultValue": "*************",
+            "defaultValue": "xyz-WIN-vm-123",
             "type": "SecureString",
             "metadata": {
                 "description": "Enter password for the Windows SAP Admin VM"
@@ -136,7 +136,7 @@
         },
         "DevOpsDeployerVirtualMachineSize": {
             "type": "String",
-            "defaultValue": "Standard_B1s"
+            "defaultValue": "Standard_B2s"
         },
         "SAPWinAdminVirtualMachineSize": {
             "type": "String",
@@ -1096,5 +1096,18 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+      "diagnosticsstorageaccount": {
+        "value": "[variables('vmName')]",
+        "type": "string"
+      },
+      "keyvault": {
+        "value": "[parameters('adminUsername')]",
+        "type": "string"
+      },
+      "mgmt-rg": {
+        "value": "[parameters('adminUsername')]",
+        "type": "string"
+      }
+    }
 }

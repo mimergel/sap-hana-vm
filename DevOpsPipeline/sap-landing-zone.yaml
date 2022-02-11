@@ -90,6 +90,51 @@ stages:
           location: '${{ parameters.location }}'
           templateLocation: 'Linked artifact'
           csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-          overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(winpw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
+          overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
           deploymentMode: 'Incremental'
           deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+
+-stage: Upload_results_to_Azure_DevOps
+  - job: Upload_results_to_Azure_DevOps
+    steps:
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        if [[ -z $(arm_output) ]]; then
+          echo "##vso[task.logissue type=error]Variable arm_output is empty"
+          exit 2
+        else
+          echo -e "$green--- Writing arm_output into the inventory ---$reset"
+          echo $(arm_output)
+          cd $(Build.Repository.LocalPath)
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}
+          echo $(arm_output)                       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.json
+          echo $(arm_output.hanavmname.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanavmname
+          echo $(arm_output.hanadbid.value)        > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanadbid
+          echo $(arm_output.hanaprivateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip
+          echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
+          git checkout $(Build.SourceBranchName)
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.json
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanavmname
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanadbid
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip
+          git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write Inventory JSON and add this information to the Azure DevOps repository
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
+      failOnStderr: false
+
+
+- stage: Post_Installation_Steps
+  displayName: Post Installation Steps
+  condition: always()
+  jobs:
+    - job:                           Post_Installation_Steps
+      displayName:                   Post Installation Steps
+      steps:
+        - task:                      PostBuildCleanup@3
+        - checkout:                  none
