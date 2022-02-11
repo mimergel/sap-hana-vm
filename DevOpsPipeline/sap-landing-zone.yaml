@@ -137,6 +137,7 @@ stages:
 
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
+  jobs:
   - job: Remove_RG
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
