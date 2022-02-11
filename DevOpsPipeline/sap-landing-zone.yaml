@@ -138,7 +138,7 @@ stages:
 - stage: Cleanup
   condition: eq(${{ parameters.cleanup }}, true)
   jobs:
-  - job: Remove_RG
+  - job: Remove_SAP_landing_zone
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Remove Resource Group'
