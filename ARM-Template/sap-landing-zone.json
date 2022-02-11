@@ -16,17 +16,8 @@
                 "description": "Enter the admin user name for the Linux & Windows VM"
             }
         },
-        "authenticationType": {
-            "type": "string",
-            "defaultValue": "sshPublicKey",
-            "allowedValues": [
-            "sshPublicKey"
-            ],
-            "metadata": {
-                "description": "Only SSH login on Linux for this scenario"
-            }
-        },
         "adminPublicKey": {
+            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
             "type": "securestring",
             "metadata": {
                 "description": "Enter SSH key for the Linux VM"
@@ -138,14 +129,6 @@
         "DevOpsDeployerComputerName": {
             "type": "String",
             "defaultValue": "[concat('deployer',resourceGroup().location)]"
-        },
-        "SAPWinAdminVMName": {
-            "type": "String",
-            "defaultValue": "[concat('sapwinadmin',resourceGroup().location)]"
-        },
-        "SAPWinAdminComputerName": {
-            "type": "String",
-            "defaultValue": "[concat('sapwinadmin',resourceGroup().location)]"
         },
         "DiskType": {
             "type": "String",
