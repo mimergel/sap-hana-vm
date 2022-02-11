@@ -147,7 +147,7 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'DeleteRG'
-        resourceGroupName: '${{ parameters.rg }}'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
 
 
 - stage: Post_Installation_Steps
