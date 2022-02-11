@@ -1,39 +1,74 @@
 # Pipeline to deploy an Azure DevopsDeployment Agent
 
 parameters:
-- name: vmname
-  displayName: DevOps Deployment Agent VM Name
-  type: string
-  default: "devopsagent"
-
-- name: hostname
-  displayName: DevOps Deployment Agent Hostname
-  type: string
-  default: "devopsagent"
-
-- name: rg
-  displayName: Target Resource Group
-  type: string
-  default: "rg-devopsagent"
-
 - name: location
-  displayName: Target Region
+  displayName: Region
   type: string
-  default: "West Europe"
+  default: "eastus2euap"
   values:
   - "West Europe"
   - "North Europe"
   - "Germany West Central"
+  - "eastus2euap"
 
-- name: vnet_subnet
-  displayName: Target VNET & Subnet
+- name: mgmt-rg
+  displayName: Resource group prefix for landing zone resources, location will be added (e.g. saponazure-westeurope)
   type: string
-  default: "HUBWEU/subnets/admin-subnet"
+  default: "SAPonAzure-"
+
+- name: deployervmname
+  displayName: DevOps Deployment Agent VM name prefix, location will be added (e.g. devopsagent-westeurope)
+  type: string
+  default: "devopsagent-"
+
+- name: deployerhostname
+  displayName: DevOps Deployment Agent hostname prefix, location will be added (e.g. devopsagent-westeurope)
+  type: string
+  default: "devopsagent-"
+
+- name: winvmname
+  displayName: Windows Admin VM name prefix
+  type: string
+  default: "winadmin-"
+
+- name: winhostname
+  displayName: Windows Admin hostname prefix
+  type: string
+  default: "winadmin-"
+
+- name: vnetrange
+  displayName: VNET range
+  type: string
+  default: "10.10.0.0/16"
+
+- name: bastionsubnetrange
+  displayName: Bastion subnet range
+  type: string
+  default: "10.10.2.0/24"
+
+- name: adminsubnetrange
+  displayName: Admin subnet range
+  type: string
+  default: "10.10.3.0/24"
+
+- name: sapsubnetrange
+  displayName: SAP subnet range
+  type: string
+  default: "10.10.10.0/24"
+
+- name: rsvtype
+  displayName: Recovery Service Vault Type
+  type: string
+  default: "LocallyRedundant"
   values:
-  - "HUBWEU/subnets/admin-subnet"
-  - "HUBNEU/subnets/admin-subnet"
-  # Adapt according to your target landing zone
-  # "<VNET>/subnets/<subnet>"
+  - "LocallyRedundant"
+  - "ZoneRedundant"
+  - "GeoRedundant"
+
+- name: crr
+  displayName: Recovery Service Vault Cross Region Restore enabled
+  type: boolean
+  default: False
 
 trigger:
 - none
@@ -55,14 +90,14 @@ steps:
       displayName: 'Deploy an Agent'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureconnectionname)'
-        subscriptionId: '$(subscription)'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: ${{ parameters.rg }}
+        resourceGroupName: ${{ parameters.adminrg }}
         location: ${{ parameters.location }}
-        templateLocation: 'URL of the file'
-        csmFileLink: 'https://raw.githubusercontent.com/$(git_user)/sap-hana-vm/$(Build.SourceBranchName)/ARM-Template/devops-deployment-agent.json'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
         overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -virtualMachineName "${{ parameters.vmname }}" -virtualMachineComputerName "${{ parameters.hostname }}" -subnetId "$(subnetid)" -Script_URL "$(url-agent-cfg)" -diagnosticsStorageAccountName "$(diagnosticsStorageAccountName)" '
-        deploymentMode: 'Complete'
-        deploymentName: 'devops-deployment-agent-$(Build.BuildId)'
-        
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+
