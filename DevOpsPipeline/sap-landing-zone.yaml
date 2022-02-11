@@ -51,6 +51,11 @@ parameters:
   type: boolean
   default: False
 
+- name: cleanup
+  displayName: Remove the SAP landing zone
+  type: boolean
+  default: False
+
 trigger:
 - none
 
@@ -128,6 +133,19 @@ stages:
       env:
         SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
+
+- stage: Cleanup
+  condition: eq(${{ parameters.cleanup }}, true)
+  - job: Remove_RG
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'DeleteRG'
+        resourceGroupName: '${{ parameters.rg }}'
 
 
 - stage: Post_Installation_Steps
