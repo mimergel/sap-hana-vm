@@ -37,6 +37,11 @@ parameters:
   type: string
   default: "10.10.10.0/24"
 
+- name: deployerpip
+  displayName: Deployer VM with public IP
+  type: boolean
+  default: False
+
 - name: rsvtype
   displayName: Recovery Service Vault Type
   type: string
