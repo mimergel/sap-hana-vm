@@ -97,7 +97,6 @@ steps:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -WindowsPassword "$(winpw)" -DevOpsDeployerVMName "${{ parameters.deployervmname }}" -DevOpsDeployerComputerName "${{ parameters.deployerhostname }}" -subnetId "$(subnetid)" -Script_URL "$(url-agent-cfg)" -diagnosticsStorageAccountName "$(diagnosticsStorageAccountName)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -WindowsPassword "$(winpw)" -DevOpsDeployerVMName "${{ parameters.deployervmname }}" -DevOpsDeployerComputerName "${{ parameters.deployerhostname }}"  -SAPWinAdminVMName "${{ parameters.winvmname }}" -SAPWinAdminComputerName "${{ parameters.winvmhostname }}" -SAPVNETNameAddressSpace "${{ parameters.vnetrange }}" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
-
