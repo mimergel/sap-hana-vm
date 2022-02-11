@@ -17,26 +17,6 @@ parameters:
   type: string
   default: "SAPonAzureLocation"
 
-- name: deployervmname
-  displayName: DevOps Deployment Agent VM name prefix, location will be added (e.g. devopsagent-westeurope)
-  type: string
-  default: "devopsagent-"
-
-- name: deployerhostname
-  displayName: DevOps Deployment Agent hostname prefix, location will be added (e.g. devopsagent-westeurope)
-  type: string
-  default: "devopsagent-"
-
-- name: winvmname
-  displayName: Windows Admin VM name prefix
-  type: string
-  default: "winadmin-"
-
-- name: winhostname
-  displayName: Windows Admin hostname prefix
-  type: string
-  default: "winadmin-"
-
 - name: vnetrange
   displayName: VNET range
   type: string
@@ -82,24 +62,34 @@ variables:
 #  - name: resourcegroup
 #    value: "${{ parameters.mgmtrg }}${{ parameters.location }}"
 
-steps:
+stages:
+- stage: Publish_Pipeline_Artifact
+  jobs:
+  - job: Publish_Pipeline_Artifact
+    workspace:
+      clean: all
+    steps:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)'
         artifact: agent
 
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Deploy an Agent'
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
-        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
-        action: 'Create Or Update Resource Group'
-        resourceGroupName: '${{ parameters.mgmtrg }}'
-        location: '${{ parameters.location }}'
-        templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -WindowsPassword "$(winpw)" -DevOpsDeployerVMName "${{ parameters.deployervmname }}" -DevOpsDeployerComputerName "${{ parameters.deployerhostname }}"  -SAPWinAdminVMName "${{ parameters.winvmname }}" -SAPWinAdminComputerName "${{ parameters.winhostname }}" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
-        deploymentMode: 'Incremental'
-        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+- stage: Deploy_the_SAP_landing_zone
+  jobs:
+  - job: Deploy_the_SAP_landing_zone
+    steps:
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: 'Deploy the SAP landing zone'
+        inputs:
+          deploymentScope: 'Resource Group'
+          azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+          subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+          action: 'Create Or Update Resource Group'
+          resourceGroupName: '${{ parameters.mgmtrg }}'
+          location: '${{ parameters.location }}'
+          templateLocation: 'Linked artifact'
+          csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
+          overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -WindowsPassword "$(winpw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
+          deploymentMode: 'Incremental'
+          deploymentName: 'sap-landing-zone-$(Build.BuildId)'
