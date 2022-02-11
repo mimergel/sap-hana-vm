@@ -79,7 +79,7 @@ pool:
 variables:
   - group: "SAP-deployments"
   - name: resourcegroup
-    value: "${{ parameters.mgmtrg }}-${{ parameters.location }}"
+    value: "${{ parameters.mgmtrg }}${{ parameters.location }}"
 
 steps:
     - task: PublishPipelineArtifact@1
