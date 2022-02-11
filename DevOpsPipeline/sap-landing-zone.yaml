@@ -77,7 +77,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  subnetid: /subscriptions/$(subscription)/resourceGroups/$(VNET_RG)/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet_subnet }}
+  - group: "SAP-deployments"
+  - name: crr
+    value: ${{ parameters.crr }}
 
 steps:
     - task: PublishPipelineArtifact@1
