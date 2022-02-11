@@ -503,9 +503,12 @@
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
         "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
-        "shortlocation": "[take(resourceGroup().location,10)]",
-        "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation'))]",
-        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation'))]",
+        "shortlocation9": "[take(resourceGroup().location,9)]",
+        "shortlocation10": "[take(resourceGroup().location,10)]",
+        "SAPWinAdminVMName15": "[concat('winadm',variables('shortlocation9'))]",
+        "SAPWinAdminComputerName15": "[concat('winadm',variables('shortlocation9'))]",
+        "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation10'))]",
+        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation10'))]",
         "vmRegistration": true,
         "VARnetworkAclsVirtualNetworkRules": [
             {
@@ -517,7 +520,7 @@
 
         ],
         "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
-        "SAPWinAdminNWInterfaceName": "[concat(parameters('SAPWinAdminVMName'), '-nic')]",
+        "SAPWinAdminNWInterfaceName": "[concat(variables('SAPWinAdminVMName15'), '-nic')]",
         "DevOpsDeployerOS": "Linux",
         "DevOpsDeployerCSExtension": {
             "Linux": {
@@ -1063,7 +1066,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2021-03-01",
-            "name": "[parameters('SAPWinAdminVMName')]",
+            "name": "[variables('SAPWinAdminVMName15')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('SAPWinAdminNWInterfaceName'))]"
@@ -1094,7 +1097,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[parameters('SAPWinAdminComputerName')]",
+                    "computerName": "[variables('SAPWinAdminComputerName15')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('WindowsPassword')]",
                     "windowsConfiguration": {
