@@ -95,6 +95,7 @@ stages:
           deploymentName: 'sap-landing-zone-$(Build.BuildId)'
 
 -stage: Upload_results_to_Azure_DevOps
+  jobs:
   - job: Upload_results_to_Azure_DevOps
     steps:
     - script: |
@@ -107,19 +108,19 @@ stages:
           echo -e "$green--- Writing arm_output into the inventory ---$reset"
           echo $(arm_output)
           cd $(Build.Repository.LocalPath)
-          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}
-          echo $(arm_output)                       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.json
-          echo $(arm_output.hanavmname.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanavmname
-          echo $(arm_output.hanadbid.value)        > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanadbid
-          echo $(arm_output.hanaprivateip.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}
+          echo $(arm_output)                     > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/arm_output.json
+          echo $(arm_output.diagnosticsstorageaccount.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
+          echo $(arm_output.keyvault.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
+          echo $(arm_output.mgmtrg.value)       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.json
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanavmname
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanadbid
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/arm_output.json
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
