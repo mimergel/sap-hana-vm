@@ -12,7 +12,7 @@ parameters:
   - "Germany West Central"
   - "East US 2 EUAP"
 
-- name: mgmt-rg
+- name: mgmtrg
   displayName: Resource group for landing zone resources
   type: string
   default: "SAPonAzureLocation"
@@ -96,7 +96,7 @@ steps:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '${{ parameters.mgmt-rg }}'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
