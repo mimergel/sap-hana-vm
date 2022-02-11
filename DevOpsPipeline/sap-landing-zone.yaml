@@ -12,10 +12,10 @@ parameters:
   - "Germany West Central"
   - "East US 2 EUAP"
 
-- name: mgmtrg
-  displayName: Resource group prefix for landing zone resources, location will be added (e.g. saponazure-westeurope)
+- name: mgmt-rg
+  displayName: Resource group for landing zone resources
   type: string
-  default: "SAPonAzure-"
+  default: "SAPonAzureLocation"
 
 - name: deployervmname
   displayName: DevOps Deployment Agent VM name prefix, location will be added (e.g. devopsagent-westeurope)
@@ -79,8 +79,8 @@ pool:
 
 variables:
   - group: "SAP-deployments"
-  - name: resourcegroup
-    value: "${{ parameters.mgmtrg }}${{ parameters.location }}"
+#  - name: resourcegroup
+#    value: "${{ parameters.mgmtrg }}${{ parameters.location }}"
 
 steps:
     - task: PublishPipelineArtifact@1
@@ -96,7 +96,7 @@ steps:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(resourcegroup)'
+        resourceGroupName: '${{ parameters.mgmt-rg }}'
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
