@@ -1102,7 +1102,7 @@
         "type": "string"
       },
       "keyvault": {
-        "value": "not-yet-in-place",
+        "value": "[parameters('RecoveryServiceVaultName')]",
         "type": "string"
       },
       "mgmtrg": {
