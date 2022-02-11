@@ -90,6 +90,6 @@ stages:
           location: '${{ parameters.location }}'
           templateLocation: 'Linked artifact'
           csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-          overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(sshkey)" -WindowsPassword "$(winpw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
+          overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(winpw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
           deploymentMode: 'Incremental'
           deploymentName: 'sap-landing-zone-$(Build.BuildId)'
