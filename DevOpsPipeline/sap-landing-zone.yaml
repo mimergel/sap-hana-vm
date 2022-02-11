@@ -98,6 +98,7 @@ stages:
         overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
 
 - stage: Upload_results_to_Azure_DevOps
   jobs:
