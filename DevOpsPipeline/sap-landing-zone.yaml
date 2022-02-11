@@ -79,22 +79,22 @@ stages:
   jobs:
   - job: Deploy_the_SAP_landing_zone
     steps:
-      - task: AzureResourceManagerTemplateDeployment@3
-        displayName: 'Deploy the SAP landing zone'
-        inputs:
-          deploymentScope: 'Resource Group'
-          azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
-          subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
-          action: 'Create Or Update Resource Group'
-          resourceGroupName: '${{ parameters.mgmtrg }}'
-          location: '${{ parameters.location }}'
-          templateLocation: 'Linked artifact'
-          csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-          overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
-          deploymentMode: 'Incremental'
-          deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Deploy the SAP landing zone'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
+        location: '${{ parameters.location }}'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" '
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
 
--stage: Upload_results_to_Azure_DevOps
+- stage: Upload_results_to_Azure_DevOps
   jobs:
   - job: Upload_results_to_Azure_DevOps
     steps:
