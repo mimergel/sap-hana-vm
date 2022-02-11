@@ -100,8 +100,6 @@ stages:
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
 
-- stage: Upload_results_to_Azure_DevOps
-  jobs:
   - job: Upload_results_to_Azure_DevOps
     steps:
     - script: |
@@ -115,10 +113,10 @@ stages:
           echo $(arm_output)
           cd $(Build.Repository.LocalPath)
           mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}
-          echo $(arm_output)                     > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/arm_output.json
+          echo $(arm_output)                                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/arm_output.json
           echo $(arm_output.diagnosticsstorageaccount.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
-          echo $(arm_output.keyvault.value)      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
-          echo $(arm_output.mgmtrg.value)       > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
+          echo $(arm_output.keyvault.value)                    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
+          echo $(arm_output.mgmtrg.value)                      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
