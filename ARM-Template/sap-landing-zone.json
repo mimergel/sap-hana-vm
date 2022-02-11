@@ -103,8 +103,8 @@
             ]
         },
         "VaultEnableCRR": {
-            "type": "bool",
-            "defaultValue": false
+            "type": "string",
+            "defaultValue": "False"
         },
         "OSPolicyNamePRD": {
             "defaultValue": "pol-sapos-prod",
