@@ -17,26 +17,6 @@ parameters:
   type: string
   default: "SAPonAzureLocation"
 
-- name: deployervmname
-  displayName: DevOps Deployment Agent VM name prefix, location will be added (e.g. devopsagent-westeurope)
-  type: string
-  default: "devopsagent-"
-
-- name: deployerhostname
-  displayName: DevOps Deployment Agent hostname prefix, location will be added (e.g. devopsagent-westeurope)
-  type: string
-  default: "devopsagent-"
-
-- name: winvmname
-  displayName: Windows Admin VM name prefix
-  type: string
-  default: "winadmin-"
-
-- name: winhostname
-  displayName: Windows Admin hostname prefix
-  type: string
-  default: "winadmin-"
-
 - name: vnetrange
   displayName: VNET range
   type: string
