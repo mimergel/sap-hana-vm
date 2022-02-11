@@ -75,7 +75,7 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)'
         artifact: agent
 
-- stage: Deploy the SAP landing zone
+- stage: Deploy_the_SAP_landing_zone
   jobs:
   - job: Deploy_the_SAP_landing_zone
     steps:
