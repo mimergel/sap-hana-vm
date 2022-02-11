@@ -8,6 +8,7 @@ parameters:
   values:
   - "West Europe"
   - "North Europe"
+  - "France Central"
   - "Germany West Central"
   - "East US 2 EUAP"
 
