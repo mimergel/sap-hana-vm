@@ -94,7 +94,7 @@ stages:
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
 
--stage: Upload_results_to_Azure_DevOps
+- stage: Upload_results_to_Azure_DevOps
   jobs:
   - job: Upload_results_to_Azure_DevOps
     steps:
