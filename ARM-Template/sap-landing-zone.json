@@ -133,19 +133,19 @@
         },
         "DevOpsDeployerVMName": {
             "type": "String",
-            "defaultValue": "DEVOPSDEPLOYER"
+            "defaultValue": "[concat('deployer',resourceGroup().location)]"
         },
         "DevOpsDeployerComputerName": {
             "type": "String",
-            "defaultValue": "devopsdeployer"
+            "defaultValue": "[concat('deployer',resourceGroup().location)]"
         },
         "SAPWinAdminVMName": {
             "type": "String",
-            "defaultValue": "SAPWINADMIN"
+            "defaultValue": "[concat('sapwinadmin',resourceGroup().location)]"
         },
         "SAPWinAdminComputerName": {
             "type": "String",
-            "defaultValue": "sapwinadmin"
+            "defaultValue": "[concat('sapwinadmin',resourceGroup().location)]"
         },
         "DiskType": {
             "type": "String",
