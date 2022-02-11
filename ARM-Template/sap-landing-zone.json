@@ -112,7 +112,7 @@
             ]
         },
         "VaultEnableCRR": {
-            "type": "bool",
+            "type": "string",
             "defaultValue": false
         },
         "OSPolicyNamePRD": {
