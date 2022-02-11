@@ -1098,15 +1098,15 @@
     ],
     "outputs": {
       "diagnosticsstorageaccount": {
-        "value": "[variables('vmName')]",
+        "value": "[variables('storageAccountNameDiagnostics')]",
         "type": "string"
       },
       "keyvault": {
-        "value": "[parameters('adminUsername')]",
+        "value": "not-yet-in-place",
         "type": "string"
       },
       "mgmt-rg": {
-        "value": "[parameters('adminUsername')]",
+        "value": "[resourceGroup().name]",
         "type": "string"
       }
     }
