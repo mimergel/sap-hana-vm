@@ -4,12 +4,12 @@ parameters:
 - name: location
   displayName: Region
   type: string
-  default: "eastus2euap"
+  default: "East US 2 EUAP"
   values:
   - "West Europe"
   - "North Europe"
   - "Germany West Central"
-  - "eastus2euap"
+  - "East US 2 EUAP"
 
 - name: mgmtrg
   displayName: Resource group prefix for landing zone resources, location will be added (e.g. saponazure-westeurope)
