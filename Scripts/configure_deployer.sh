@@ -25,6 +25,7 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash > /dev/null
 pkg_mgr_install "${required_pkgs[@]}"
 
 # Installations
+sudo apt update 
 sudo apt install jq -y
 sudo apt install unzip -y
 sudo apt install ca-certificates -y
@@ -34,7 +35,7 @@ sudo apt install lsb-release -y
 sudo apt install gnupg -y
 sudo apt install sshpass -y
 sudo apt install dos2unix -y
-sudo apt install pip3 -y
+sudo apt install python3-pip -y 
 
 # Install Ansible
 sudo apt update -y
@@ -78,7 +79,7 @@ su - $@ -c 'wget https://vstsagentpackage.azureedge.net/agent/2.198.3/vsts-agent
 su - $@ -c 'mkdir devopsagent && cd devopsagent ; tar zxvf ~/vsts-agent-linux-x64-2.198.3.tar.gz'
 
 # Clone some scripts
-git clone https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git
+su - $@ -c 'git clone -q https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git > /dev/null 2>&1'
 
 echo "##################################################################################"
 echo "#########   Complete the DevOps Deployment Agent Setup with 3 manual steps   #####"
