@@ -35,6 +35,11 @@
 #
 # Setup some useful shell options
 #
+green="\e[1;32m" 
+blue="\e[0;34m"
+boldred="\e[1;31m"
+reset="\e[0m"
+
 
 #
 # Terraform Version settings
@@ -202,18 +207,11 @@ ansible_venv_bin=${ansible_venv}/bin
 ansible_collections=${ansible_base}/collections
 ansible_pip3=${ansible_venv_bin}/pip3
 
-# Azure SAP Automated Deployment directories
-asad_home="${HOME}/Azure_SAP_Automated_Deployment"
-asad_ws="${asad_home}/WORKSPACES"
-asad_repo="https://github.com/Azure/sap-automation.git"
-asad_dir="${asad_home}/$(basename ${asad_repo} .git)"
-
 # Terraform installation directories
 tf_base=/opt/terraform
 tf_dir=${tf_base}/terraform_${tfversion}
 tf_bin=${tf_base}/bin
 tf_zip=terraform_${tfversion}_linux_amd64.zip
-
 
 #
 # Main body of script
@@ -276,14 +274,6 @@ pkg_mgr_refresh
 # Install required packages as determined above
 pkg_mgr_install "${required_pkgs[@]}"
 
-
-
-#
-# Clone Azure SAP Automated Deployment project repository
-#
-if [[ ! -d "${asad_dir}" ]]; then
-    git clone "${asad_repo}" "${asad_dir}"
-fi
 
 #
 # Install terraform for all users
@@ -421,15 +411,6 @@ subscription_id=$(jq --raw-output .compute.subscriptionId vm.json)
 rm vm.json
 
 
-# Prepare Azure SAP Automated Deployment folder structure
-mkdir -p \
-    ${asad_ws}/LOCAL/${rg_name} \
-    ${asad_ws}/LIBRARY \
-    ${asad_ws}/SYSTEM \
-    ${asad_ws}/LANDSCAPE \
-    ${asad_ws}/DEPLOYER/${rg_name}
-
-
 # Install DevOps Agent in the home directory of the adminuser
 su - $@ -c 'wget https://vstsagentpackage.azureedge.net/agent/2.198.3/vsts-agent-linux-x64-2.198.3.tar.gz'
 su - $@ -c 'mkdir devopsagent && cd devopsagent ; tar zxvf ~/vsts-agent-linux-x64-2.198.3.tar.gz'
@@ -437,20 +418,20 @@ su - $@ -c 'mkdir devopsagent && cd devopsagent ; tar zxvf ~/vsts-agent-linux-x6
 # Clone some scripts
 git clone https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git
 
-echo "##################################################################################"
-echo "#########   Complete the DevOps Deployment Agent Setup with 3 manual steps   #####"
-echo "##################################################################################"
-echo "To Do 1."
-echo "DevOps Agent configuration, connection, install the service and start the deamon"
-echo "Before running the config.sh script get a PAT: personal access token from'      "
-echo "Azure DevOps to enable the connection                                           "
-echo "./config.sh"
-echo "sudo ./svc.sh install"
-echo "sudo ./svc.sh start"
-echo "##################################################################################"
-echo "To Do 2."
-echo "put your private ssh-key in ~.ssh/id_rsa with 600 file permissions"
-echo "##################################################################################"
+echo "$blue ##################################################################################"
+echo "$blue #########   Complete the DevOps Deployment Agent Setup with 2 manual steps   #####"
+echo "$blue ##################################################################################"
+echo "$blue 1."
+echo "$blue DevOps Agent configuration, connection, install the service and start the deamon"
+echo "$blue Before running the config.sh script get a PAT: personal access token from'      "
+echo "$blue Azure DevOps to enable the connection                                           "
+echo "$blue ./config.sh        $red  not as root!!! "
+echo "$blue sudo ./svc.sh install"
+echo "$blue sudo ./svc.sh start"
+echo "$blue ##################################################################################"
+echo "$blue To Do 2."
+echo "$blue put your private ssh-key in ~.ssh/id_rsa with 600 file permissions"
+echo "$blue ##################################################################################"
 
 
 exit 0
