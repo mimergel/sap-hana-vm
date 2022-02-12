@@ -1,5 +1,19 @@
 #!/bin/bash
 
+
+# Print expanded commands as they are about to be executed
+set -o xtrace
+
+# Print shell input lines as they are read in
+set -o verbose
+
+# Fail if any command exits with a non-zero exit status
+set -o errexit
+
+# Ensure that the exit status of a pipeline command is non-zero if any
+# stage of the pipefile has a non-zero exit status.
+set -o pipefail
+
 # Install Powershell and other Tools
 
 # Update the list of packages
@@ -18,7 +32,16 @@ sudo apt-get install -y powershell
 # pwsh
 
 # Install the Azure Az PowerShell module
-# wip
+# Ubuntu 20.04 (Focal Fossa) and 20.10 (Groovy Gorilla) include an azure-cli package with version 2.0.81 provided by the universe repository. 
+# This package is outdated and not recommended. If this package is installed, remove the package
+echo "Removing Azure CLI"
+sudo apt remove azure-cli -y 
+sudo apt autoremove -y
+sudo apt update -y
+
+# Install az cli using provided scripting
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash > /dev/null
+/usr/bin/az extension add --name storage-blob-preview > /dev/null
 
 # Install unzip
 sudo apt install unzip -y
