@@ -641,6 +641,7 @@
             }
         },
         {
+            "condition": "[equals(parameters('deployerpip'),'True')]",
             "name": "[variables('deployerpublicIPName')]",
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-05-01",
@@ -649,10 +650,7 @@
                 "name": "Standard"
             },
             "properties": {
-                "publicIPAllocationMethod": "Static",
-                "dnsSettings": {
-                    "domainNameLabel": "[parameters('dnsLabelPrefix')]"
-                }
+                "publicIPAllocationMethod": "Static"
             }
         },
         {
@@ -959,10 +957,13 @@
                     {
                         "name": "devopsdeployeripconfig",
                         "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[if(equals(parameters('deployerpip'),'True'), resourceId('Microsoft.Network/publicIPAddresses', variables('deployerpublicIPName')), json('null'))]"
+                            },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('SAPAdminSubnetName'))]"
-                            },
-                            "privateIPAllocationMethod": "Dynamic"
+                            }
                         }
                     }
                 ]
