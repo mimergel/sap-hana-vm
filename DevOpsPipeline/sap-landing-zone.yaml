@@ -134,6 +134,7 @@ stages:
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
       displayName: Write Inventory JSON and add this information to the Azure DevOps repository
+      condition: succeededOrFailed()
       env:
         SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
