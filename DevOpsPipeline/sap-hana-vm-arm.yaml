@@ -52,7 +52,7 @@ parameters:
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
   - "SAPonAzureGermany"
-  - "SAPonAzureFrance"
+  - "SAPonAzureFranceCentral"
   - "SAPonAzureWestUS"
 
 - name: sid
@@ -102,7 +102,7 @@ parameters:
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-prod-germanywestcentral-001"
-  - "SAPDemoEnvironmentNetwork"
+  - "vnet-sap-francecentral-001"
   - "DEV-NOEU-SAP02-vnet"
   - "MIM-GEWC-SAP04-vnet"
 
@@ -113,7 +113,7 @@ parameters:
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-prod-germanywestcentral-001"
-  - "sapprdsubnet"
+  - "snet-sap-francecentral-001"
   - "DEV-NOEU-SAP02_db-subnet"
   - "MIM-GEWC-SAP04_db-subnet"
 
@@ -126,7 +126,7 @@ parameters:
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
   - "SAPonAzureGermany"
-  - "SAPonAzureFrance"
+  - "SAPonAzureFranceCentral"
   - "SAPonAzureWestUS"
 
 - name: availzone
