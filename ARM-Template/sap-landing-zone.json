@@ -516,7 +516,7 @@
             "Name": "CustomScript",
             "Version": "2.0",
             "script": "[parameters('SetupDeploymentAgentScriptURL')]",
-            "scriptCall": "[concat('sh setup-deployment-agent.sh ', parameters('adminUsername'))]"
+            "scriptCall": "[concat('sh configure_deployer.sh ', parameters('adminUsername'))]"
             }
         }
     },
@@ -1114,6 +1114,10 @@
       },
       "mgmtrg": {
         "value": "[resourceGroup().name]",
+        "type": "string"
+      },
+      "deployerpip": {
+        "value": "[if(equals(parameters('deployerpip'),'True'), resourceId('Microsoft.Network/publicIPAddresses', variables('deployerpublicIPName')), json('null'))]",
         "type": "string"
       }
     }
