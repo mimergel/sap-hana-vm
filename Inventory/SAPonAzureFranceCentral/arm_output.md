@@ -1,1 +1,0 @@
-diagnosticsstorageaccount:type:String diagnosticsstorageaccount:value:stdiagnosticsfrancecent keyvault:type:String keyvault:value:rsv-sap-francecentral-001 mgmtrg:type:String mgmtrg:value:SAPonAzureFranceCentral
