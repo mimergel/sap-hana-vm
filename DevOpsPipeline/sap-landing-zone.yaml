@@ -120,6 +120,7 @@ stages:
           echo $(arm_output.diagnosticsstorageaccount.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
           echo $(arm_output.keyvault.value)                    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
           echo $(arm_output.mgmtrg.value)                      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
+          echo $(arm_output.deployerpip.value)                 > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/deployerpip.md
           echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
@@ -128,6 +129,7 @@ stages:
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/deployerpip.md
           git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
