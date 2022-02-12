@@ -106,6 +106,10 @@
             "type": "string",
             "defaultValue": "False"
         },
+        "deployerpip": {
+            "type": "string",
+            "defaultValue": "False"
+        },
         "OSPolicyNamePRD": {
             "defaultValue": "pol-sapos-prod",
             "type": "string"
@@ -485,7 +489,8 @@
     },
     "variables": {
         "resourcegroupId": "[resourceGroup().id]",
-        "bastionPublicIPName": "[concat(parameters('bastionHostName'), 'pip')]",
+        "bastionPublicIPName": "[concat(parameters('bastionHostName'), '-pip')]",
+        "deployerpublicIPName": "[concat(parameters('DevOpsDeployerVMName'), '-pip')]",
         "shortlocation9": "[take(resourceGroup().location,9)]",
         "shortlocation10": "[take(resourceGroup().location,10)]",
         "SAPWinAdminVMName15": "[concat('winadm',variables('shortlocation9'))]",
@@ -633,6 +638,21 @@
             },
             "sku": {
                 "name": "Standard"
+            }
+        },
+        {
+            "name": "[variables('deployerpublicIPName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+                }
             }
         },
         {
