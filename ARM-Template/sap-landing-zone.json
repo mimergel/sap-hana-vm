@@ -530,20 +530,6 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "RDP",
-                        "properties": {
-                        "description": "Allow RDP",
-                        "protocol": "Tcp",
-                        "sourcePortRange": "*",
-                        "destinationPortRange": "3389",
-                        "sourceAddressPrefix": "Internet",
-                        "destinationAddressPrefix": "*",
-                        "access": "Deny",
-                        "priority": 100,
-                        "direction": "Inbound"
-                    }
-                    },
-                    {
                         "name": "SSH",
                         "properties": {
                         "description": "Allow SSH",
