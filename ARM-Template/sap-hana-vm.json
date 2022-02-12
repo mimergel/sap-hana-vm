@@ -69,6 +69,7 @@
           "M64ls_512_GB",
           "M32dms_v2_875_GB",
           "M64ds_v2_1.000_GB",
+          "M64ds_v2_1.000_GB_ZRS",
           "M64dms_v2_1.792_GB",
           "M128ds_v2_2.000_GB",
           "M208s_v2_2.850_GB",
@@ -1291,6 +1292,130 @@
                 "createOption": "Empty",
                 "managedDisk": {
                   "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64ds_v2_1.000_GB_ZRS": {
+          "HANA": {
+            "vmSize": "Standard_M64ds_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
                   "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
                 },
                 "diskSizeGB": 1024
