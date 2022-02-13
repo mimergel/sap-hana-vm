@@ -44,6 +44,9 @@ sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible
 
 # Install terraform
+# https://www.terraform.io/cli/install/apt
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt install terraform -y
 
 # This Ansible setting is required to prevent ssh prompts during first logins
