@@ -307,6 +307,8 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	* Use the same adminuser name on deployer and HANA VM
 * fatal: [10.10.10.4]: UNREACHABLE!
 	* add your ssh private key to ~/.ssh/id_rsa and ensure correct file permission 600.
+* fatal: [10.10.10.4]: FAILED! => {"msg": "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user ....
+	* 
 * InvalidParameter: Destination path for SSH public keys is currently limited to its default value /home/$(adminuser)/.ssh/authorized_keys  due to a known issue in Linux provisioning agent.
 	* Make sure the adminuser variable is set and corresponds to the adminuser during initial deployment of the HANA VM
 
