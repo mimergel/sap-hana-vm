@@ -82,18 +82,19 @@ su - $@ -c 'mkdir devopsagent && cd devopsagent ; tar zxvf ~/vsts-agent-linux-x6
 su - $@ -c 'git clone -q https://github.com/Azure/SAP-on-Azure-Scripts-and-Utilities.git > /dev/null 2>&1'
 
 echo "##################################################################################"
-echo "#########   Complete the DevOps Deployment Agent Setup with 3 manual steps   #####"
+echo "#########   Complete the DevOps Deployment Agent Setup with 2 manual steps   #####"
 echo "##################################################################################"
 echo "To Do 1."
-echo "DevOps Agent configuration, connection, install the service and start the deamon"
-echo "Before running the config.sh script get a PAT: personal access token from'      "
-echo "Azure DevOps to enable the connection                                           "
-echo "./config.sh"
-echo "sudo ./svc.sh install"
-echo "sudo ./svc.sh start"
+echo "DevOps Agent configuration, connection, install the service and start the deamon  "
+echo "Before running the config.sh script get a PAT: personal access token from'        "
+echo "Azure DevOps to enable the connection                                             "
+echo "as user $@                                                                        "
+echo "./config.sh                                                                       "
+echo "sudo ./svc.sh install                                                             "
+echo "sudo ./svc.sh start                                                               "
 echo "##################################################################################"
-echo "To Do 2."
-echo "put your private ssh-key in ~.ssh/id_rsa with 600 file permissions"
+echo "To Do 2.                                                                          "
+echo "put your private ssh-key in ~.ssh/id_rsa with 600 file permissions                "
 echo "##################################################################################"
 
 exit 0
