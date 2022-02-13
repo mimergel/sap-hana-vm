@@ -305,6 +305,8 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 	  ssh-rsa AB2C1D2csadasdlfk23094rewqfösadnf8urhfeöwndsadmsäewidfuewfbdcsaklNFDWEIFNÖADNFfEJWNFÖOWIBNEFADSASDFafdasdfasdfaR§FGBTGHDFASDADaaSDFASDFASDFSADFSDAFASDFASDDASDFGHFDSFasdfdfghdjdghffvBgDFAGSFDgsfdgasdfgdafgdfgearghsfgdhadfgasdfadfgdfhethjzgasdf54624uadsrfg34ze65htrsearw45ztrgsef4t5z6trgfedw4t5zrgfedw345trgfdew345trfedw345trgsfedw3245trgfedw3ra4t5rgfedw32tr5fdswr34t5z6hg==
 * Failed to connect to the host via ssh: key_load_public: invalid format or other ssh connectivity issues
 	* Use the same adminuser name on deployer and HANA VM
+* fatal: [10.10.10.4]: UNREACHABLE!
+	* add your ssh private key to ~/.ssh/id_rsa and ensure correct file permission 600.
 * InvalidParameter: Destination path for SSH public keys is currently limited to its default value /home/$(adminuser)/.ssh/authorized_keys  due to a known issue in Linux provisioning agent.
 	* Make sure the adminuser variable is set and corresponds to the adminuser during initial deployment of the HANA VM
 
