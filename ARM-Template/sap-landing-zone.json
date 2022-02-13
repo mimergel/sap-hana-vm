@@ -494,22 +494,28 @@
             }
         },
         "sampleGraphicalRunbookName": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "AzureAutomationTutorialWithIdentityGraphical"
         },
         "sampleGraphicalRunbookDescription": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "An example runbook which gets all the ARM resources using the Managed Identity."
         },
         "sampleGraphicalRunbookContentUri": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "https://eus2oaasibizamarketprod1.blob.core.windows.net/marketplace-runbooks/AzureAutomationTutorialNewGraphical.graphrunbook"
         },
         "samplePowerShellRunbookName": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "AzureAutomationTutorialWithIdentity"
         },
         "samplePowerShellRunbookDescription": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "An example runbook which gets all the ARM resources using the Managed Identity."
         },
         "samplePowerShellRunbookContentUri": {
-            "type": "String"
+            "type": "String",
+            "defaultValue": "https://eus2oaasibizamarketprod1.blob.core.windows.net/marketplace-runbooks/AzureAutomationTutorialNew.ps1"
         }
     },
     "variables": {
