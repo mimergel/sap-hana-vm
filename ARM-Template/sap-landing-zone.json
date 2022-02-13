@@ -485,6 +485,31 @@
                 }
             ],
             "type": "Array"
+        },
+        "automationaccountName": {
+            "type": "String",
+            "defaultValue": "[concat('automation-sap-',resourceGroup().location,'-001')]",
+            "metadata": {
+                "description": "Name of the automation account"
+            }
+        },
+        "sampleGraphicalRunbookName": {
+            "type": "String"
+        },
+        "sampleGraphicalRunbookDescription": {
+            "type": "String"
+        },
+        "sampleGraphicalRunbookContentUri": {
+            "type": "String"
+        },
+        "samplePowerShellRunbookName": {
+            "type": "String"
+        },
+        "samplePowerShellRunbookDescription": {
+            "type": "String"
+        },
+        "samplePowerShellRunbookContentUri": {
+            "type": "String"
         }
     },
     "variables": {
@@ -1101,7 +1126,66 @@
                 },
                 "licenseType": "Windows_Client"
             }
-        }
+        },
+        {
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2021-06-22",
+            "name": "[parameters('automationaccountName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                },
+                "publicNetworkAccess": true
+            },
+            "resources": [
+                {
+                    "type": "runbooks",
+                    "apiVersion": "2019-06-01",
+                    "name": "[parameters('sampleGraphicalRunbookName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationaccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "GraphPowerShell",
+                        "logProgress": false,
+                        "logVerbose": false,
+                        "description": "[parameters('sampleGraphicalRunbookDescription')]",
+                        "publishContentLink": {
+                            "uri": "[parameters('sampleGraphicalRunbookContentUri')]",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                },
+                {
+                    "type": "runbooks",
+                    "apiVersion": "2019-06-01",
+                    "name": "[parameters('samplePowerShellRunbookName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationaccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "PowerShell",
+                        "logProgress": false,
+                        "logVerbose": false,
+                        "description": "[parameters('samplePowerShellRunbookDescription')]",
+                        "publishContentLink": {
+                            "uri": "[parameters('samplePowerShellRunbookContentUri')]",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                }
+            ]
+        }      
     ],
     "outputs": {
       "diagnosticsstorageaccount": {
