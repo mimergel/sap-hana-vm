@@ -44,7 +44,8 @@ sudo apt install python3-pip -y
 sudo apt update -y
 sudo apt install -y software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
-sudo apt install -y ansible
+# sudo apt install -y ansible
+sudo pip install ansible==2.9.27
 
 # Install terraform
 # https://www.terraform.io/cli/install/apt
