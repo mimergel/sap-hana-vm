@@ -20,9 +20,12 @@ sudo apt-get install -y powershell
 # Install az cli using provided scripting
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash > /dev/null
 /usr/bin/az extension add --name storage-blob-preview > /dev/null
+/usr/bin/az extension add --name azure-devops > /dev/null
 
-# Install required packages as determined above
-pkg_mgr_install "${required_pkgs[@]}"
+# Install some modules which are required for quality checks
+/usr/bin/pwsh -c "Install-Module Az -Force"
+/usr/bin/pwsh -c "Install-Module Az.NetAppFiles -Force"
+/usr/bin/pwsh -c "Install-Module Posh-SSH -Force"
 
 # Installations
 sudo apt update 
