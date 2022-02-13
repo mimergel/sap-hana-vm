@@ -190,7 +190,7 @@ trigger:
   none
 
 pool:
-name: $(Agent)
+  name: $(Agent)
 
 variables:
   - group: "SAP-deployments"
