@@ -55,17 +55,13 @@ sudo apt install terraform -y
 
 # This Ansible setting is required to prevent ssh prompts during first logins
 # host_key_checking = False
-sudo /usr/bin/ansible-config init --disabled > ansible.cfg
-sed -i 's/;host_key_checking=True/host_key_checking=False/g' ansible.cfg
-echo "allow_world_readable_tmpfiles=True" >> ansible.cfg
-sudo mv ansible.cfg /etc/ansible/ansible.cfg
-# old
-# sed -i 's/;allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
+sed -i 's/#host_key_checking = True/host_key_checking = False/g' /etc/ansible/ansible.cfg 
+sed -i 's/#allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
 
-
-rel=$(lsb_release -a | grep Release | cut -d':' -f2 | xargs)
 # Ubuntu 20.04 (Focal Fossa) and 20.10 (Groovy Gorilla) include an azure-cli package with version 2.0.81 provided by the universe repository. 
 # This package is outdated and not recommended. If this package is installed, remove the package
+rel=$(lsb_release -a | grep Release | cut -d':' -f2 | xargs)
+
 if [ "$rel" == "20.04" ]; then
   if [ ! -f /etc/az_removed ]; then
     echo "Removing Azure CLI"
