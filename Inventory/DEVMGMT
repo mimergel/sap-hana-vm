@@ -1,0 +1,13 @@
+ARM_SUBSCRIPTION_ID=8d8422a3-a9c1-4fe9-b880-adcf61557c71
+REMOTE_STATE_RG=MGMT-NOEU-SAP_LIBRARY
+keyvault=MGMTNOEUDEP00userDAE
+environment=DEV
+client_id=6369757e-23c9-4fe6-87b8-fe30dca45de1
+tenant_id=72f988bf-86f1-41af-91ab-2d7cd011db47
+deployer_tfstate_key=MGMT-NOEU-DEP00-INFRASTRUCTURE.terraform.tfstate
+REMOTE_STATE_SA=mgmtnoeutfstate009
+subscription=8d8422a3-a9c1-4fe9-b880-adcf61557c71
+STATE_SUBSCRIPTION=8d8422a3-a9c1-4fe9-b880-adcf61557c71
+tfstate_resource_id=/subscriptions/8d8422a3-a9c1-4fe9-b880-adcf61557c71/resourceGroups/MGMT-NOEU-SAP_LIBRARY/providers/Microsoft.Storage/storageAccounts/mgmtnoeutfstate009
+landscape_tfstate_key=DEV-NOEU-SAP02-INFRASTRUCTURE.terraform.tfstate
+workloadkeyvault=DEVNOEUSAP02user9BA

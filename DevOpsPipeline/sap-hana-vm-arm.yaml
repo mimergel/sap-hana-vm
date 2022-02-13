@@ -102,6 +102,7 @@ parameters:
   default: "vnet-sap-prod-germanywestcentral-001"
   values:
   - "vnet-sap-prod-westeurope-001"
+  - "vnet-sap-northeurope-001"
   - "vnet-sap-prod-germanywestcentral-001"
   - "vnet-sap-francecentral-001"
   - "DEV-NOEU-SAP02-vnet"
@@ -113,6 +114,7 @@ parameters:
   default: "snet-sap-prod-germanywestcentral-001"
   values:
   - "snet-sap-prod-westeurope-001"
+  - "snet-sap-northeurope-001"
   - "snet-sap-prod-germanywestcentral-001"
   - "snet-sap-francecentral-001"
   - "DEV-NOEU-SAP02_db-subnet"
@@ -123,12 +125,12 @@ parameters:
   type: string
   default: "SAPonAzureGermany"
   values:
-  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
   - "SAPonAzureGermany"
   - "SAPonAzureFranceCentral"
   - "SAPonAzureWestUS"
+  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
 
 - name: availzone
   displayName: Availability zone
@@ -209,7 +211,7 @@ variables:
   - name: usepyth3
     value: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
 
-name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+name: ${{ parameters.location }}_${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
 - stage: Publish_Pipeline_Artifact
