@@ -96,6 +96,16 @@ parameters:
   - "France Central"
   - "Germany West Central"
 
+- name: agent
+  displayName: Agent pool name
+  type: string
+  default: "Germany"
+  values:
+  - "WestEurope"
+  - "NorthEurope"
+  - "France"
+  - "Germany"
+
 - name: vnet
   displayName: Target VNET
   type: string
@@ -190,7 +200,8 @@ trigger:
   none
 
 pool:
-  name: $(Agent)
+# name: $(Agent)
+  name: ${{ parameters.agent }}
 
 variables:
   - group: "SAP-deployments"
@@ -211,7 +222,7 @@ variables:
   - name: usepyth3
     value: $[ or(eq(variables['osvar'], 'SLES 15 SP2'),eq(variables['osvar'], 'RHEL 8.1')) ]
 
-name: ${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+name: ${{ parameters.location }}_${{ parameters.vmname }}_${{ parameters.sid }}_${{ parameters.nr }}_${{ parameters.os }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
 - stage: Publish_Pipeline_Artifact
