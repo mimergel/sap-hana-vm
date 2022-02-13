@@ -1,5 +1,8 @@
 # Pipeline to deploy an Azure DevopsDeployment Agent
 
+name: ${{ parameters.mgmtrg }}_${{ parameters.vnetrange }}_Cleanup_${{ parameters.cleanup }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+
 parameters:
 - name: location
   displayName: Region
