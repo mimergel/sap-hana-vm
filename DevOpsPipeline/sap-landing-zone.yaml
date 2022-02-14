@@ -50,6 +50,11 @@ parameters:
   type: boolean
   default: False
 
+- name: limitaccess
+  displayName: "Limit access to both admin VMs to a specific IP, e.g. 88.152.184.232/32. Default * = all Internet allowed"
+  type: string
+  default: "*"
+
 - name: deploykeyvault
   displayName: Keyvault and disk encryption set
   type: boolean
