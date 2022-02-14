@@ -51,7 +51,7 @@ parameters:
   default: False
 
 - name: limitaccess
-  displayName: "Limit access to both admin VMs to a specific IP, e.g. 88.152.184.232/32. Default * = all Internet allowed"
+  displayName: "Limit access to both admin VMs to a specific IP, e.g. 88.152.184.232/32. Default is * -> all internet allowed"
   type: string
   default: "*"
 
