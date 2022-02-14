@@ -125,7 +125,8 @@ stages:
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Deploy the SAP landing zone'
       inputs:
-        deploymentScope: 'Resource Group'
+        # deploymentScope: 'Resource Group'
+        deploymentScope: 'Subscription'
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
@@ -137,6 +138,7 @@ stages:
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
+        addSpnToEnvironment: true
 
     - script: |
         #!/bin/bash
