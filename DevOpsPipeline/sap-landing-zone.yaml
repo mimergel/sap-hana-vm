@@ -45,6 +45,11 @@ parameters:
   type: boolean
   default: False
 
+- name: deploykeyvault
+  displayName: Keyvault and disk encryption set
+  type: boolean
+  default: False
+
 - name: rsvtype
   displayName: Recovery Service Vault Type
   type: string
@@ -103,7 +108,7 @@ stages:
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}"'
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
