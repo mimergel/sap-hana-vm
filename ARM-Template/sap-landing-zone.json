@@ -1248,29 +1248,6 @@
                     "enabled": true
                 }
             }
-        },
-        {
-            "condition": "[equals(parameters('deploykeyvault'),'True')]",
-            "type": "Microsoft.Compute/diskEncryptionSets",
-            "apiVersion": "2021-04-01",
-            "name": "[concat('SAPDiskEncryptionSet', parameters('location'))]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), concat(parameters('KeyVaultName'), '/sap-disk-encryption-key'))]"
-            ],
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "activeKey": {
-                    "sourceVault": {
-                        "id": "[concat('/subscriptions/', subscription().id, '/resourceGroups/', resourceGroup().name, 'providers/Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
-                    },
-                    "keyUrl": "[concat('https://', parameters('KeyVaultName'), 'vault.azure.net/keys/sap-disk-encryption-key')]"
-                },
-                "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys",
-                "rotationToLatestKeyVersionEnabled": false
-            }
         }
     ],
     "outputs": {
