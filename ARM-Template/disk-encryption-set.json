@@ -18,15 +18,24 @@
         },
         "KeyVaultName": {
             "defaultValue": "[concat('keyvault-',resourceGroup().location, parameters('uid'))]",
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Keyvault name"
+            }
         },
         "deploykeyvault": {
             "defaultValue": "False",
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Deploy a keyvault, True or False"
+            }
         },
         "encryptionkeyname": {
             "defaultValue": "sap-disk-encryption-key",
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Encryption key name for the disk encryption"
+            }
         }
     },
     "variables": {
