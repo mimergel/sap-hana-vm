@@ -60,7 +60,7 @@ parameters:
   - "GeoRedundant"
 
 - name: crr
-  displayName: Recovery Service Vault Cross Region Restore enabled
+  displayName: Cross Region Restore (CRR) enabled recovery service vault
   type: boolean
   default: False
 
