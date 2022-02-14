@@ -163,7 +163,7 @@ stages:
         az account set --subscription $(ARM_SUBSCRIPTION_ID)
         region=$(az group show --name ${{ parameters.mgmtrg }} --query location -o tsv)
         az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${region}-${{ parameters.uid }}
-        az role assignment create --role "Key Vault Administrator" --assignee "$(Build.RequestedForEmail)" --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${region}-${{ parameters.uid }}
+        # az role assignment create --role "Key Vault Administrator" --assignee "$(Build.RequestedForEmail)" --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${region}-${{ parameters.uid }}
         exit $return_code
       displayName: Set RBAC role for SPN on keyvault
       condition: eq(${{ parameters.deploykeyvault }}, true)
