@@ -1271,6 +1271,21 @@
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
             }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/keys",
+            "apiVersion": "2019-09-01",
+            "name": "[concat(parameters('KeyVaultName'), '/sap-disk-encryption-key')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+            ],
+            "properties": {
+                "kty": "RSA",
+                "keyOps": ["sign", "verify", "encrypt", "decrypt", "wrapKey", "unwrapKey", "import"],
+                "keySize": 2048,
+                "curveName": "P-256"
+            }
         }
     ],
     "outputs": {
