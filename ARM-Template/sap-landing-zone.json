@@ -123,11 +123,16 @@
             "defaultValue": "False",
             "type": "string"
         },
+        "encryptionkeyname": {
+            "defaultValue": "sap-disk-encryption-key",
+            "type": "string"
+        },
         "VaultStorageType": {
             "type": "string",
             "defaultValue": "LocallyRedundant",
             "allowedValues": [
                 "LocallyRedundant",
+                "ZoneRedundant",
                 "GeoRedundant"
             ]
         },
@@ -1275,7 +1280,7 @@
         {
             "type": "Microsoft.KeyVault/vaults/keys",
             "apiVersion": "2019-09-01",
-            "name": "[concat(parameters('KeyVaultName'), '/sap-disk-encryption-key')]",
+            "name": "[concat(parameters('KeyVaultName'), '/', parameters('encryptionkeyname'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
@@ -1295,7 +1300,7 @@
             "name": "[concat('SAPDiskEncryptionSet', parameters('location'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'),  concat(parameters('KeyVaultName'), '/sap-disk-encryption-key'))]"
+                "[resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), parameters('encryptionkeyname'))]"
             ],
             "identity": {
                 "type": "SystemAssigned"
