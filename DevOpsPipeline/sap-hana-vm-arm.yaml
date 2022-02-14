@@ -23,6 +23,16 @@ parameters:
   - M208ms_v2_5.700_GB
   - M416ms_v2_11.400_GB
 
+- name: location
+  displayName: Target region
+  type: string
+  default: "North Europe"
+  values:
+  - "West Europe"
+  - "North Europe"
+  - "France Central"
+  - "Germany West Central"
+
 - name: os
   displayName: Operating System
   type: string
@@ -34,27 +44,6 @@ parameters:
   - "SLES 12 SP5"
   - "SLES 15 SP2"
   - "CUSTOM"
-
-- name: encryption
-  displayName: Enable double encryption with CMK
-  type: boolean
-  default: "true"
-
-- name: encryptionset
-  displayName: Disk encryption set name
-  type: string
-  default: "SAPDiskEncryptionSetGEWC"
-
-- name: encryptionsetrg
-  displayName: Disk encryption set resource group
-  type: string
-  default: "SAPonAzureGermany"
-  values:
-  - "SAPonAzureWestEurope"
-  - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermany"
-  - "SAPonAzureFranceCentral"
-  - "SAPonAzureWestUS"
 
 - name: sid
   displayName: HANA System ID
@@ -72,7 +61,7 @@ parameters:
   default: "RG-HANATEST-HDB"
 
 - name: vmname
-  displayName: HANA Azure VM Name 
+  displayName: HANA VM Name 
   type: string
   default: "HANATESTHDB"
 
@@ -86,20 +75,31 @@ parameters:
   type: string
   default: "dynamic"
 
-- name: location
-  displayName: Target region
+- name: encryption
+  displayName: Enable double encryption with CMK
+  type: boolean
+  default: "true"
+
+- name: encryptionset
+  displayName: Disk encryption set name
   type: string
-  default: "Germany West Central"
+  default: "SAPDiskEncryptionSetnortheurope"
+
+- name: mgmtrg
+  displayName: Landing zone resource group
+  type: string
+  default: "SAPonAzureNorthEurope"
   values:
-  - "West Europe"
-  - "North Europe"
-  - "France Central"
-  - "Germany West Central"
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFranceCentral"
+  - "SAPonAzureWestUS"
 
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "vnet-sap-prod-germanywestcentral-001"
+  default: "vnet-sap-northeurope-001"
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-northeurope-001"
@@ -111,7 +111,7 @@ parameters:
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "snet-sap-prod-germanywestcentral-001"
+  default: "snet-sap-northeurope-001"
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-northeurope-001"
@@ -119,18 +119,6 @@ parameters:
   - "snet-sap-francecentral-001"
   - "DEV-NOEU-SAP02_db-subnet"
   - "MIM-GEWC-SAP04_db-subnet"
-
-- name: vnetrg
-  displayName: VNET resource group
-  type: string
-  default: "SAPonAzureGermany"
-  values:
-  - "SAPonAzureWestEurope"
-  - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermany"
-  - "SAPonAzureFranceCentral"
-  - "SAPonAzureWestUS"
-  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
 
 - name: availzone
   displayName: Availability zone
@@ -205,7 +193,7 @@ variables:
   - name: vmid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.rg }}/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.vnetrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
     value: ${{ parameters.os }}
   - name: usepyth3
@@ -244,7 +232,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
