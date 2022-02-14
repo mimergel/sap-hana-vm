@@ -23,6 +23,16 @@ parameters:
   - M208ms_v2_5.700_GB
   - M416ms_v2_11.400_GB
 
+- name: location
+  displayName: Target region
+  type: string
+  default: "Germany West Central"
+  values:
+  - "West Europe"
+  - "North Europe"
+  - "France Central"
+  - "Germany West Central"
+
 - name: os
   displayName: Operating System
   type: string
@@ -34,16 +44,6 @@ parameters:
   - "SLES 12 SP5"
   - "SLES 15 SP2"
   - "CUSTOM"
-
-- name: encryption
-  displayName: Enable double encryption with CMK
-  type: boolean
-  default: "true"
-
-- name: encryptionset
-  displayName: Disk encryption set name
-  type: string
-  default: "SAPDiskEncryptionSetnortheurope"
 
 - name: sid
   displayName: HANA System ID
@@ -61,7 +61,7 @@ parameters:
   default: "RG-HANATEST-HDB"
 
 - name: vmname
-  displayName: HANA Azure VM Name 
+  displayName: HANA VM Name 
   type: string
   default: "HANATESTHDB"
 
@@ -75,15 +75,15 @@ parameters:
   type: string
   default: "dynamic"
 
-- name: location
-  displayName: Target region
+- name: encryption
+  displayName: Enable double encryption with CMK
+  type: boolean
+  default: "true"
+
+- name: encryptionset
+  displayName: Disk encryption set name
   type: string
-  default: "Germany West Central"
-  values:
-  - "West Europe"
-  - "North Europe"
-  - "France Central"
-  - "Germany West Central"
+  default: "SAPDiskEncryptionSetnortheurope"
 
 - name: mgmtrg
   displayName: Landing zone resource group
@@ -99,7 +99,7 @@ parameters:
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "vnet-sap-prod-germanywestcentral-001"
+  default: "vnet-sap-northeurope-001"
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-northeurope-001"
@@ -111,7 +111,7 @@ parameters:
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "snet-sap-prod-germanywestcentral-001"
+  default: "snet-sap-northeurope-001"
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-northeurope-001"
