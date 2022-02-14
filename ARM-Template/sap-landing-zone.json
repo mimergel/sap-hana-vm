@@ -1316,10 +1316,11 @@
             "location": "[parameters('location')]",
             "properties": {
                 "sku": {
-                    "name": "Free"
+                    "name": "pergb2018"
                 },
+                "retentionInDays": 30,
                 "features": {
-                    "enableLogAccessUsingOnlyResourcePermissions": "true"
+                    "enableLogAccessUsingOnlyResourcePermissions": true
                 }
             },
             "resources": [
