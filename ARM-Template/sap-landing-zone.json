@@ -9,6 +9,20 @@
             },
             "type": "String"
         },
+        "subscriptionid": {
+            "defaultValue": "[subscription().id]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "tenantid": {
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
         "adminUsername": {
             "defaultValue": "azureadm",
             "type": "String",
@@ -1211,10 +1225,10 @@
                     "family": "A",
                     "name": "Standard"
                 },
-                "tenantId": "[subscription().tenantId]",
+                "tenantId": "[parameters('tenantid')]",
                 "accessPolicies": [
                     {
-                        "tenantId": "[subscription().tenantId]",
+                        "tenantId": "[parameters('tenantid')]",
                         "objectId": "951d85da-90f7-4b9d-aeb2-14d80da7cf41",
                         "permissions": {
                             "keys": [
@@ -1230,6 +1244,7 @@
                 "enabledForTemplateDeployment": true,
                 "enableSoftDelete": false,
                 "softDeleteRetentionInDays": 7,
+                "enablePurgeProtection": true,
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
             }
