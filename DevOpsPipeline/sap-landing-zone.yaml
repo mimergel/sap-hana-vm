@@ -23,7 +23,7 @@ parameters:
 - name: uid
   displayName: Unique resource numbering (some resources names must be unique, e.g. keyvaults)
   type: string
-  default: "002"
+  default: "005"
 
 - name: vnetrange
   displayName: VNET range
