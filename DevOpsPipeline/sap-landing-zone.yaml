@@ -50,7 +50,7 @@ parameters:
   type: boolean
   default: False
 
-- name: limitaccess
+- name: AllowedIP
   displayName: "Limit access to both admin VMs to a specific IP, e.g. 88.152.184.232/32. Default is * -> all internet allowed"
   type: string
   default: "*"
@@ -143,7 +143,7 @@ stages:
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -uid "${{ parameters.uid }}" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -uid "${{ parameters.uid }}" -AllowedIP "${{ parameters.AllowedIP }}"'
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
