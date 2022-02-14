@@ -1230,7 +1230,6 @@
                 "enabledForTemplateDeployment": true,
                 "enableSoftDelete": false,
                 "softDeleteRetentionInDays": 7,
-                "enablePurgeProtection": false,
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
             }
