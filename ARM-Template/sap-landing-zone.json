@@ -1217,7 +1217,7 @@
         {
             "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2021-06-01-preview",
             "name": "[parameters('KeyVaultName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -1226,25 +1226,14 @@
                     "name": "Standard"
                 },
                 "tenantId": "[parameters('tenantid')]",
-                "accessPolicies": [
-                    {
-                        "tenantId": "[parameters('tenantid')]",
-                        "objectId": "951d85da-90f7-4b9d-aeb2-14d80da7cf41",
-                        "permissions": {
-                            "keys": [
-                                "get",
-                                "wrapkey",
-                                "unwrapkey"
-                            ]
-                        }
-                    }
-                ],
+                "accessPolicies": [],
                 "enabledForDeployment": true,
                 "enabledForDiskEncryption": true,
                 "enabledForTemplateDeployment": true,
                 "enableSoftDelete": false,
                 "softDeleteRetentionInDays": 7,
                 "enablePurgeProtection": true,
+                "vaultUri": "[concat('https://', parameters('KeyVaultName'), '.vault.azure.net/')]",
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
             }
