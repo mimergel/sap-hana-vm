@@ -192,6 +192,8 @@ stages:
   condition: always()
   jobs:
     - job:                           Post_Installation_Steps
+      workspace:
+        clean: all
       displayName:                   Post Installation Steps
       steps:
         - task:                      PostBuildCleanup@3
