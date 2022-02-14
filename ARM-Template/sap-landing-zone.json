@@ -1308,6 +1308,33 @@
                     "enabled": true
                 }
             }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[concat('loganalytics-workspace', resourceGroup().location, '-', parameters('uid'))]",
+            "apiVersion": "2020-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "Free"
+                },
+                "features": {
+                    "enableLogAccessUsingOnlyResourcePermissions": "true"
+                }
+            },
+            "resources": [
+                {
+                "type": "Microsoft.OperationalInsights/workspaces/tables",
+                "apiVersion": "2020-08-01",
+                "name": "[concat('loganalytics-workspace', resourceGroup().location, '-', parameters('uid'),'/','Heartbeat')]",
+                "dependsOn": [
+                    "[concat('loganalytics-workspace', resourceGroup().location, '-', parameters('uid'))]"
+                ],
+                "properties": {
+                    "RetentionInDays": "30"
+                    }
+                }
+            ]
         }
     ],
     "outputs": {
