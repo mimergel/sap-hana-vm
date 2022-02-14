@@ -17,7 +17,7 @@
             }
         },
         "KeyVaultName": {
-            "defaultValue": "[concat('keyvault-',resourceGroup().location, parameters('uid'))]",
+            "defaultValue": "[concat('keyvault-', resourceGroup().location, '-', parameters('uid'))]",
             "type": "string",
             "metadata": {
                 "description": "Keyvault name"
