@@ -50,6 +50,11 @@ parameters:
   type: boolean
   default: False
 
+- name: AllowedIP
+  displayName: "Limit access to both admin VMs to a specific IP, e.g. 88.152.184.232/32. Default is * -> all internet allowed"
+  type: string
+  default: "*"
+
 - name: deploykeyvault
   displayName: Keyvault and disk encryption set
   type: boolean
@@ -130,8 +135,7 @@ stages:
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Deploy the SAP landing zone'
       inputs:
-        # deploymentScope: 'Resource Group'
-        deploymentScope: 'Subscription'
+        deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
@@ -139,7 +143,7 @@ stages:
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -uid "${{ parameters.uid }}" -AllowedIP "${{ parameters.AllowedIP }}"'
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
@@ -157,11 +161,8 @@ stages:
             exit $return_code
           fi
         az account set --subscription $(ARM_SUBSCRIPTION_ID)
-        az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${{ parameters.location }}-002
-
-        ARM_CLIENT_OBJECTID=$(az ad sp show --id $(ARM_CLIENT_ID) --query objectId -o tsv)
-        echo "##vso[task.setvariable variable=ARM_CLIENT_OBJECTID]$ARM_CLIENT_OBJECTID"
-        echo -e "$green--- SPN Object Id is: $ARM_CLIENT_OBJECTID ---$reset"
+        region=$(az group show --name ${{ parameters.mgmtrg }} --query location -o tsv)
+        az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${region}-${{ parameters.mgmtrg }}
         exit $return_code
       displayName: Set RBAC role for SPN on keyvault
       condition: eq(${{ parameters.deploykeyvault }}, true)
@@ -173,18 +174,18 @@ stages:
       failOnStderr: false
 
     - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Deploy the SAP landing zone'
+      displayName: 'Deploy the disk encryption set'
+      condition: eq(${{ parameters.deploykeyvault }}, true)
       inputs:
-        # deploymentScope: 'Resource Group'
-        deploymentScope: 'Subscription'
+        deploymentScope: 'Resource Group'
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '${{ parameters.mgmtrg }}'
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" '
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/disk-encryption-set.json
+        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
