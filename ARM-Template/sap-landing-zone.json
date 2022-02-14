@@ -1283,8 +1283,7 @@
             "properties": {
                 "kty": "RSA",
                 "keyOps": ["sign", "verify", "encrypt", "decrypt", "wrapKey", "unwrapKey", "import"],
-                "keySize": 2048,
-                "curveName": "P-256"
+                "keySize": 2048
             }
         }
     ],
