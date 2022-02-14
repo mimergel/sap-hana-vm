@@ -109,7 +109,7 @@
             "type": "string"
         },
         "KeyVaultName": {
-            "defaultValue": "[concat('keyvault-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('keyvault-',resourceGroup().location,'-002')]",
             "type": "string"
         },
         "deploykeyvault": {
