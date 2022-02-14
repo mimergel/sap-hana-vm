@@ -111,6 +111,13 @@
             "defaultValue": "[concat('nsg-admin-',resourceGroup().location, parameters('uid'))]",
             "type": "String"
         },
+        "AllowedIP": {
+            "defaultValue": "*",
+            "type": "String",
+            "metadata": {
+                "description": "default is * allowing all internet. set to a specific IP to limit access, e.g. 88.152.184.232/32"
+            }
+        },
         "RecoveryServiceVaultName": {
             "defaultValue": "[concat('rsv-sap-',resourceGroup().location, parameters('uid'))]",
             "type": "string"
@@ -610,7 +617,7 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "22",
-                        "sourceAddressPrefix": "Internet",
+                        "sourceAddressPrefix": "*",
                         "destinationAddressPrefix": "*",
                         "access": "Deny",
                         "priority": 200,
@@ -664,7 +671,7 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "3389",
-                        "sourceAddressPrefix": "Internet",
+                        "sourceAddressPrefix": "[if(equals(parameters('AllowedIP'),'*'), 'Internet', parameters('AllowedIP'))]",
                         "destinationAddressPrefix": "*",
                         "access": "Allow",
                         "priority": 100,
@@ -678,7 +685,7 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "22",
-                        "sourceAddressPrefix": "Internet",
+                        "sourceAddressPrefix": "[if(equals(parameters('AllowedIP'),'*'), 'Internet', parameters('AllowedIP'))]",
                         "destinationAddressPrefix": "*",
                         "access": "Allow",
                         "priority": 200,
