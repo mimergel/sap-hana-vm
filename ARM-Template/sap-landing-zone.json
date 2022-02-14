@@ -95,7 +95,7 @@
             "type": "string"
         },
         "KeyVaultName": {
-            "defaultValue": "[concat('keyvault-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('keyvault-',resourceGroup().location,'-002')]",
             "type": "string"
         },
         "deploykeyvault": {
@@ -1237,7 +1237,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/keys",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2021-06-01-preview",
             "name": "[concat(parameters('KeyVaultName'), '/sap-disk-encryption-key')]",
             "location": "[parameters('location')]",
             "dependsOn": [
@@ -1256,7 +1256,7 @@
             "name": "[concat('SAPDiskEncryptionSet', parameters('location'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults/keys', concat(parameters('KeyVaultName'), '/sap-disk-encryption-key'))]"
+                "[resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), concat(parameters('KeyVaultName'), '/sap-disk-encryption-key'))]"
             ],
             "identity": {
                 "type": "SystemAssigned"
