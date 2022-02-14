@@ -23,6 +23,13 @@
             },
             "type": "String"
         },
+        "spnobjectid": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "SPN object Id, required to link keyvault and disk encryption set"
+            }
+        },
         "adminUsername": {
             "defaultValue": "azureadm",
             "type": "String",
@@ -1226,7 +1233,28 @@
                     "name": "Standard"
                 },
                 "tenantId": "[parameters('tenantid')]",
-                "accessPolicies": [],
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('tenantid')]",
+                        "objectId": "[parameters('spnobjectid')]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Delete"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete"
+                            ],
+                            "certificates": [],
+                            "storage": []
+                        }
+                    }
+                ],
                 "enabledForDeployment": true,
                 "enabledForDiskEncryption": true,
                 "enabledForTemplateDeployment": true,
