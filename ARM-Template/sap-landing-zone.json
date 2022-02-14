@@ -1250,8 +1250,7 @@
                                 "Set",
                                 "Delete"
                             ],
-                            "certificates": [],
-                            "storage": []
+                            "certificates": []
                         }
                     }
                 ],
