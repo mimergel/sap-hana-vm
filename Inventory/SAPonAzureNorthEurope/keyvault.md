@@ -1,1 +1,1 @@
-rsv-sap-northeurope-001
+keyvault-northeurope-002
