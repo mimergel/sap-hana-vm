@@ -9,19 +9,19 @@
             },
             "type": "String"
         },
-        "subscriptionid": {
-            "defaultValue": "[subscription().id]",
-            "metadata": {
-                "description": "Will be set automatically base on the RG location"
-            },
-            "type": "String"
-        },
         "tenantid": {
             "defaultValue": "[subscription().tenantId]",
             "metadata": {
                 "description": "Will be set automatically base on the RG location"
             },
             "type": "String"
+        },
+        "uid": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Unique resource numbering (some resources names must be unique, e.g. keyvaults)"
+            }
         },
         "spnobjectid": {
             "defaultValue": "",
@@ -66,7 +66,7 @@
             }
         },
         "SAPVNETName": {
-            "defaultValue": "[concat('vnet-sap-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('vnet-sap-', resourceGroup().location, parameters('uid'))]",
             "type": "String"
         },
         "SAPVNETNameAddressSpace": {
@@ -76,7 +76,7 @@
             "type": "Array"
         },
         "SAPSubnetName": {
-            "defaultValue": "[concat('snet-sap-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('snet-sap-', resourceGroup().location, parameters('uid'))]",
             "type": "String"
         },
         "SAPSubnetAddressRange": {
@@ -84,7 +84,7 @@
             "type": "String"
         },
         "SAPAdminSubnetName": {
-            "defaultValue": "[concat('snet-admin-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('snet-admin-', resourceGroup().location, parameters('uid'))]",
             "type": "String"
         },
         "SAPAdminSubnetAddressRange": {
@@ -104,19 +104,19 @@
             "type": "string"
         },
         "SAPNSGName": {
-            "defaultValue": "[concat('nsg-sap-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('nsg-sap-',resourceGroup().location, parameters('uid'))]",
             "type": "String"
         },
         "SAPAdminNSGName": {
-            "defaultValue": "[concat('nsg-admin-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('nsg-admin-',resourceGroup().location, parameters('uid'))]",
             "type": "String"
         },
         "RecoveryServiceVaultName": {
-            "defaultValue": "[concat('rsv-sap-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('rsv-sap-',resourceGroup().location, parameters('uid'))]",
             "type": "string"
         },
         "KeyVaultName": {
-            "defaultValue": "[concat('keyvault-',resourceGroup().location,'-002')]",
+            "defaultValue": "[concat('keyvault-',resourceGroup().location, parameters('uid'))]",
             "type": "string"
         },
         "deploykeyvault": {
@@ -522,7 +522,7 @@
         },
         "automationaccountName": {
             "type": "String",
-            "defaultValue": "[concat('automation-sap-',resourceGroup().location,'-001')]",
+            "defaultValue": "[concat('automation-sap-',resourceGroup().location, parameters('uid'))]",
             "metadata": {
                 "description": "Name of the automation account"
             }
