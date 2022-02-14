@@ -43,18 +43,7 @@ parameters:
 - name: encryptionset
   displayName: Disk encryption set name
   type: string
-  default: "SAPDiskEncryptionSetGEWC"
-
-- name: encryptionsetrg
-  displayName: Disk encryption set resource group
-  type: string
-  default: "SAPonAzureGermany"
-  values:
-  - "SAPonAzureWestEurope"
-  - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermany"
-  - "SAPonAzureFranceCentral"
-  - "SAPonAzureWestUS"
+  default: "SAPDiskEncryptionSetnortheurope"
 
 - name: sid
   displayName: HANA System ID
@@ -96,6 +85,17 @@ parameters:
   - "France Central"
   - "Germany West Central"
 
+- name: mgmtrg
+  displayName: Landing zone resource group
+  type: string
+  default: "SAPonAzureNorthEurope"
+  values:
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermany"
+  - "SAPonAzureFranceCentral"
+  - "SAPonAzureWestUS"
+
 - name: vnet
   displayName: Target VNET
   type: string
@@ -119,18 +119,6 @@ parameters:
   - "snet-sap-francecentral-001"
   - "DEV-NOEU-SAP02_db-subnet"
   - "MIM-GEWC-SAP04_db-subnet"
-
-- name: vnetrg
-  displayName: VNET resource group
-  type: string
-  default: "SAPonAzureGermany"
-  values:
-  - "SAPonAzureWestEurope"
-  - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermany"
-  - "SAPonAzureFranceCentral"
-  - "SAPonAzureWestUS"
-  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
 
 - name: availzone
   displayName: Availability zone
