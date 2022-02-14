@@ -1300,7 +1300,7 @@
             "name": "[concat('SAPDiskEncryptionSet', parameters('location'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), parameters('encryptionkeyname'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
             ],
             "identity": {
                 "type": "SystemAssigned"
