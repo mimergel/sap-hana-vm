@@ -1217,7 +1217,7 @@
         {
             "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2021-06-01-preview",
+            "apiVersion": "2019-09-01",
             "name": "[parameters('KeyVaultName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -1230,26 +1230,19 @@
                 "enabledForDeployment": true,
                 "enabledForDiskEncryption": true,
                 "enabledForTemplateDeployment": true,
+                "enableRbacAuthorization": false,
+                "networkAcls": {
+                    "defaultAction": "allow",
+                    "bypass": "AzureServices",
+                    "ipRules": [],
+                    "virtualNetworkRules": []
+                },
                 "enableSoftDelete": false,
                 "softDeleteRetentionInDays": 7,
                 "enablePurgeProtection": true,
                 "vaultUri": "[concat('https://', parameters('KeyVaultName'), '.vault.azure.net/')]",
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/keys",
-            "apiVersion": "2021-06-01-preview",
-            "name": "[concat(parameters('KeyVaultName'), '/sap-disk-encryption-key')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
-            ],
-            "properties": {
-                "attributes": {
-                    "enabled": true
-                }
             }
         }
     ],
