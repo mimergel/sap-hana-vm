@@ -1,0 +1,1 @@
+stdiagnosticseastus2eua
