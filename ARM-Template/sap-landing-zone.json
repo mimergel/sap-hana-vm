@@ -1254,9 +1254,9 @@
                         }
                     }
                 ],
-                "enabledForDeployment": true,
-                "enabledForDiskEncryption": true,
-                "enabledForTemplateDeployment": true,
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
                 "enableRbacAuthorization": false,
                 "networkAcls": {
                     "defaultAction": "allow",
@@ -1282,8 +1282,10 @@
             ],
             "properties": {
                 "kty": "RSA",
-                "keyOps": ["sign", "verify", "encrypt", "decrypt", "wrapKey", "unwrapKey", "import"],
-                "keySize": 2048
+                "keySize": 2048,
+                "attributes": {
+                    "enabled": true
+                }
             }
         }
     ],
