@@ -16,7 +16,13 @@
                 "description": "Unique resource numbering, some resources names must be unique, e.g. keyvaults"
             }
         },
-        "KeyVaultName": {
+        "subscription": {
+            "defaultValue": "subscriptionid",
+            "type": "string",
+            "metadata": {
+                "description": "Subscription Id"
+            }
+        },        "KeyVaultName": {
             "defaultValue": "[concat('keyvault-', resourceGroup().location, '-', parameters('uid'))]",
             "type": "string",
             "metadata": {
@@ -53,7 +59,7 @@
             "properties": {
                 "activeKey": {
                     "sourceVault": {
-                        "id": "[concat('/subscriptions/', '35b67b4c-4fd4-4f0b-997c-bbb82032d45d', '/resourceGroups/', resourceGroup().name, 'providers/Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                        "id": "[concat('/subscriptions/', parameters('subscription'), '/resourceGroups/', resourceGroup().name, 'providers/Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
                     },
                     "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), parameters('encryptionkeyname')), '2019-09-01', 'Full').properties.keyUriWithVersion]"
                 },
