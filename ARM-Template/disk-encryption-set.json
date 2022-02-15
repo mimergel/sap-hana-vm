@@ -50,7 +50,7 @@
         {
             "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.Compute/diskEncryptionSets",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "2021-08-01",
             "name": "[concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid'))]",
             "location": "[parameters('location')]",
             "identity": {
