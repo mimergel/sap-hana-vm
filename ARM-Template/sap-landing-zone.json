@@ -1285,9 +1285,6 @@
                     "ipRules": [],
                     "virtualNetworkRules": []
                 },
-                "enableSoftDelete": false,
-                "softDeleteRetentionInDays": 7,
-                "enablePurgeProtection": true,
                 "vaultUri": "[concat('https://', parameters('KeyVaultName'), '.vault.azure.net/')]",
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
