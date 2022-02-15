@@ -118,7 +118,7 @@
                     },
                     {
                         "tenantId": "[parameters('tenantid')]",
-                        "objectId": "[reference(concat('Microsoft.Compute/diskEncryptionSets', concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid'))), '2021-08-01', 'Full').properties.objectId]",
+                        "objectId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid'))), '2021-08-01', 'Full').properties.objectId]",
                         "permissions": {
                             "keys": [
                                 "get",
