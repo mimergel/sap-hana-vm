@@ -59,7 +59,7 @@
             "properties": {
                 "activeKey": {
                     "sourceVault": {
-                        "id": "[concat('/subscriptions/', parameters('subscription'), '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                        "id": "[concat('/subscriptions/', parameters('subscription'), '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.KeyVault/vaults/', parameters('KeyVaultName'))]"
                     },
                     "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), parameters('encryptionkeyname')), '2019-09-01', 'Full').properties.keyUriWithVersion]"
                 },
