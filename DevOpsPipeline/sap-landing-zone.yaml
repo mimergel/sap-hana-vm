@@ -23,7 +23,7 @@ parameters:
 - name: uid
   displayName: Unique resource numbering (some resources names must be unique, e.g. keyvaults)
   type: string
-  default: "005"
+  default: "003"
 
 - name: vnetrange
   displayName: VNET range
@@ -186,7 +186,7 @@ stages:
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/disk-encryption-set.json
-        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" '
+        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -subscription "$(ARM_SUBSCRIPTION_ID)" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
