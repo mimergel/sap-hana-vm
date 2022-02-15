@@ -45,7 +45,7 @@
             "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.Compute/diskEncryptionSets",
             "apiVersion": "2019-07-01",
-            "name": "[concat('SAPDiskEncryptionSet', parameters('location'))]",
+            "name": "[concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid'))]",
             "location": "[parameters('location')]",
             "identity": {
                 "type": "SystemAssigned"
@@ -53,12 +53,11 @@
             "properties": {
                 "activeKey": {
                     "sourceVault": {
-                        "id": "[concat('/subscriptions/', subscription().id, '/resourceGroups/', resourceGroup().name, 'providers/Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                        "id": "[concat('/subscriptions/', '35b67b4c-4fd4-4f0b-997c-bbb82032d45d', '/resourceGroups/', resourceGroup().name, 'providers/Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
                     },
                     "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), parameters('encryptionkeyname')), '2019-09-01', 'Full').properties.keyUriWithVersion]"
                 },
-                "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys",
-                "rotationToLatestKeyVersionEnabled": false
+                "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys"
             }
         }
     ]
