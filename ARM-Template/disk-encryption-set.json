@@ -87,7 +87,7 @@
             "apiVersion": "2019-09-01",
             "name": "[parameters('KeyVaultName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/diskEncryptionSets', concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid')))]"
+                "[resourceId('Microsoft.Compute/diskEncryptionSets/', concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid')))]"
             ],
             "location": "[parameters('location')]",
             "properties": {
