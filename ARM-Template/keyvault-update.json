@@ -1,0 +1,125 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "tenantid": {
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "uid": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Unique resource numbering, some resources names must be unique, e.g. keyvaults"
+            }
+        },
+        "subscription": {
+            "defaultValue": "subscriptionid",
+            "type": "string",
+            "metadata": {
+                "description": "Subscription Id"
+            }
+        },
+        "spnobjectid": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "SPN object Id, required to link keyvault and disk encryption set"
+            }
+        },
+        "KeyVaultName": {
+            "defaultValue": "[concat('keyvault-', resourceGroup().location, '-', parameters('uid'))]",
+            "type": "string",
+            "metadata": {
+                "description": "Keyvault name"
+            }
+        },
+        "deploykeyvault": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Deploy a keyvault, True or False"
+            }
+        },
+        "encryptionkeyname": {
+            "defaultValue": "sap-disk-encryption-key",
+            "type": "string",
+            "metadata": {
+                "description": "Encryption key name for the disk encryption"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('deploykeyvault'),'True')]",
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[parameters('KeyVaultName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "[parameters('tenantid')]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('tenantid')]",
+                        "objectId": "[parameters('spnobjectid')]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Delete"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete"
+                            ],
+                            "certificates": []
+                        }
+                    },
+                    {
+                        "tenantId": "[parameters('tenantid')]",
+                        "objectId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid'))), '2021-08-01', 'Full').properties.objectId]",
+                        "permissions": {
+                            "keys": [
+                                "get",
+                                "wrapkey",
+                                "unwrapkey"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "enableRbacAuthorization": false,
+                "networkAcls": {
+                    "defaultAction": "allow",
+                    "bypass": "AzureServices",
+                    "ipRules": [],
+                    "virtualNetworkRules": []
+                },
+                "vaultUri": "[concat('https://', parameters('KeyVaultName'), '.vault.azure.net/')]",
+                "provisioningState": "Succeeded",
+                "publicNetworkAccess": "Enabled"
+            }
+        }
+    ]
+}
