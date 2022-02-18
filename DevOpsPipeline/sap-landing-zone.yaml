@@ -203,7 +203,7 @@ stages:
         resourceGroupName: '${{ parameters.mgmtrg }}'
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/kevault-update.json
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/keyvault-update.json
         overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -tenantid "$(ARM_TENANT_ID)" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
