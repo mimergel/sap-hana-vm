@@ -87,8 +87,8 @@ pool:
 
 variables:
   - group: "SAP-deployments"
-#  - name: resourcegroup
-#    value: "${{ parameters.mgmtrg }}${{ parameters.location }}"
+#  - name: "KeyVaultName"
+#    value: keyvault-${{ parameters.location }}-${{ parameters.uid }}
 
 stages:
 - stage: Publish_Pipeline_Artifact
@@ -187,6 +187,24 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/disk-encryption-set.json
         overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -subscription "$(ARM_SUBSCRIPTION_ID)" '
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+        addSpnToEnvironment: true
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Update keyvault to allow disk encryption set'
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
+        location: '${{ parameters.location }}'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/kevault-update.json
+        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -tenantid "$(ARM_TENANT_ID)" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
