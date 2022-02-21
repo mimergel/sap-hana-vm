@@ -2241,7 +2241,9 @@
             }
           },
           "storageProfile": {
-            "imageReference": "[if(equals(variables('images')[parameters('osType')].publisher, 'CUSTOM'), variables('customimageReference'), variables('azureimageReference'))]",
+            "imageReference": {
+              "id": "[variables('images')[parameters('osType')].id]",
+            },
             "osDisk": {
               "name": "[concat(variables('vmName'), '-os-disk')]",
               "caching": "ReadWrite",
