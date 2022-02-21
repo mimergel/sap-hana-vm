@@ -186,7 +186,7 @@
         "CUSTOM": {
           "publisher": "CUSTOM",
           "OSType": "Linux",
-          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPImages/images/12-sp4-gen2/versions/0.0.1"
+          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/mylinuximages/images/mysles15/versions/0.0.1"
         },
         "RHEL 7.7": {
           "sku": "77sapha-gen2",
