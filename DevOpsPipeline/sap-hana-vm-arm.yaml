@@ -115,7 +115,7 @@ parameters:
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-northeurope-001"
-  - "vnet-sap-germanywestcentral-004"
+  - "snet-sap-germanywestcentral-004"
   - "snet-sap-francecentral-001"
   - "DEV-NOEU-SAP02_db-subnet"
   - "MIM-GEWC-SAP04_db-subnet"
