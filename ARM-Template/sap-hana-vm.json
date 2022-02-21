@@ -59,7 +59,6 @@
       "hanaSystemSize": {
         "type": "string",
         "allowedValues": [
-          "E8s_v3",
           "E16ds_v4_128_GB-Non-PRD",
           "E20ds_v4_160_GB-Non-PRD",
           "M32ts_192_GB",
@@ -2230,7 +2229,10 @@
           },
           "storageProfile": {
             "imageReference": {
-                "id": "[variables('images')[parameters('osType')].id]"
+              "publisher": "[variables('images')[parameters('osType')].publisher]",
+              "offer": "[variables('images')[parameters('osType')].offer]",
+              "sku": "[variables('images')[parameters('osType')].sku]",
+              "version": "[variables('images')[parameters('osType')].version]"
             },
             "osDisk": {
               "name": "[concat(variables('vmName'), '-os-disk')]",
