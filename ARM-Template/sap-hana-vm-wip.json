@@ -225,6 +225,15 @@
           "version": "latest"
         }
       },
+      "azureimageReference": {
+        "publisher": "[variables('images')[parameters('osType')].publisher]",
+        "offer": "[variables('images')[parameters('osType')].offer]",
+        "sku": "[variables('images')[parameters('osType')].sku]",
+        "version": "[variables('images')[parameters('osType')].version]"
+      },
+      "customimageReference": {
+        "id": "[variables('images')[parameters('osType')].id]"
+      },
       "internalOSType": "[variables('images')[parameters('osType')].OSType]",
       "csExtension": {
         "Linux": {
@@ -2229,9 +2238,7 @@
             }
           },
           "storageProfile": {
-            "imageReference": {
-                "id": "[variables('images')[parameters('osType')].id]"
-            },
+            "imageReference": "[if(equals(variables('images')[parameters('osType')].publisher, 'CUSTOM'), variables('customimageReference'), variables('azureimageReference'))]",
             "osDisk": {
               "name": "[concat(variables('vmName'), '-os-disk')]",
               "caching": "ReadWrite",
