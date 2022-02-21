@@ -86,7 +86,7 @@ parameters:
 - name: mgmtrg
   displayName: Landing zone resource group
   type: string
-  default: "SAPonAzureNorthEurope"
+  default: "SAPonAzureGermanyWestCentral"
   values:
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
