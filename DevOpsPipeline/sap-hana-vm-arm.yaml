@@ -26,7 +26,7 @@ parameters:
 - name: location
   displayName: Target region
   type: string
-  default: "North Europe"
+  default: "Germany West Central"
   values:
   - "West Europe"
   - "North Europe"
@@ -82,7 +82,7 @@ parameters:
 - name: encryptionset
   displayName: Disk encryption set name
   type: string
-  default: "SAPDiskEncryptionSetnortheurope"
+  default: "SAPDiskEncryptionSet-germanywestcentral-004"
 
 - name: mgmtrg
   displayName: Landing zone resource group
@@ -98,7 +98,7 @@ parameters:
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "vnet-sap-northeurope-001"
+  default: "vnet-sap-germanywestcentral-004"
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-northeurope-001"
@@ -110,7 +110,7 @@ parameters:
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "snet-sap-northeurope-001"
+  default: "snet-sap-germanywestcentral-004"
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-northeurope-001"
