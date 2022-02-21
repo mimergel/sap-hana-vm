@@ -1,1 +1,0 @@
-SAPonAzureEastUS2EUAP
