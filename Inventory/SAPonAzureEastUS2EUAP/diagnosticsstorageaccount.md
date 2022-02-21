@@ -1,1 +1,0 @@
-stdiagnosticseastus2eua
