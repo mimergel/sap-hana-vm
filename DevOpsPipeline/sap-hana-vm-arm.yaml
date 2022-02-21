@@ -14,7 +14,6 @@ parameters:
   - M64ls_512_GB
   - M32dms_v2_875_GB
   - M64ds_v2_1.000_GB
-  - M64ds_v2_1.000_GB_ZRS
   - M64dms_v2_1.792_GB
   - M128ds_v2_2.000_GB
   - M208s_v2_2.850_GB
