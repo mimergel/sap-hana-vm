@@ -149,17 +149,20 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 # Deploy the landing zone
 
-1. Create a Project in Azure DevOps and import this Github repository into DevOps 
+1. Create a Project in Azure DevOps 
+2. Import this Github repository  
 
 	![Create a repository](./Documentation/Images/import-repo-1.jpg)
 
 	![Import from GitHub](./Documentation/Images/import-repo-2.jpg)
 
-2. Add following extensions to your DevOps Project
+
+3. Add following extensions to your DevOps Project
 	* [Ansible Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.vss-services-ansible) 
 	* [Post Build Cleanup](https://marketplace.visualstudio.com/items?itemName=mspremier.PostBuildCleanup) <br />
+	 <br />
 
-3. Create the Pipeline for the landing zone
+4. Create the Pipeline for the landing zone
 	* In the DevOps Pipeline Area
 	* Create a "New Pipeline" 
 	* Where is your code? => "Azure Repos Git" 
@@ -168,7 +171,8 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Branch "Main" (or Beta)
 	* Path "/DevOpsPipeline/sap-landing-zone.yaml" 
 	* Continue and Click on the right side of the Run button to "Save" 
-	* Optionally change the name in the Pipeline overview
+	* Optionally change the name in the Pipeline overview 
+	 <br />
 
 	The landing zone includes following resources:
 
@@ -180,11 +184,11 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Windows Admin VM (For HANA Studio, SAPGui, Easy SAPBits Upload to storage account, etc.)
 	* Keyvault
 	* Disk encryption set
+	 <br />
 
-4. Create a varaiable group
+5. Create the required variable group
 
-	In the Pipeline sectio under Library create the following variable group
-	Name: **SAP-deployments**
+	In the Pipeline section under **Library** create the following variable group **SAP-deployments**
 
 	Variables:
 
@@ -214,15 +218,18 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	Example: <br />
 	
 	![Variables](./Documentation/Images/variablegroup.jpg)
+	<br />
 
-	Add pipeline permissions:  <br />
+	* Add pipeline permissions:  <br />
 
 	![Pipeline permissions](./Documentation/Images/pipeline-permissions.jpg)  <br />
 	![Pipeline permissions](./Documentation/Images/pipeline-permissions2.jpg)  <br />
-
+	
+	<br />
 
 	```
-	Tip: In case you plan to deploy into differen landing zones / regions / subscription you might want to create a separate variable group with variables specific to the landing zone
+	Tip: In case you plan to deploy into differen landing zones / regions / subscription 
+	you might want to create a separate variable group with variables specific to the landing zone
 	```
 	
 	Example: Variable group **SAP-deployments-germany**  <br />
@@ -232,8 +239,12 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 4. Deploy the landing zone
 
-	* Run the Pipeline 
+	* Press the "Run Pipeline", enter required parameters and -> "Run"
 
+	![DeployLandingZoneParam1](./Documentation/Images/landing-zone-1.jpg)
+	![DeployLandingZoneParam2](./Documentation/Images/landing-zone-2.jpg)
+	
+	<br />
 
 2. #### Finalize the Deployment Agent Setup
 		* Login with your ssh user to the ubuntu based deployment agent, then <br />
