@@ -247,48 +247,48 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	
 	<br />
 
-5. #### Finalize the Deployment Agent Setup
+5. Finalize the Deployment Agent Setup
 
-		* Login with your ssh user to the linux vm which will serve as deployment agent, then <br />
-			`cd devopsagent ; ./config.sh` <br />
+	*	Login with your ssh user to the linux vm which will serve as deployment agent, then
+
+		`cd devopsagent ; ./config.sh`
 		
-		* Follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready.
+	* Follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready.
+		
 		[See here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
 		
-		* Script responses as follows: 
+	* Script responses as follows: 
+
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
 
-		* Ensure the deployment agent software is automatically started as a service after each reboot: <br />
-			`sudo ./svc.sh install ; sudo ./svc.sh start`
+	* Ensure the deployment agent software is automatically started as a service after each reboot: <br />
+	
+		`sudo ./svc.sh install ; sudo ./svc.sh start`
 
-		* Save your private ssh-key in `~/.ssh/id_rsa` (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
-
-
+	* Save your private ssh-key in `~/.ssh/id_rsa` (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
 
 
 # Deploy SAP HANA VMs
 
-3. In the DevOps Pipeline Area
+1. In the DevOps Pipeline Area
 	* Create a "New Pipeline" 
 	* Where is your code? => "Azure Repos Git" 
 	* Select a repository => "sap-hana-vm" 
 	* Configure your pipeline => "Existing Azure Pipeline YAML file"
 	* Branch "Main" (or Beta)
-	* Path "/DevOpsPipeline/hana-vm.yaml" 
+	* Path "/DevOpsPipeline/sap-hana-vm-arm.yaml" 
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
 
-5. The required SAP Binaries SAPCAR*, IMDB_SERVER*, optionally HCMT* and XSA compents. Store the files in a storage container. Get the URLs from the storage container and update the variables `url_sapcar`, `url_hdbserver`, `url_hcmt` in `Ansible/vars/defaults.yml`. An easy way to download the SAP binaries is on the sapwinadmin host where you can connect with the Azure Bastion Service. From there you can upload to the Storage Account via the Azure Portal. Note: these links might change, please check in the SAP Support Portal for the latest version.
-6. In case the target networks don't have access to the internet
+2. In case the target networks don't have access to the internet
 	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the pipeline variables 
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
-7. Adapt Target Subnet parameter, section: `- name: vnet_subnet` in the pipeline to match your landing zone target
-8. [Create an azure resource manager service connection with an existing service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
-9. Create the variable group "**SAP-Deployments** with the all required variables. Use the values corresponding to your target landing zone: <br />
-	
 
+3. Adapt VNET, Subnet and other parameters in the pipeline to match your landing zone situation
 
-# HANA VM Deployment - Run the Azure DevOps Pipeline 
+4. [Create an azure resource manager service connection with the service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
+
+5. Run the Pipeline
 
 Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
 * Run the pipeline <br /> 
@@ -309,7 +309,8 @@ Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
 Use this ARM template to deploy the SAP Application VMs.
 Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
 
-[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fbeta%2FARM-Template%2Fsap-app-vm.json) 
+[![Deploy SAP VM to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2Fmain%2FARM-Template%2Fsap-app-vm-arm.json) 
+
 
 # Troubleshooting
 * ARM deployment fails because the URL to the diskConfig.sh Script is not reachable from the deployed VM. In this case login to the VM and try with wget to download the script. Use your own container in your storage account and ensure it's reachable from VMs in the target subnet
