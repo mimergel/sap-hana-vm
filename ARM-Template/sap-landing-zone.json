@@ -618,9 +618,9 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "22",
-                        "sourceAddressPrefix": "*",
+                        "sourceAddressPrefix": "VirtualNetwork",
                         "destinationAddressPrefix": "*",
-                        "access": "Deny",
+                        "access": "Allow",
                         "priority": 200,
                         "direction": "Inbound"
                        }
