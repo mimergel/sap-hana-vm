@@ -2242,7 +2242,7 @@
           },
           "storageProfile": {
             "imageReference": {
-              "id": "[variables('images')[parameters('osType')].id]",
+              "id": "[variables('images')[parameters('osType')].id]"
             },
             "osDisk": {
               "name": "[concat(variables('vmName'), '-os-disk')]",
