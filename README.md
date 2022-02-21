@@ -5,20 +5,11 @@ Table of contents
 - [SAP HANA VM Deployments](#SAP-HANA-VM-Deployments)
 - [Deployment Framework](#deployment-framework)
 - [HANA VM Sizes and Storage Configurations](#hana-vm-sizes-and-storage-configurations)
-    + [Azure Subscription](#azure-subscription)
-    + [Azure DevOps and Github account](#azure-devops-and-github-account)
-    + [SAP User for the Software Downloads](#sap-user-for-the-software-downloads)
-    + [Basic Resources](#basic-resources)
-      - [Deploy the basic resources (landing zone)](#deploy-the-basic-resources-landing-zone)
-    + [Setup the Deployment Agent in an existing landing zone](#setup-the-deployment-agent-in-an-existing-landing-zone)
-      - [Option A With this ARM-Template](#option-a-with-this-arm-template)
-      - [Option B Manually](#option-b-manually)
-      - [Finalize the Deployment Agent Setup](#finalize-the-deployment-agent-setup)
-- [Setup the Azure DevOps Pipeline](#setup-the-azure-devops-pipeline)
-- [HANA VM Deployment - Run the Azure DevOps Pipeline](#hana-vm-deployment---run-the-azure-devops-pipeline)
+- [Prerequesites for SAP HANA Deployments](#prerequesites-for-sap-hana-deployments)
+- [Deploy the landing zone](#deploy-the-landing-zone)
+- [Deploy SAP HANA VMs](#deploy-sap-hana-vms)
 - [HANA Cloud Measurement Test Results](#hana-cloud-measurement-test-results)
-- [SAP VM Deployment](#sap-vm-deployment)
-- [Todo](#todo)
+- [SAP App VM Deployment](#sap-app-vm-deployment)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
 - [Disclaimer](#disclaimer)
@@ -305,7 +296,7 @@ Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
 	Example <br />
 	![Example:](./Documentation/Images/hcmt-result.jpg)
 
-# SAP VM Deployment
+# SAP App VM Deployment
 Use this ARM template to deploy the SAP Application VMs.
 Automated SAP Installation and deployment via an Azure DevOps Pipeline functionality will be added soon.
 
