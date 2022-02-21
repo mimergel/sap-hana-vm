@@ -87,8 +87,6 @@ pool:
 
 variables:
   - group: "SAP-deployments"
-#  - name: "KeyVaultName"
-#    value: keyvault-${{ parameters.location }}-${{ parameters.uid }}
 
 stages:
 - stage: Publish_Pipeline_Artifact
@@ -122,7 +120,6 @@ stages:
         ARM_CLIENT_OBJECTID=$(az ad sp show --id $(ARM_CLIENT_ID) --query objectId -o tsv)
         echo "##vso[task.setvariable variable=ARM_CLIENT_OBJECTID]$ARM_CLIENT_OBJECTID"
         echo -e "$green--- SPN Object Id is: $ARM_CLIENT_OBJECTID ---$reset"
-        exit $return_code
       displayName: Get the objectId of the service principle for key vault and disk encryption set creation
       condition: eq(${{ parameters.deploykeyvault }}, true)
       env:
@@ -152,24 +149,11 @@ stages:
     - script: |
         #!/bin/bash
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
-        echo -e "$green--- az login ---$reset"
-          az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
-          return_code=$?
-          if [ 0 != $return_code ]; then
-            echo -e "$boldred--- Login failed ---$reset"
-            echo "##vso[task.logissue type=error]az login failed."
-            exit $return_code
-          fi
-        az account set --subscription $(ARM_SUBSCRIPTION_ID)
-        region=$(az group show --name ${{ parameters.mgmtrg }} --query location -o tsv)
+        # need to cut lenght due to kv name length limitations, same in ARM templates
+        region=$(az group show --name SAPonAzureGermanyWestCentral   --query location -o tsv | cut -c 1-10 ) 
         az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/kv-${region}-${{ parameters.uid }}
       displayName: Set RBAC role for SPN on keyvault
       condition: eq(${{ parameters.deploykeyvault }}, true)
-      env:
-        ARM_SUBSCRIPTION_ID:     $(ARM_SUBSCRIPTION_ID)
-        ARM_CLIENT_ID:           $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET:       $(ARM_CLIENT_SECRET)
-        ARM_TENANT_ID:           $(ARM_TENANT_ID)
       failOnStderr: false
 
     - task: AzureResourceManagerTemplateDeployment@3
@@ -197,11 +181,6 @@ stages:
         echo "##vso[task.setvariable variable=diskencryptionsetobjectid]$diskencryptionsetobjectid"
       displayName: 'Update keyvault to allow disk encryption set'
       condition: eq(${{ parameters.deploykeyvault }}, true)
-      env:
-        ARM_SUBSCRIPTION_ID:     $(ARM_SUBSCRIPTION_ID)
-        ARM_CLIENT_ID:           $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET:       $(ARM_CLIENT_SECRET)
-        ARM_TENANT_ID:           $(ARM_TENANT_ID)
       failOnStderr: false
 
     - task: AzureResourceManagerTemplateDeployment@3
