@@ -9,13 +9,11 @@ parameters:
   - E16ds_v4_128_GB-Non-PRD
   - E20ds_v4_160
   - M32ts_192_GB
-  - M32ts_192_GB_ZRS
   - M32ls_256_GB
   - E48ds_v4_384
   - M64ls_512_GB
   - M32dms_v2_875_GB
   - M64ds_v2_1.000_GB
-  - M64ds_v2_1.000_GB_ZRS
   - M64dms_v2_1.792_GB
   - M128ds_v2_2.000_GB
   - M208s_v2_2.850_GB
@@ -442,11 +440,11 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(mgmt-rg)'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(mgmt-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
+        overrideParameters: '-vaultName "$(rsv)" -vaultRG "${{ parameters.mgmtrg }}" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -459,7 +457,7 @@ stages:
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(rsv)"
-          -RGV "$(mgmt-rg)"
+          -RGV "${{ parameters.mgmtrg }}"
           -VM "${{ parameters.vmname }}"
           -SERVER "${{ parameters.hostname }}"
           -VMRG "${{ parameters.rg }}"
@@ -480,7 +478,7 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
         arguments: >
           -RSV "$(rsv)"
-          -RGV "$(mgmt-rg)"
+          -RGV "${{ parameters.mgmtrg }}"
           -VM "${{ parameters.vmname }}"
           -VMRG "${{ parameters.rg }}"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
@@ -580,7 +578,7 @@ stages:
         arguments: >
           -SID                     "${{ parameters.sid }}"
           -RSV                     "$(rsv)"
-          -RGV                     "$(mgmt-rg)"
+          -RGV                     "${{ parameters.mgmtrg }}"
           -VM                      "${{ parameters.vmname }}"
           -VMRG                    "${{ parameters.rg }}"
           -POL                    "NA"
