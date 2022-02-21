@@ -7,11 +7,10 @@ parameters:
   default: E16ds_v4_128_GB-Non-PRD
   values:
   - E16ds_v4_128_GB-Non-PRD
-  - E20ds_v4_160_GB-Non-PRD
+  - E20ds_v4_160
   - M32ts_192_GB
-  - M32ts_192_GB_ZRS
   - M32ls_256_GB
-  - E48ds_v4_384_GB-Non-PRD
+  - E48ds_v4_384
   - M64ls_512_GB
   - M32dms_v2_875_GB
   - M64ds_v2_1.000_GB
