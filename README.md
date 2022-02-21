@@ -143,9 +143,10 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 # Prerequesites for SAP HANA Deployments
 
 1. ### [Azure Subscription](https://portal.azure.com/) 
-2. ### [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
-3. ### SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
-4. ### An existing landingzone with basic resource or laterntively deploy a landing zone with the included pipeline and ARM templates
+2. ### A service principle ID including the secret with contributor rights on the subscription 
+3. ### [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
+4. ### SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
+5. ### An existing landingzone with basic resource or laterntively deploy a landing zone with the included pipeline and ARM templates
 
 # Deploy the landing zone
 
@@ -239,24 +240,31 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 4. Deploy the landing zone
 
-	* Press the "Run Pipeline", enter required parameters and -> "Run"
+	* Press "Run Pipeline", enter required parameters and "Run"
 
 	![DeployLandingZoneParam1](./Documentation/Images/landing-zone-1.jpg)
 	![DeployLandingZoneParam2](./Documentation/Images/landing-zone-2.jpg)
 	
 	<br />
 
-2. #### Finalize the Deployment Agent Setup
-		* Login with your ssh user to the ubuntu based deployment agent, then <br />
+5. #### Finalize the Deployment Agent Setup
+
+		* Login with your ssh user to the linux vm which will serve as deployment agent, then <br />
 			`cd devopsagent ; ./config.sh` <br />
-			Follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready [see here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
+		
+		* Follow the prompts and enter required information, have the PAT (personal access token) from DevOps ready.
+		[See here where to retrieve the PAT](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#authenticate-with-a-personal-access-token-pat)
+		
+		* Script responses as follows: 
 		![script prompts and required entries](./Documentation/Images/agent-setup.jpg)
+
 		* Ensure the deployment agent software is automatically started as a service after each reboot: <br />
 			`sudo ./svc.sh install ; sudo ./svc.sh start`
-		* Login to Azure <br />
-			`az login` <br /> 
-			Optionally for a permanent login [create a service principle](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli#sign-in-with-a-service-principal)
+
 		* Save your private ssh-key in `~/.ssh/id_rsa` (ensure 600 file permission). This ensures possible login from the deployment agent to the HANA VM which is required for Ansible activities.
+
+
+
 
 # Deploy SAP HANA VMs
 
