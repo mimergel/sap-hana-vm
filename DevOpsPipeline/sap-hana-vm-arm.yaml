@@ -9,7 +9,6 @@ parameters:
   - E16ds_v4_128_GB-Non-PRD
   - E20ds_v4_160
   - M32ts_192_GB
-  - M32ts_192_GB_ZRS
   - M32ls_256_GB
   - E48ds_v4_384
   - M64ls_512_GB
@@ -26,7 +25,7 @@ parameters:
 - name: location
   displayName: Target region
   type: string
-  default: "North Europe"
+  default: "Germany West Central"
   values:
   - "West Europe"
   - "North Europe"
@@ -82,7 +81,7 @@ parameters:
 - name: encryptionset
   displayName: Disk encryption set name
   type: string
-  default: "SAPDiskEncryptionSetnortheurope"
+  default: "SAPDiskEncryptionSet-germanywestcentral-004"
 
 - name: mgmtrg
   displayName: Landing zone resource group
@@ -98,7 +97,7 @@ parameters:
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "vnet-sap-northeurope-001"
+  default: "vnet-sap-germanywestcentral-004"
   values:
   - "vnet-sap-prod-westeurope-001"
   - "vnet-sap-northeurope-001"
@@ -110,7 +109,7 @@ parameters:
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "snet-sap-northeurope-001"
+  default: "snet-sap-germanywestcentral-004"
   values:
   - "snet-sap-prod-westeurope-001"
   - "snet-sap-northeurope-001"
@@ -446,11 +445,11 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(mgmt-rg)'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(mgmt-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
+        overrideParameters: '-vaultName "$(rsv)" -vaultRG "${{ parameters.mgmtrg }}" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -463,7 +462,7 @@ stages:
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(rsv)"
-          -RGV "$(mgmt-rg)"
+          -RGV "${{ parameters.mgmtrg }}"
           -VM "${{ parameters.vmname }}"
           -SERVER "${{ parameters.hostname }}"
           -VMRG "${{ parameters.rg }}"
@@ -484,7 +483,7 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
         arguments: >
           -RSV "$(rsv)"
-          -RGV "$(mgmt-rg)"
+          -RGV "${{ parameters.mgmtrg }}"
           -VM "${{ parameters.vmname }}"
           -VMRG "${{ parameters.rg }}"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
@@ -584,7 +583,7 @@ stages:
         arguments: >
           -SID                     "${{ parameters.sid }}"
           -RSV                     "$(rsv)"
-          -RGV                     "$(mgmt-rg)"
+          -RGV                     "${{ parameters.mgmtrg }}"
           -VM                      "${{ parameters.vmname }}"
           -VMRG                    "${{ parameters.rg }}"
           -POL                    "NA"
