@@ -162,9 +162,7 @@ stages:
           fi
         az account set --subscription $(ARM_SUBSCRIPTION_ID)
         region=$(az group show --name ${{ parameters.mgmtrg }} --query location -o tsv)
-        az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${region}-${{ parameters.uid }}
-        # az role assignment create --role "Key Vault Administrator" --assignee "$(Build.RequestedForEmail)" --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/keyvault-${region}-${{ parameters.uid }}
-        exit $return_code
+        az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/kv-${region}-${{ parameters.uid }}
       displayName: Set RBAC role for SPN on keyvault
       condition: eq(${{ parameters.deploykeyvault }}, true)
       env:
@@ -192,6 +190,20 @@ stages:
         deploymentOutputs: 'arm_output'
         addSpnToEnvironment: true
 
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        diskencryptionsetobjectid=$(az disk-encryption-set show --name "SAPDiskEncryptionSet-germanywestcentral-004" --resource-group ${{ parameters.mgmtrg }} --query identity.principalId -o tsv)
+        echo "##vso[task.setvariable variable=diskencryptionsetobjectid]$diskencryptionsetobjectid"
+      displayName: 'Update keyvault to allow disk encryption set'
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      env:
+        ARM_SUBSCRIPTION_ID:     $(ARM_SUBSCRIPTION_ID)
+        ARM_CLIENT_ID:           $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET:       $(ARM_CLIENT_SECRET)
+        ARM_TENANT_ID:           $(ARM_TENANT_ID)
+      failOnStderr: false
+
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: 'Update keyvault to allow disk encryption set'
       condition: eq(${{ parameters.deploykeyvault }}, true)
@@ -204,7 +216,7 @@ stages:
         location: '${{ parameters.location }}'
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/keyvault-update.json
-        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -tenantid "$(ARM_TENANT_ID)" '
+        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -tenantid "$(ARM_TENANT_ID)" -diskencryptionsetobjectid "$(diskencryptionsetobjectid)" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-landing-zone-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
