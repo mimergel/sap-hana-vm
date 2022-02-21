@@ -1291,6 +1291,7 @@
             }
         },
         {
+            "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.KeyVault/vaults/keys",
             "apiVersion": "2019-09-01",
             "name": "[concat(parameters('KeyVaultName'), '/', parameters('encryptionkeyname'))]",
