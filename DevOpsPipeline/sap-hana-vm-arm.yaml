@@ -446,11 +446,11 @@ stages:
         azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
         subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: '$(rsv-rg)'
+        resourceGroupName: '$(mgmt-rg)'
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/ARM-Template/backup-container.json'
-        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(rsv-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
+        overrideParameters: '-vaultName "$(rsv)" -vaultRG "$(mgmt-rg)" -vaultSubID "$(ARM_SUBSCRIPTION_ID)" -protectionContainers ["$(backupcontainer)"] -sourceResourceIds ["$(vmid)"]'
         deploymentMode: 'Incremental'
         deploymentName: 'hana-backup-container-${{ parameters.sid }}-$(Build.BuildId)'
 
@@ -463,7 +463,7 @@ stages:
         arguments: >
           -SID "${{ parameters.sid }}"
           -RSV "$(rsv)"
-          -RGV "$(rsv-rg)"
+          -RGV "$(mgmt-rg)"
           -VM "${{ parameters.vmname }}"
           -SERVER "${{ parameters.hostname }}"
           -VMRG "${{ parameters.rg }}"
@@ -484,7 +484,7 @@ stages:
         filePath: '$(System.DefaultWorkingDirectory)/Scripts/SelectiveDiskBackup.ps1'
         arguments: >
           -RSV "$(rsv)"
-          -RGV "$(rsv-rg)"
+          -RGV "$(mgmt-rg)"
           -VM "${{ parameters.vmname }}"
           -VMRG "${{ parameters.rg }}"
           -ARM_CLIENT_ID          "$(ARM_CLIENT_ID)"
@@ -584,7 +584,7 @@ stages:
         arguments: >
           -SID                     "${{ parameters.sid }}"
           -RSV                     "$(rsv)"
-          -RGV                     "$(rsv-rg)"
+          -RGV                     "$(mgmt-rg)"
           -VM                      "${{ parameters.vmname }}"
           -VMRG                    "${{ parameters.rg }}"
           -POL                    "NA"
