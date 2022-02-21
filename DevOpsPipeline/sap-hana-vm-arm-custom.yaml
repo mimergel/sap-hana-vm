@@ -36,13 +36,9 @@ parameters:
 - name: os
   displayName: Operating System
   type: string
-  default: "SLES 15 SP2"
+  default: "CUSTOM"
   values:
-  - "RHEL 7.7"
-  - "RHEL 8.1"
-  - "SLES 12 SP4"
-  - "SLES 12 SP5"
-  - "SLES 15 SP2"
+  - "CUSTOM"
 
 - name: sid
   displayName: HANA System ID
@@ -230,7 +226,7 @@ stages:
         resourceGroupName: ${{ parameters.rg }}
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm.json
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-hana-vm-custom.json
         overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -hanaSystemId "${{ parameters.sid }}" -hanaSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset  "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.mgmtrg }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'hana-vm-${{ parameters.sid }}-$(Build.BuildId)'
