@@ -2249,7 +2249,6 @@
               "caching": "ReadWrite",
               "createOption": "FromImage",
               "managedDisk": {
-                "storageAccountType": "Premium_LRS",
                 "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
               }
             },
