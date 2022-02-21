@@ -30,6 +30,13 @@
                 "description": "SPN object Id, required to link keyvault and disk encryption set"
             }
         },
+        "diskencryptionsetobjectid": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "DiskEncryptinSet object Id"
+            }
+        },
         "KeyVaultName": {
             "defaultValue": "kv-(location)-uid",
             "type": "string",
@@ -84,7 +91,7 @@
                     },
                     {
                         "tenantId": "[parameters('tenantid')]",
-                        "objectId": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureNorthEurope/providers/Microsoft.Compute/diskEncryptionSets/SAPDiskEncryptionSet-northeurope-003",
+                        "objectId": "[parameters('diskencryptionsetobjectid')]",
                         "permissions": {
                             "keys": [
                                 "get",
