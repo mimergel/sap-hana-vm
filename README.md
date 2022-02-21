@@ -184,7 +184,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 4. Create a varaiable group
 
 	In the Pipeline sectio under Library create the following variable group
-	Name: ****
+	Name: **SAP-deployments**
 
 	Variables:
 
@@ -199,12 +199,13 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* AZURE_CONNECTION_NAME      [azure connection name as defined in devops service connections]]
 	* diagnosticsstorageaccount  [name of diagnostics storage account]
 	* hana-pw                    [password for the hana db]
-	* keyvault                   [not yet used]
+	* privatednszone             [e.g. sap.contoso.net]
+	* S-Username                 [S-Username]
+	* S-Password                 [S-User password]
 	* sap-pw                     [password for sap login, not yet used]
 	* privatednszone             [e.g. sap.contoso.net]
 	* pubsshkey                  rsa-ssh ABCxxxx...
 	* rsv                        [recovery service vault name]
-	* rsv-rg                     [resource group of the recovery service vault]
 	* skipComponentGovernanceDetection true
 	* url-disk-cfg               [url to diskconfig.sh script]
 	* 
@@ -229,10 +230,10 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	![Landing Zone sepcific variables group](./Documentation/Images/variablegroup-landingzone.jpg)<br />
 
 
+4. Deploy the landing zone
 
-	#### Deploy the basic resources (landing zone)
-	Use this button to setup all of the above for a basic landing zone. When done continue with 5.iii
-	[![Deploy to Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmimergel%2Fsap-hana-vm%2F%2FARM-Template%2Fsap-landing-zone.json) 
+	* Run the Pipeline 
+
 
 2. #### Finalize the Deployment Agent Setup
 		* Login with your ssh user to the ubuntu based deployment agent, then <br />
