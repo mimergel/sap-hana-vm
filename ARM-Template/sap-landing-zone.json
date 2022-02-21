@@ -123,10 +123,10 @@
             "type": "string"
         },
         "KeyVaultName": {
-            "defaultValue": "[concat('kv-',resourceGroup().location, '-', parameters('uid'))]",
+            "defaultValue": "kv-(location)-uid",
             "type": "string",
             "metadata": {
-                "description": "Keyvault name"
+                "description": "Keyvault name will be generated as shown in default value"
             }
         },
         "deploykeyvault": {
@@ -578,6 +578,7 @@
         "SAPWinAdminComputerName15": "[concat('winadm',variables('shortlocation9'))]",
         "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation10'))]",
         "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation10'))]",
+        "KeyVaultName": "[concat('kv-', variables('shortlocation10'), '-', parameters('uid'))]",
         "vmRegistration": true,
         "VARnetworkAclsVirtualNetworkRules": [
             {
@@ -1246,7 +1247,7 @@
             "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2019-09-01",
-            "name": "[parameters('KeyVaultName')]",
+            "name": "[variables('KeyVaultName')]",
             "location": "[parameters('location')]",
             "properties": {
                 "sku": {
@@ -1285,7 +1286,7 @@
                     "ipRules": [],
                     "virtualNetworkRules": []
                 },
-                "vaultUri": "[concat('https://', parameters('KeyVaultName'), '.vault.azure.net/')]",
+                "vaultUri": "[concat('https://', variables('KeyVaultName'), '.vault.azure.net/')]",
                 "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
             }
@@ -1294,10 +1295,10 @@
             "condition": "[equals(parameters('deploykeyvault'),'True')]",
             "type": "Microsoft.KeyVault/vaults/keys",
             "apiVersion": "2019-09-01",
-            "name": "[concat(parameters('KeyVaultName'), '/', parameters('encryptionkeyname'))]",
+            "name": "[concat(variables('KeyVaultName'), '/', parameters('encryptionkeyname'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('KeyVaultName'))]"
             ],
             "properties": {
                 "kty": "RSA",
@@ -1342,7 +1343,7 @@
         "type": "string"
       },
       "keyvault": {
-        "value": "[parameters('KeyVaultName')]",
+        "value": "[variables('KeyVaultName')]",
         "type": "string"
       },
       "mgmtrg": {

@@ -24,10 +24,10 @@
             }
         },
         "KeyVaultName": {
-            "defaultValue": "[concat('kv-', resourceGroup().location, '-', parameters('uid'))]",
+            "defaultValue": "kv-(location)-uid",
             "type": "string",
             "metadata": {
-                "description": "Keyvault name"
+                "description": "Keyvault name will be generated as shown in default value"
             }
         },
         "deploykeyvault": {
@@ -46,6 +46,8 @@
         }
     },
     "variables": {
+        "shortlocation10": "[take(resourceGroup().location,10)]",
+        "KeyVaultName": "[concat('kv-', variables('shortlocation10'), '-', parameters('uid'))]"
     },
     "resources": [
         {
@@ -60,9 +62,9 @@
             "properties": {
                 "activeKey": {
                     "sourceVault": {
-                        "id": "[concat('/subscriptions/', parameters('subscription'), '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.KeyVault/vaults/', parameters('KeyVaultName'))]"
+                        "id": "[concat('/subscriptions/', parameters('subscription'), '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.KeyVault/vaults/', variables('KeyVaultName'))]"
                     },
-                    "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', parameters('KeyVaultName'), parameters('encryptionkeyname')), '2019-09-01', 'Full').properties.keyUriWithVersion]"
+                    "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('KeyVaultName'), parameters('encryptionkeyname')), '2019-09-01', 'Full').properties.keyUriWithVersion]"
                 },
                 "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys"
             }
