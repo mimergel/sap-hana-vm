@@ -40,8 +40,9 @@ parameters:
 - name: osdisksize
   displayName: Operating system disk size in GB
   type: string
-  default: "64"
+  default: "128"
   values:
+  - "64"
   - "128"
   - "256"
   - "512"
