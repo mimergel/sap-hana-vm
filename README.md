@@ -133,16 +133,17 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 # Prerequesites for SAP HANA Deployments
 
-1. ### [Azure Subscription](https://portal.azure.com/) 
-2. ### A service principle ID including the secret with contributor rights on the subscription 
-3. ### [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
-4. ### SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
-5. ### An existing landingzone with basic resource or laterntively deploy a landing zone with the included pipeline and ARM templates
+1. [Azure Subscription](https://portal.azure.com/) 
+2. A service principle ID including the secret with contributor rights on the subscription 
+3. [Azure DevOps](http://dev.azure.com/) and [Github](http://github.com/) account
+4. SAP User for the [Software Downloads](https://launchpad.support.sap.com/)
+5. An existing landing zone with basic resource or alterntively deploy a landing zone with the included pipeline and ARM templates
+5. An ssh public and private key pair. 'ssh-keygen -f mykeypair -t rsa -b 4096'
 
 # Deploy the landing zone
 
 1. Create a Project in Azure DevOps 
-2. Import this Github repository  
+2. Import this Github repository https://github.com/mimergel/sap-hana-vm.git 
 
 	![Create a repository](./Documentation/Images/import-repo-1.jpg)
 
@@ -166,7 +167,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Optionally change the name in the Pipeline overview 
 	 <br />
 
-	The landing zone includes following resources:
+	**The landing zone includes following resources:**
 
 	* VNET + Subnets + NSGs
 	* Recovery Service Vault with policies for HANA & OS backups 
@@ -199,8 +200,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* S-Username                 [S-Username]
 	* S-Password                 [S-User password]
 	* sap-pw                     [password for sap login, not yet used]
-	* privatednszone             [e.g. sap.contoso.net]
-	* pubsshkey                  rsa-ssh ABCxxxx...
+	* pubsshkey                  [public key]
 	* rsv                        [recovery service vault name]
 	* skipComponentGovernanceDetection true
 	* url-disk-cfg               [url to diskconfig.sh script]
@@ -212,7 +212,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	![Variables](./Documentation/Images/variablegroup.jpg)
 	<br />
 
-	* Add pipeline permissions:  <br />
+	**Add pipeline permissions:**  <br />
 
 	![Pipeline permissions](./Documentation/Images/pipeline-permissions.jpg)  <br />
 	![Pipeline permissions](./Documentation/Images/pipeline-permissions2.jpg)  <br />
@@ -281,8 +281,8 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 5. Run the Pipeline
 
-Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
-* Run the pipeline <br /> 
+	Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
+	* Run the pipeline <br /> 
 	![Run Pipeline](./Documentation/Images/run-pipeline.jpg) <br />
 
 * Provide inputs as required and press "Run" <br />
