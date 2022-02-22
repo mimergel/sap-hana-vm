@@ -270,24 +270,24 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Path "/DevOpsPipeline/sap-hana-vm-arm.yaml" 
 	* Continue and Click on the right side of the Run button to "Save" 
 	* Optionally change the name in the Pipeline overview
-
+<br />
 2. In case the target networks don't have access to the internet
 	* Upload [diskConfig.sh](./Scripts/diskConfig.sh) in the storage container and adapt variables `url-disk-cfg` in the pipeline variables 
 	* Upload [msawb-plugin-config-com-sap-hana.sh](https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409) to the container and adapt variable `url_msawb_plugin` in `Ansible/vars/defaults.yml` 
-
+<br />
 3. Adapt VNET, Subnet and other parameters in the pipeline to match your landing zone situation
-
+<br />
 4. [Create an azure resource manager service connection with the service principal](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal) in [project settings](./Documentation/Images/azure-service-connection.jpg)
-
+<br />
 5. Run the Pipeline
-
+<br />
 Now you're ready to deploy the SAP HANA VM including subsequent tasks.<br />
 * Run the pipeline <br /> 
 	![Run Pipeline](./Documentation/Images/run-pipeline.jpg) <br />
 
 * Provide inputs as required and press "Run" <br />
 	![Pipeline Inputs](./Documentation/Images/hana-pipeline-inputs.jpg) <br />
-
+<br />
 # HANA Cloud Measurement Test Results
 * The tests run a couple of hours. Once the execution is completed it will create a file here: \[hanavm\]:/hana/shared/install/setup/hcmtresult-\<timestamp\>.zip
 * You need to upload the results file on a SAP web site to check if the systems meet the configuration and performance requirements. Upload link: [https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html](https://hotui-supportportal.dispatcher.hana.ondemand.com/index.html) 
