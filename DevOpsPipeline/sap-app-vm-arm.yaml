@@ -38,7 +38,7 @@ parameters:
   - Standard_D96ds_v5
 
 - name: sapdisksize
-  displayName: Operating system disk size in GB
+  displayName: SAP disk size in GB
   type: string
   default: "128"
   values:
