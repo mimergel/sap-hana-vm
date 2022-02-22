@@ -219,7 +219,7 @@ variables:
   - name: vmid
     value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.rg }}/providers/Microsoft.Compute/virtualMachines/${{ parameters.vmname }}
   - name: subnetid
-    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.mgmtrg }}/subnets/${{ parameters.subnet }}
+    value: /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.Network/virtualNetworks/${{ parameters.vnet }}/subnets/${{ parameters.subnet }}
   - name: osvar
     value: ${{ parameters.os }}
   - name: usepyth3
