@@ -40,6 +40,34 @@
           "description": "The type of the operating system you want to deploy."
         }
       },
+      "osdisksize": {
+        "type": "string",
+        "allowedValues": [
+          "64",
+          "128",
+          "256",
+          "512",
+          "1024"
+        ],
+        "defaultValue": "128",
+        "metadata": {
+          "description": "The os disk size."
+        }
+      },
+      "sapdisksize": {
+        "type": "string",
+        "allowedValues": [
+          "64",
+          "128",
+          "256",
+          "512",
+          "1024"
+        ],
+        "defaultValue": "128",
+        "metadata": {
+          "description": "The SAP disk size."
+        }
+      },
       "adminPasswordOrKey": {
         "type": "securestring",
         "metadata": {
@@ -219,7 +247,7 @@
               "storageAccountType": "Premium_LRS",
               "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
             },
-            "diskSizeGB": 128
+            "diskSizeGB": "[parameters('sapdisksize')]"
           }
         ],
         "scriptArguments": {
