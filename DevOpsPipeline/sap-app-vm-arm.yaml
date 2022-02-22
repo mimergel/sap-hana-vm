@@ -15,6 +15,16 @@ parameters:
   - Standard_E64ds_v4
   - Standard_E80ids_v4
 
+- name: osdisksize
+  displayName: Operating system disk size
+  type: string
+  default: "64"
+  values:
+  - "128"
+  - "256"
+  - "512"
+  - "1024"
+
 - name: os
   displayName: Operating System
   type: string
@@ -223,8 +233,8 @@ stages:
         resourceGroupName: '${{ parameters.rg }}'
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
-        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" '
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm-arm.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" -osdisksize "${{ parameters.osdisksize }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
