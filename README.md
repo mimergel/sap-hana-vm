@@ -143,7 +143,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 # Deploy the landing zone
 
 1. Create a Project in Azure DevOps 
-2. Import this Github repository  
+2. Import this Github repository https://github.com/mimergel/sap-hana-vm.git 
 
 	![Create a repository](./Documentation/Images/import-repo-1.jpg)
 
@@ -167,7 +167,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Optionally change the name in the Pipeline overview 
 	 <br />
 
-	The landing zone includes following resources:
+	#The landing zone includes following resources:
 
 	* VNET + Subnets + NSGs
 	* Recovery Service Vault with policies for HANA & OS backups 
