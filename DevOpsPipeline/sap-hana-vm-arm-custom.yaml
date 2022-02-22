@@ -69,7 +69,7 @@ parameters:
   default: "dynamic"
 
 - name: encryption
-  displayName: Enable double encryption with CMK
+  displayName: Enable double encryption with PMK & CMK
   type: boolean
   default: "true"
 

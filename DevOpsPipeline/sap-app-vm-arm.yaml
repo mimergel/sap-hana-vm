@@ -4,7 +4,7 @@ parameters:
 - name: size
   displayName: SAP VM Size
   type: string
-  default: Standard_E2ds_v4
+  default: Standard_E4ds_v4
   values:
   - Standard_E2ds_v4
   - Standard_E4ds_v4
@@ -13,10 +13,32 @@ parameters:
   - Standard_E32ds_v4
   - Standard_E48ds_v4
   - Standard_E64ds_v4
-  - Standard_E80ids_v4
+  - Standard_D2ds_v4
+  - Standard_D4ds_v4
+  - Standard_D8ds_v4
+  - Standard_D16ds_v4
+  - Standard_D32ds_v4
+  - Standard_D48ds_v4
+  - Standard_D64ds_v4
+  - Standard_E2ds_v5
+  - Standard_E4ds_v5
+  - Standard_E8ds_v5
+  - Standard_E16ds_v5
+  - Standard_E32ds_v5
+  - Standard_E48ds_v5
+  - Standard_E64ds_v5
+  - Standard_E96ds_v5
+  - Standard_D2ds_v5
+  - Standard_D4ds_v5
+  - Standard_D8ds_v5
+  - Standard_D16ds_v5
+  - Standard_D32ds_v5
+  - Standard_D48ds_v5
+  - Standard_D64ds_v5
+  - Standard_D96ds_v5
 
 - name: osdisksize
-  displayName: Operating system disk size
+  displayName: Operating system disk size in GB
   type: string
   default: "64"
   values:
@@ -38,23 +60,23 @@ parameters:
   - "CUSTOM"
 
 - name: encryption
-  displayName: Enable double encryption with CMK
+  displayName: Enable double encryption with PMK & CMK
   type: boolean
   default: "true"
 
 - name: encryptionset
   displayName: Disk encryption set name
   type: string
-  default: "SAPDiskEncryptionSetGEWC"
+  default: "SAPDiskEncryptionSet-germanywestcentral-004"
 
 - name: encryptionsetrg
   displayName: Disk encryption set resource group
   type: string
-  default: "SAPonAzureGermany"
+  default: "SAPonAzureGermanyWestCentral"
   values:
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermany"
+  - "SAPonAzureGermanyWestCentral"
   - "SAPonAzureFrance"
   - "SAPonAzureWestUS"
 
@@ -71,7 +93,7 @@ parameters:
 - name: rg
   displayName: HANA VM resource group
   type: string
-  default: "RG-SAPTEST"
+  default: "RG-SAPTEST-TST"
 
 - name: vmname
   displayName: SAP VM Name in Azure
@@ -98,44 +120,45 @@ parameters:
   - "France Central"
   - "Germany West Central"
 
+- name: mgmtrg
+  displayName: Landing zone resource group
+  type: string
+  default: "SAPonAzureGermanyWestCentral"
+  values:
+  - "SAPonAzureWestEurope"
+  - "SAPonAzureNorthEurope"
+  - "SAPonAzureGermanyWestCentral"
+  - "SAPonAzureFranceCentral"
+  - "SAPonAzureWestUS"
+
 - name: vnet
   displayName: Target VNET
   type: string
-  default: "vnet-sap-prod-germanywestcentral-001"
+  default: "vnet-sap-germanywestcentral-004"
   values:
   - "vnet-sap-prod-westeurope-001"
-  - "vnet-sap-prod-germanywestcentral-001"
-  - "SAPDemoEnvironmentNetwork"
+  - "vnet-sap-northeurope-001"
+  - "vnet-sap-germanywestcentral-004"
+  - "vnet-sap-francecentral-001"
   - "DEV-NOEU-SAP02-vnet"
   - "MIM-GEWC-SAP04-vnet"
 
 - name: subnet
   displayName: Target subnet
   type: string
-  default: "snet-sap-prod-germanywestcentral-001"
+  default: "snet-sap-germanywestcentral-004"
   values:
   - "snet-sap-prod-westeurope-001"
-  - "snet-sap-prod-germanywestcentral-001"
-  - "sapprdsubnet"
+  - "snet-sap-northeurope-001"
+  - "snet-sap-germanywestcentral-004"
+  - "snet-sap-francecentral-001"
   - "DEV-NOEU-SAP02_db-subnet"
   - "MIM-GEWC-SAP04_db-subnet"
-
-- name: vnetrg
-  displayName: VNET resource group
-  type: string
-  default: "SAPonAzureGermany"
-  values:
-  - "MIM-GEWC-SAP04-INFRASTRUCTURE"
-  - "SAPonAzureWestEurope"
-  - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermany"
-  - "SAPonAzureFrance"
-  - "SAPonAzureWestUS"
 
 - name: availzone
   displayName: Availability zone
   type: number
-  default: 1
+  default: 0
   values:
   - 0
   - 1
