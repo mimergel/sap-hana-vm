@@ -37,7 +37,7 @@ parameters:
   - Standard_D64ds_v5
   - Standard_D96ds_v5
 
-- name: osdisksize
+- name: sapdisksize
   displayName: Operating system disk size in GB
   type: string
   default: "128"
