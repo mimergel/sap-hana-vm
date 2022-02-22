@@ -311,6 +311,7 @@
               "name": "[concat(variables('vmName'), '-os-disk')]",
               "caching": "ReadWrite",
               "createOption": "FromImage",
+              "diskSizeGB": "[parameters('osdisksize')]",
               "managedDisk": {
                 "storageAccountType": "Premium_LRS",
                 "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
