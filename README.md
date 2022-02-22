@@ -167,7 +167,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Optionally change the name in the Pipeline overview 
 	 <br />
 
-	#The landing zone includes following resources:
+	**The landing zone includes following resources:**
 
 	* VNET + Subnets + NSGs
 	* Recovery Service Vault with policies for HANA & OS backups 
@@ -212,7 +212,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	![Variables](./Documentation/Images/variablegroup.jpg)
 	<br />
 
-	* Add pipeline permissions:  <br />
+	**Add pipeline permissions:**  <br />
 
 	![Pipeline permissions](./Documentation/Images/pipeline-permissions.jpg)  <br />
 	![Pipeline permissions](./Documentation/Images/pipeline-permissions2.jpg)  <br />
