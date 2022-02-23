@@ -95,7 +95,7 @@
           "description": "Disk encryption set name"
         }
       },
-      "encryptionsetrg": {
+      "mgmtrg": {
         "type": "string",
         "defaultValue": "SAPonAzureGermany",
         "metadata": {
@@ -168,7 +168,7 @@
       "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]",
       "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
       "diskEncryptionSet": {
-        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('mgmtrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
       },
       "ippropertiesstatic": {
         "privateIPAddress": "[parameters('ipaddress')]",
