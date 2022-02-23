@@ -241,7 +241,7 @@ stages:
         artifact: sap
 
 - stage: Deploy_VM
-  condition: eq(${{ parameters.vmdeployment }}, true)
+  condition: and(eq(${{ parameters.vmdeployment }}, true), ne(${{ parameters.os }}, CUSTOM))
   jobs:
   - job: Deploy_VM
     steps:
@@ -258,6 +258,29 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -mgmtrg "${{ parameters.mgmtrg }}" -sapdisksize "${{ parameters.sapdisksize }}" -osdisksize "${{ parameters.osdisksize }}" '
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+
+- stage: Deploy_VM_CUSTOM_Image
+  condition: and(eq(${{ parameters.vmdeployment }}, true), eq(${{ parameters.os }}, CUSTOM))
+  jobs:
+  - job: Deploy_VM
+    steps:
+    - checkout: none
+      persistCredentials:        true
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'SAP VM Deployment via ARM with a CUSTOM image'
+      inputs:
+        deploymentScope: Resource Group
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '${{ parameters.rg }}'
+        location: ${{ parameters.location }}
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm-custom.json
         overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -mgmtrg "${{ parameters.mgmtrg }}" -sapdisksize "${{ parameters.sapdisksize }}" -osdisksize "${{ parameters.osdisksize }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
