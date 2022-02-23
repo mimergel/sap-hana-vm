@@ -81,18 +81,6 @@ parameters:
   type: string
   default: "SAPDiskEncryptionSet-germanywestcentral-004"
 
-- name: mgmtrg
-  displayName: Landing zone resource group
-  type: string
-  default: "SAPonAzureGermanyWestCentral"
-  values:
-  - "SAPonAzureWestEurope"
-  - "SAPonAzureNorthEurope"
-  - "SAPonAzureGermanyWestCentral"
-  - "SAPonAzureFranceCentral"
-  - "SAPonAzureWestUS"
-
-
 - name: sid
   displayName: SAP System ID
   type: string
