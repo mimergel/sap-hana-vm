@@ -81,16 +81,17 @@ parameters:
   type: string
   default: "SAPDiskEncryptionSet-germanywestcentral-004"
 
-- name: encryptionsetrg
-  displayName: Disk encryption set resource group
+- name: mgmtrg
+  displayName: Landing zone resource group
   type: string
   default: "SAPonAzureGermanyWestCentral"
   values:
   - "SAPonAzureWestEurope"
   - "SAPonAzureNorthEurope"
   - "SAPonAzureGermanyWestCentral"
-  - "SAPonAzureFrance"
+  - "SAPonAzureFranceCentral"
   - "SAPonAzureWestUS"
+
 
 - name: sid
   displayName: SAP System ID
@@ -269,7 +270,7 @@ stages:
         location: ${{ parameters.location }}
         templateLocation: 'Linked artifact'
         csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-app-vm.json
-        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -encryptionsetrg "${{ parameters.encryptionsetrg }}" -sapdisksize "${{ parameters.sapdisksize }}" -osdisksize "${{ parameters.osdisksize }}" '
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPasswordOrKey "$(pubsshkey)" -vmNameInput "${{ parameters.vmname }}" -HostNameInput "${{ parameters.hostname }}" -sapSystemId "${{ parameters.sid }}" -sapSystemSize "${{ parameters.size }}" -osType "${{ parameters.os }}" -subnetId "$(subnetid)" -ipaddress ${{ parameters.ipaddress }} -availabilityZone ${{ parameters.availzone }} -Script_URL "$(url-disk-cfg)" -diagnosticsStorageAccount "$(diagnosticsstorageaccount)" -encryption "${{ parameters.encryption }}" -encryptionset "${{ parameters.encryptionset }}" -mgmtrg "${{ parameters.mgmtrg }}" -sapdisksize "${{ parameters.sapdisksize }}" -osdisksize "${{ parameters.osdisksize }}" '
         deploymentMode: 'Incremental'
         deploymentName: 'sap-vm-${{ parameters.sid }}-$(Build.BuildId)'
         deploymentOutputs: 'arm_output'
