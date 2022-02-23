@@ -238,7 +238,6 @@ stages:
 - stage: Deploy_VM_CUSTOM_Image
   condition: and(eq(${{ parameters.vmdeployment }}, True), eq('${{ parameters.os }}', 'CUSTOM'))
   jobs:
-  jobs:
   - job: Deploy_VM_CUSTOM_Image
     steps:
     - checkout: none
