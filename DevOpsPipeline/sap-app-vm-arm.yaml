@@ -241,7 +241,7 @@ stages:
         artifact: sap
 
 - stage: Deploy_VM
-  condition: and(eq(${{ parameters.vmdeployment }}, true), ne(${{ parameters.os }}, 'CUSTOM'))
+  condition: and(eq(${{ parameters.vmdeployment }}, true), ne(${{ parameters.os }}, CUSTOM))
   jobs:
   - job: Deploy_VM
     steps:
@@ -264,7 +264,7 @@ stages:
         deploymentOutputs: 'arm_output'
 
 - stage: Deploy_VM_CUSTOM_Image
-  condition: and(eq(${{ parameters.vmdeployment }}, true), eq(${{ parameters.os }}, 'CUSTOM'))
+  condition: and(eq(${{ parameters.vmdeployment }}, true), eq(${{ parameters.os }}, CUSTOM))
   jobs:
   - job: Deploy_VM
     steps:
