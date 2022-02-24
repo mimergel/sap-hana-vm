@@ -934,7 +934,10 @@
                         "type": "Microsoft.Network/virtualNetworks/subnets",
                         "name": "[parameters('BastionSubnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('BastianSubnetAddressRange')]"
+                            "addressPrefix": "[parameters('BastianSubnetAddressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('BastionNSGName'))]"
+                            }
                         }
                     }
                 ],
