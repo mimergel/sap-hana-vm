@@ -111,7 +111,10 @@
             "defaultValue": "[concat('nsg-admin-',resourceGroup().location, '-', parameters('uid'))]",
             "type": "String"
         },
-        "AllowedIP": {
+        "BastionNSGName": {
+            "defaultValue": "[concat('nsg-bastion-',resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },        "AllowedIP": {
             "defaultValue": "*",
             "type": "String",
             "metadata": {
@@ -686,6 +689,31 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "22",
+                        "sourceAddressPrefix": "[if(equals(parameters('AllowedIP'),'*'), 'Internet', parameters('AllowedIP'))]",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 200,
+                        "direction": "Inbound"
+                       }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('BastionNSGName')]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowHttpsInBound",
+                        "properties": {
+                        "description": "Allow AllowHttpsInBound",
+                        "protocol": "*",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "443",
                         "sourceAddressPrefix": "[if(equals(parameters('AllowedIP'),'*'), 'Internet', parameters('AllowedIP'))]",
                         "destinationAddressPrefix": "*",
                         "access": "Allow",
