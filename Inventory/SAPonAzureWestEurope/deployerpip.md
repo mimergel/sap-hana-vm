@@ -1,0 +1,1 @@
+/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureWestEurope/providers/Microsoft.Network/publicIPAddresses/deployerwesteurope-pip
