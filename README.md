@@ -320,6 +320,12 @@ Automated SAP Installation and deployment via an Azure DevOps Pipeline functiona
 		* Analyse the now more detailed debugging information due to option "-vvvv"
 * Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user
 	* On the deployment agent set `allow_world_readable_tmpfiles = True` in `/etc/ansible/ansible.cfg`	
+	Make sure to have folling content in `/etc/ansible/ansible.cfg`
+	```
+	[defaults]
+	allow_world_readable_tmpfiles = True
+	host_key_checking = False
+	```
 * Backup or SAP Monitoring scripts fails
 	* Perform `az login` on the ubuntu deployment agent
 * Deployment of the devopsdeployer VM fails in the last step: message: "VM has reported a failure when processing extension 'CustomScript' ..."
