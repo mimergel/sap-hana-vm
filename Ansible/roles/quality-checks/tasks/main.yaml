@@ -37,13 +37,9 @@
     executable: pwsh
 
 - name: Run the quality check
-  ansible.builtin.shell: |
-    spawn /usr/bin/pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
-    expect "VMPassword:"
-    send "some-dummy-string \n"
+  command: pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem {{ distro }} -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
   args:
-    chdir: /home/azureadm/agent/_work/1/s/Scripts/
-    executable: /usr/bin/expect
+    chdir: "{{ workdir }}/Scripts/"
 
 - name:                            Find quality check result files
   ansible.builtin.find:
