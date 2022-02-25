@@ -198,6 +198,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* diagnosticsstorageaccount  [name of diagnostics storage account]
 	* hana-pw                    [password for the hana db]
 	* privatednszone             [e.g. sap.contoso.net]
+	* rsv                        [recovery service vault, e.g. rsv-sap-germanywestcentral-004]
 	* S-Username                 [S-Username]
 	* S-Password                 [S-User password]
 	* sap-pw                     [password for sap login, not yet used]
@@ -297,6 +298,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	![Example:](./Documentation/Images/hcmt-result.jpg)
 
 # Quality checks
+* Note: implementation WIP
 * Once the execution is completed it will create a html file with all results in the Inventory folder: quality-checks.html
 
 	Example <br />

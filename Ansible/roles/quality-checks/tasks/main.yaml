@@ -9,3 +9,12 @@
 - name: Install Module Posh-SSH
   command: pwsh -Command Install-Module Posh-SSH -Force
 
+- name: Run the quality check
+  command: pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup RG-HANATEST-ANF -AzVMName HANATESTANF -VMHostname 10.10.10.5 -VMUsername {{ vmname }} -SSHKey ~/.ssh/id_rsa "
+    chdir: ~/SAP-on-Azure-Scripts-and-Utilities/QualityCheck
+    creates: ~/SAP-on-Azure-Scripts-and-Utilities/QualityCheck/*.html
+
+- name: Copy quality check result HTML file to Inventory 
+  ansible.builtin.copy:
+    src: ~/SAP-on-Azure-Scripts-and-Utilities/QualityCheck/{{ vmname }}*.html
+    dest: ~Inventory/{{ rg }}/
