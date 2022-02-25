@@ -1,6 +1,11 @@
 ---
 
-- name: Run basic PowerShell script
-  ansible.windows.win_powershell:
-    script: |
-      echo "Hello World"
+- name: Install Module Module Az
+  command: pwsh -Command Install-Module Posh-SSH -Force
+
+- name: Install Module Az.NetAppFiles
+  command: pwsh -Command Install-Module Az.NetAppFiles -Force
+
+- name: Install Module Posh-SSH
+  command: pwsh -Command Install-Module Posh-SSH -Force
+
