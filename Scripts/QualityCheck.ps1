@@ -62,7 +62,12 @@ param (
     # HANA Deployment Model
     [string][ValidateSet("OLTP","OLAP","OLTP-ScaleOut","OLAP-ScaleOut")]$HANADeployment="OLTP",
     # High Availability Agent
-    [string][ValidateSet("SBD","FencingAgent","WCF")]$HighAvailabilityAgent="SBD"
+    [string][ValidateSet("SBD","FencingAgent","WCF")]$HighAvailabilityAgent="SBD",
+    # ARM_* vars for az login
+    [Parameter(Mandatory = $true)][string]$ARM_CLIENT_ID,
+    [Parameter(Mandatory = $true)][string]$ARM_CLIENT_SECRET,
+    [Parameter(Mandatory = $true)][string]$ARM_TENANT_ID,
+    [Parameter(Mandatory = $true)][string]$ARM_SUBSCRIPTION_ID
 )
 
 
