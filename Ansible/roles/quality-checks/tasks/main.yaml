@@ -36,13 +36,12 @@
   args:
     executable: pwsh
 
-- name: Install Module Posh-SSH
-  command: pwsh -Command Install-Module Posh-SSH -Force
-
 - name: Run the quality check
-  command: pwsh -Command "Scripts/QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
+  command: pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
+  args:
+    chdir: "{{ workdir }}/Scripts/"
 
 - name: Copy quality check result HTML file to Inventory 
   ansible.builtin.copy:
-    src: "Scripts/{{ vmname }}*.html"
-    dest: "{{ inventorypath }}/"
+    src:  "{{ workdir }}/Scripts/{{ vmname }}*.html"
+    dest: "{{ inventory }}/{{ rg }}/"
