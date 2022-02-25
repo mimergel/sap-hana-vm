@@ -201,7 +201,6 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* S-Password                 [S-User password]
 	* sap-pw                     [password for sap login, not yet used]
 	* pubsshkey                  [public key]
-	* rsv                        [recovery service vault name]
 	* skipComponentGovernanceDetection true
 	* url-disk-cfg               [url to diskconfig.sh script]
 	* 
