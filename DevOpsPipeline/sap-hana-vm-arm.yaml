@@ -607,8 +607,17 @@ stages:
         #!/bin/bash
         privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
         echo "##vso[task.setvariable variable=privateip]$privateip"
+        if [[ "$(osvar)" == "SLES"* ]]; then
+          distro="SUSE"
+          echo $distro
+          echo "##vso[task.setvariable variable=distro]$distro"
+        elif [[ "$(osvar)" == "RHEL"* ]]; then
+          distro="RedHat"
+          echo $distro
+          echo "##vso[task.setvariable variable=distro]$distro"
+        fi
         exit 0
-      displayName: Get private IP for following ansible tasks 
+      displayName: Get private IP and Linux disrtibution for following ansible tasks 
       failOnStderr: false
     - task: Ansible@0
       displayName: 'Run Quality checks (Ansible)'
@@ -619,7 +628,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} -e adminuser=$(adminuser) -e ip=$(privateip) -e inventory="$(System.DefaultWorkingDirectory)/Inventory" -e workdir="$(System.DefaultWorkingDirectory)" '
+        args: '-e distro=$(distro) -e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} -e adminuser=$(adminuser) -e ip=$(privateip) -e inventory="$(System.DefaultWorkingDirectory)/Inventory" -e workdir="$(System.DefaultWorkingDirectory)" '
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
