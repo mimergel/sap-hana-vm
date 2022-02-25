@@ -38,9 +38,9 @@ param (
     # VM Username
     [Parameter(Mandatory=$true)][string]$VMUsername,
     # VM Password
-    [Parameter(Mandatory=$true)][System.Security.SecureString]$VMPassword,
+    # [Parameter(Mandatory=$true)][System.Security.SecureString]$VMPassword,
     # SSH Keys
-    [string]$SSHKey,
+    [Parameter(Mandatory=$true)][string]$SSHKey,
     # VM Connection Port (Linux SSH Port)
     [string]$VMConnectionPort="22",
     # Run HA checks

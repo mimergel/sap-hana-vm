@@ -39,6 +39,7 @@ sudo apt install gnupg -y
 sudo apt install sshpass -y
 sudo apt install dos2unix -y
 sudo apt install python3-pip -y 
+sudo apt install expect -y
 
 # Install Ansible
 sudo apt update -y

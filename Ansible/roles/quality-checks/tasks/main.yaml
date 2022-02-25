@@ -37,11 +37,25 @@
     executable: pwsh
 
 - name: Run the quality check
-  command: pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
+  ansible.builtin.shell: |
+    spawn /usr/bin/pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
+    expect "VMPassword:"
+    send "some-dummy-string \n"
   args:
-    chdir: "{{ workdir }}/Scripts/"
+    chdir: /home/azureadm/agent/_work/1/s/Scripts/
+    executable: /usr/bin/expect
 
-- name: Copy quality check result HTML file to Inventory 
-  ansible.builtin.copy:
-    src:  "{{ workdir }}/Scripts/{{ vmname }}*.html"
-    dest: "{{ inventory }}/{{ rg }}/"
+- name:                            Find quality check result files
+  ansible.builtin.find:
+    paths:                         "{{ workdir }}/Scripts/"
+    patterns:                      "{{ vmname }}*.html"
+    recurse:                       false
+  register:                        file_2_copy
+
+- name:                            Copy quality check result HTML file to Inventory
+  ansible.builtin.fetch:
+    src:                           "{{ item.path }}"
+    dest:                          "{{ workdir }}/Inventory/{{ rg }}/"
+    flat:                          true
+    fail_on_missing:               false
+  with_items:                      "{{ file_2_copy.files }}"
