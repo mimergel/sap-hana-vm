@@ -38,7 +38,7 @@ param (
     # VM Username
     [Parameter(Mandatory=$true)][string]$VMUsername,
     # VM Password
-    # [Parameter(Mandatory=$true)][System.Security.SecureString]$VMPassword,
+    [Parameter(Mandatory=$false)][String]$VMPassword="dummy",
     # SSH Keys
     [Parameter(Mandatory=$true)][string]$SSHKey,
     # VM Connection Port (Linux SSH Port)
@@ -305,10 +305,11 @@ function ConnectVM {
     else {
         
         # create a pasword hash that will be used to connect when using sudo commands
-        $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+        # $script:_ClearTextPassword = ConvertFrom-SecureString -SecureString $VMPassword -AsPlainText
+        $script:securepassword = ConvertTo-SecureString -String $VMPassword -AsPlainText -Force
 
         # create credentials object
-        $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $VMPassword);
+        $script:_credentials = New-Object System.Management.Automation.PSCredential ($VMUsername, $securepassword);
         
         # check if SSH Keys are used
         if ($SSHKey.Length -eq 0) {
