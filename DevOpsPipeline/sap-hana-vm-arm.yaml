@@ -628,17 +628,9 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vvvv -e distro=$(distro) -e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} -e adminuser=$(adminuser) -e ip=$(privateip) -e inventory="$(System.DefaultWorkingDirectory)/Inventory" -e workdir="$(System.DefaultWorkingDirectory)" '
+        args: '-vvvv -e distro=$(distro) -e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} -e adminuser=$(adminuser) -e ip=$(privateip) -e inventory="$(System.DefaultWorkingDirectory)/Inventory" -e workdir="$(System.DefaultWorkingDirectory)" -e "ARM_CLIENT_ID=$(ARM_CLIENT_ID)" -e "ARM_TENANT_ID=$(ARM_TENANT_ID)" -e "ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)" -e "ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)" '
         failOnStdErr: false
       env:
-        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
-        ANSIBLE_HOST_KEY_CHECKING: False
-        ANSIBLE_SSH_HOST_KEY_CHECKING: False
-        ANSIBLE_ALLOW_WORLD_READABLE_TMPFILES: True
-        ARM_SUBSCRIPTION_ID:     $(ARM_SUBSCRIPTION_ID)
-        ARM_CLIENT_ID:           $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET:       $(ARM_CLIENT_SECRET)
-        ARM_TENANT_ID:           $(ARM_TENANT_ID)
         SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
 
     - script: |
