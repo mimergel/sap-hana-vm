@@ -643,7 +643,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-vv -e distro=$(distro) -e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} -e adminuser=$(adminuser) -e ip=$(privateip) -e inventory="$(System.DefaultWorkingDirectory)/Inventory" -e workdir="$(System.DefaultWorkingDirectory)" '
+        args: '-vvvv -e distro=$(distro) -e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} -e adminuser=$(adminuser) -e ip=$(privateip) -e inventory="$(System.DefaultWorkingDirectory)/Inventory" -e workdir="$(System.DefaultWorkingDirectory)" '
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
