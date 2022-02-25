@@ -609,9 +609,11 @@ stages:
         echo "##vso[task.setvariable variable=privateip]$privateip"
         if [[ $osvar == "SLES"* ]]; then
           distro="SLES"
+          echo $distro
           echo "##vso[task.setvariable variable=distro]$distro"
         elif [[ $osvar == "RHEL"* ]]; then
           distro="RedHat"
+          echo $distro
           echo "##vso[task.setvariable variable=distro]$distro"
         fi
         exit 0
