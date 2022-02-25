@@ -10,9 +10,7 @@
   command: pwsh -Command Install-Module Posh-SSH -Force
 
 - name: Run the quality check
-  command: pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
-    chdir: "Scripts/"
-    creates: "{{ vmname }}*.html"
+  command: pwsh -Command "Scripts/QualityCheck.ps1 -VMOperatingSystem SUSE -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa "
 
 - name: Copy quality check result HTML file to Inventory 
   ansible.builtin.copy:
