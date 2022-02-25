@@ -53,10 +53,17 @@ curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt install terraform -y
 
-# This Ansible setting is required to prevent ssh prompts during first logins
-# host_key_checking = False
-sed -i 's/#host_key_checking = True/host_key_checking = False/g' /etc/ansible/ansible.cfg 
-sed -i 's/#allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
+# Some Ansible settings
+if [ -e /etc/ansible/ansible.cfg  ]
+then
+  sed -i 's/#host_key_checking = True/host_key_checking = False/g' /etc/ansible/ansible.cfg 
+  sed -i 's/#allow_world_readable_tmpfiles = False/allow_world_readable_tmpfiles = True/g' /etc/ansible/ansible.cfg 
+else
+  mkdir -p /etc/ansible
+  echo "[defaults]"                            >  /etc/ansible/ansible.cfg 
+  echo "host_key_checking = False"             >> /etc/ansible/ansible.cfg 
+  echo "allow_world_readable_tmpfiles = True"  >> /etc/ansible/ansible.cfg 
+fi
 
 # Ubuntu 20.04 (Focal Fossa) and 20.10 (Groovy Gorilla) include an azure-cli package with version 2.0.81 provided by the universe repository. 
 # This package is outdated and not recommended. If this package is installed, remove the package
