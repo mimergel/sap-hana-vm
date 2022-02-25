@@ -286,7 +286,7 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 	* Run the pipeline <br /> 
 	![Run Pipeline](./Documentation/Images/run-pipeline.jpg) <br />
 
-* Provide inputs as required and press "Run" <br />
+	* Provide inputs as required and press "Run" <br />
 	![Pipeline Inputs](./Documentation/Images/hana-pipeline-inputs.jpg) <br />
 
 # HANA Cloud Measurement Test Results
