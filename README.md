@@ -18,7 +18,7 @@ Table of contents
 
 # SAP HANA VM Deployments
 
-This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps including the following options: 
+**This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps including the following options: **
 
 * SLES 12 & 15
 * RHEL 7 & 8 
@@ -30,8 +30,8 @@ This repository is used to deploy SAP HANA Databases 2.0 with Azure DevOps inclu
 * Backup Integration into an Azure Recovery Service Vault including optional execution of initial OS & HANA backups
 * Selective disk backup, which excludes hana log & data disks from the OS backups
 * Setup Azure Monitoring Extension for SAP
-* Execution quality checks (WIP)
 * Execution of HANA Cloud Measurement Tool (HCMT)
+* Execution quality checks (WIP)
 * Removal of the complete deployment 
 
 # Deployment Framework
