@@ -631,7 +631,7 @@ stages:
         #!/bin/bash
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
         cd $(Build.Repository.LocalPath)
-        if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/hcmtresult-*.zip ]; then
+        if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/quality-check.html ]; then
           echo "##vso[task.logissue type=error]No HCMT result found "
           exit 2
         else
@@ -640,7 +640,7 @@ stages:
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/hcmtresult-*.zip
+          git add -f  $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/quality-check.html
           git commit -m "Added HCMT test result $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
