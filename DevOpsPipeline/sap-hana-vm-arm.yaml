@@ -619,7 +619,7 @@ stages:
         inventoryInlineContentAgentMachine: |
           [hana]
           $(privateip)
-        args: '-e sap_sid=${{ parameters.sid }} -e s_user=$(S-Username) -e s_password="$(S-Password)" '
+        args: '-e rg=${{ parameters.rg }} -e vmname=${{ parameters.vmname }} '
         failOnStdErr: false
       env:
         ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
@@ -631,7 +631,7 @@ stages:
         #!/bin/bash
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
         cd $(Build.Repository.LocalPath)
-        if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/quality-check.html ]; then
+        if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}*.html ]; then
           echo "##vso[task.logissue type=error]No HCMT result found "
           exit 2
         else
@@ -640,7 +640,7 @@ stages:
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
-          git add -f  $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/quality-check.html
+          git add -f  $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}*.html
           git commit -m "Added HCMT test result $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
