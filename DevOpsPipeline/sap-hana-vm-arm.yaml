@@ -167,6 +167,11 @@ parameters:
   type: boolean
   default: False
 
+- name: qualitychecks
+  displayName: Quality checks
+  type: boolean
+  default: False
+
 - name: cleanup
   displayName: Remove the deployment
   type: boolean
@@ -584,6 +589,58 @@ stages:
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
           git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/hcmtresult-*.zip
+          git commit -m "Added HCMT test result $(Build.DefinitionName) [skip ci]"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write HCMT test result to inventory
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
+      failOnStderr: false
+
+- stage: Quality_checks
+  condition: eq(${{ parameters.qualitychecks }}, true)
+  jobs:
+  - job: Quality_checks
+    steps:
+    - checkout: none
+    - script: |
+        #!/bin/bash
+        privateip=`cat $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}.hanaprivateip`
+        echo "##vso[task.setvariable variable=privateip]$privateip"
+        exit 0
+      displayName: Get private IP for following ansible tasks 
+      failOnStderr: false
+    - task: Ansible@0
+      displayName: 'Run Quality checks (Ansible)'
+      inputs:
+        ansibleInterface: 'agentMachine'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/Ansible/quality-checks_playbook.yml'
+        inventoriesAgentMachine: inlineContent
+        inventoryInlineContentAgentMachine: |
+          [hana]
+          $(privateip)
+        args: '-e sap_sid=${{ parameters.sid }} -e s_user=$(S-Username) -e s_password="$(S-Password)" '
+        failOnStdErr: false
+      env:
+        ANSIBLE_DISPLAY_SKIPPED_HOSTS: False
+        ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_SSH_HOST_KEY_CHECKING: False
+        ANSIBLE_ALLOW_WORLD_READABLE_TMPFILES: True
+
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        cd $(Build.Repository.LocalPath)
+        if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/quality-check.html ]; then
+          echo "##vso[task.logissue type=error]No HCMT result found "
+          exit 2
+        else
+          echo -e "$green--- Adding HCMT test result to the inventory ---$reset"
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}
+          git checkout $(Build.SourceBranchName)
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add -f  $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/quality-check.html
           git commit -m "Added HCMT test result $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
