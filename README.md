@@ -9,6 +9,7 @@ Table of contents
 - [Deploy the landing zone](#deploy-the-landing-zone)
 - [Deploy SAP HANA VMs](#deploy-sap-hana-vms)
 - [HANA Cloud Measurement Test Results](#hana-cloud-measurement-test-results)
+- [Quality checks](#quality-checks)
 - [SAP App VM Deployment](#sap-app-vm-deployment)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
@@ -294,6 +295,13 @@ Note: Required target Subnet ID can be retrieved in cloud shell via: <br />
 
 	Example <br />
 	![Example:](./Documentation/Images/hcmt-result.jpg)
+
+# Quality checks
+* Once the execution is completed it will create a html file with all results in the Inventory folder: quality-checks.html
+
+	Example <br />
+	![Example:](./Documentation/Images/quality-checks.jpg)
+
 
 # SAP App VM Deployment
 Use this ARM template to deploy the SAP Application VMs.
