@@ -632,19 +632,19 @@ stages:
         green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
         cd $(Build.Repository.LocalPath)
         if [ ! -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}*.html ]; then
-          echo "##vso[task.logissue type=error]No HCMT result found "
+          echo "##vso[task.logissue type=error]No quality check result found "
           exit 2
         else
-          echo -e "$green--- Adding HCMT test result to the inventory ---$reset"
+          echo -e "$green--- Adding quality check result to the inventory ---$reset"
           mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}
           git checkout $(Build.SourceBranchName)
           git config --global user.email "$(Build.RequestedForEmail)"
           git config --global user.name "$(Build.RequestedFor)"
           git add -f  $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.rg }}/${{ parameters.vmname }}*.html
-          git commit -m "Added HCMT test result $(Build.DefinitionName) [skip ci]"
+          git commit -m "Added quality check result $(Build.DefinitionName) [skip ci]"
           git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
         fi
-      displayName: Write HCMT test result to inventory
+      displayName: Write quality check result to inventory
       env:
         SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
       failOnStderr: false
