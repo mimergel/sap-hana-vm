@@ -1,5 +1,5 @@
 ---
-- hosts: sap
+- hosts: localhost
   become: true
   vars_files:
     - vars/default.yml
