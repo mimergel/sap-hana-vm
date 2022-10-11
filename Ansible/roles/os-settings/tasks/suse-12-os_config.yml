@@ -1,0 +1,40 @@
+---
+# SLES 12 specifics
+
+# Update all packages SLES
+- name: Update all packages on OpenSUSE/SUSE Linux
+  zypper:
+    name: '*'
+    state: latest
+    type: patch
+  environment:
+    ZYPP_LOCK_TIMEOUT: 300
+  when: ansible_os_family|upper == "SUSE"
+
+# SUSE bug 1167134
+- name:         "Ensure DHCLIENT_SET_HOSTNAME is set to no for SLES"
+  lineinfile:
+    path:       /etc/sysconfig/network/dhcp
+    regexp:     '^DHCLIENT_SET_HOSTNAME='
+    line:       DHCLIENT_SET_HOSTNAME="no"
+  when:         ansible_os_family|upper == 'SUSE'
+
+- name: Task Tweak the Default System Settings for SAP HANA 1 
+  command: "saptune solution apply HANA"
+  ignore_errors: yes
+
+- name: Task Tweak the Default System Settings for SAP HANA 2
+  command: "saptune service takeover"
+  
+- name: Task Check saptune 1
+  command: "/usr/sbin/saptune_check"
+  ignore_errors: yes
+
+- name: Task Check saptune 
+  command: "systemctl reset-failed"
+  ignore_errors: yes
+
+- name: Task Check saptune 2
+  command: "/usr/sbin/saptune_check"
+  ignore_errors: yes
+  

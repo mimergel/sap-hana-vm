@@ -1,0 +1,8 @@
+---
+
+- name: create install dir
+  file:
+    path: "{{ target_media_location }}"
+    state: directory
+
+# sap installation to be added herafter

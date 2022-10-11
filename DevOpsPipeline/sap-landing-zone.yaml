@@ -1,0 +1,264 @@
+# Pipeline to deploy an Azure DevopsDeployment Agent
+
+name: ${{ parameters.mgmtrg }}_Cleanup_${{ parameters.cleanup }}_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+
+parameters:
+- name: location
+  displayName: Region
+  type: string
+  default: "North Europe"
+  values:
+  - "West Europe"
+  - "North Europe"
+  - "France Central"
+  - "Germany West Central"
+  - "East US 2 EUAP"
+
+- name: mgmtrg
+  displayName: Resource group for landing zone resources
+  type: string
+  default: "SAPonAzureNorthEurope"
+
+- name: uid
+  displayName: Unique resource numbering (some resources names must be unique, e.g. keyvaults)
+  type: string
+  default: "003"
+
+- name: vnetrange
+  displayName: VNET range
+  type: string
+  default: "10.10.0.0/16"
+
+- name: bastionsubnetrange
+  displayName: Bastion subnet range
+  type: string
+  default: "10.10.2.0/24"
+
+- name: adminsubnetrange
+  displayName: Admin subnet range
+  type: string
+  default: "10.10.3.0/24"
+
+- name: sapsubnetrange
+  displayName: SAP subnet range
+  type: string
+  default: "10.10.10.0/24"
+
+- name: deployerpip
+  displayName: Deployer VM with public IP
+  type: boolean
+  default: False
+
+- name: AllowedIP
+  displayName: "Limit access to both admin VMs to a specific IP, e.g. 88.152.184.232/32. Default is * -> all internet allowed"
+  type: string
+  default: "*"
+
+- name: deploykeyvault
+  displayName: Keyvault and disk encryption set
+  type: boolean
+  default: False
+
+- name: rsvtype
+  displayName: Recovery Service Vault Type
+  type: string
+  default: "GeoRedundant"
+  values:
+  - "LocallyRedundant"
+  - "ZoneRedundant"
+  - "GeoRedundant"
+
+- name: crr
+  displayName: Cross Region Restore (CRR) enabled recovery service vault
+  type: boolean
+  default: True
+
+- name: cleanup
+  displayName: Remove the SAP landing zone
+  type: boolean
+  default: False
+
+trigger:
+- none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: "SAP-deployments"
+
+stages:
+- stage: Publish_Pipeline_Artifact
+  jobs:
+  - job: Publish_Pipeline_Artifact
+    workspace:
+      clean: all
+    steps:
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact'
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)'
+        artifact: agent
+
+- stage: Deploy_the_SAP_landing_zone
+  jobs:
+  - job: Deploy_the_SAP_landing_zone
+    steps:
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        echo -e "$green--- az login ---$reset"
+          az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
+          return_code=$?
+          if [ 0 != $return_code ]; then
+            echo -e "$boldred--- Login failed ---$reset"
+            echo "##vso[task.logissue type=error]az login failed."
+            exit $return_code
+          fi
+        az account set --subscription $(ARM_SUBSCRIPTION_ID)
+        ARM_CLIENT_OBJECTID=$(az ad sp show --id $(ARM_CLIENT_ID) --query objectId -o tsv)
+        echo "##vso[task.setvariable variable=ARM_CLIENT_OBJECTID]$ARM_CLIENT_OBJECTID"
+        echo -e "$green--- SPN Object Id is: $ARM_CLIENT_OBJECTID ---$reset"
+      displayName: Get the objectId of the service principle for key vault and disk encryption set creation
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      env:
+        ARM_SUBSCRIPTION_ID:     $(ARM_SUBSCRIPTION_ID)
+        ARM_CLIENT_ID:           $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET:       $(ARM_CLIENT_SECRET)
+        ARM_TENANT_ID:           $(ARM_TENANT_ID)
+      failOnStderr: false
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Deploy the SAP landing zone'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
+        location: '${{ parameters.location }}'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/sap-landing-zone.json
+        overrideParameters: '-adminUsername "$(adminuser)" -adminPublicKey "$(pubsshkey)" -WindowsPassword "$(win-pw)" -SAPVNETNameAddressSpace "["${{ parameters.vnetrange }}"]" -SAPAdminSubnetAddressRange "${{ parameters.adminsubnetrange }}" -SAPSubnetAddressRange "${{ parameters.sapsubnetrange }}" -BastianSubnetAddressRange "${{ parameters.bastionsubnetrange }}" -VaultStorageType "${{ parameters.rsvtype }}" -VaultEnableCRR "${{ parameters.crr }}" -deployerpip "${{ parameters.deployerpip }}" -deploykeyvault "${{ parameters.deploykeyvault }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -uid "${{ parameters.uid }}" -AllowedIP "${{ parameters.AllowedIP }}"'
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+        addSpnToEnvironment: true
+
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        # need to cut lenght due to kv name length limitations, same in ARM templates
+        region=$(az group show --name ${{ parameters.mgmtrg }} --query location -o tsv | cut -c 1-10 ) 
+        az role assignment create --role "Key Vault Administrator" --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/${{ parameters.mgmtrg }}/providers/Microsoft.KeyVault/vaults/kv-${region}-${{ parameters.uid }}
+      displayName: Set RBAC role for SPN on keyvault
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      failOnStderr: false
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Deploy the disk encryption set'
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
+        location: '${{ parameters.location }}'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/disk-encryption-set.json
+        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -subscription "$(ARM_SUBSCRIPTION_ID)" '
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+        addSpnToEnvironment: true
+
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        region=$(az group show --name ${{ parameters.mgmtrg }} --query location -o tsv) 
+        diskencryptionsetobjectid=$(az disk-encryption-set show --name "SAPDiskEncryptionSet-${region}-${{ parameters.uid }}" --resource-group ${{ parameters.mgmtrg }} --query identity.principalId -o tsv)
+        echo "##vso[task.setvariable variable=diskencryptionsetobjectid]$diskencryptionsetobjectid"
+      displayName: 'Update keyvault to allow disk encryption set'
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      failOnStderr: false
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Update keyvault to allow disk encryption set'
+      condition: eq(${{ parameters.deploykeyvault }}, true)
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
+        location: '${{ parameters.location }}'
+        templateLocation: 'Linked artifact'
+        csmFile: $(System.DefaultWorkingDirectory)/ARM-Template/keyvault-update.json
+        overrideParameters: '-deploykeyvault "${{ parameters.deploykeyvault }}" -uid "${{ parameters.uid }}" -spnobjectid "$(ARM_CLIENT_OBJECTID)" -tenantid "$(ARM_TENANT_ID)" -diskencryptionsetobjectid "$(diskencryptionsetobjectid)" '
+        deploymentMode: 'Incremental'
+        deploymentName: 'sap-landing-zone-$(Build.BuildId)'
+        deploymentOutputs: 'arm_output'
+        addSpnToEnvironment: true
+
+    - script: |
+        #!/bin/bash
+        green="\e[1;32m" ; reset="\e[0m" ; boldred="\e[1;31m"
+        if [[ -z $(arm_output) ]]; then
+          echo "##vso[task.logissue type=error]Variable arm_output is empty"
+          exit 2
+        else
+          echo -e "$green--- Writing arm_output into the inventory ---$reset"
+          echo $(arm_output)
+          cd $(Build.Repository.LocalPath)
+          mkdir -p $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}
+          echo $(arm_output)                                   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/arm_output.json
+          echo $(arm_output.diagnosticsstorageaccount.value)   > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
+          echo $(arm_output.keyvault.value)                    > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
+          echo $(arm_output.mgmtrg.value)                      > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
+          echo $(arm_output.deployerpip.value)                 > $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/deployerpip.md
+          echo -e "$green--- Adding deployment automation configuration to devops repository ---$reset"
+          git checkout $(Build.SourceBranchName)
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/arm_output.json
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/diagnosticsstorageaccount.md
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/keyvault.md
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/mgmtrg.md
+          git add -f $(System.DefaultWorkingDirectory)/Inventory/${{ parameters.mgmtrg }}/deployerpip.md
+          git commit -m "Added updates from devops deployment $(Build.DefinitionName) [skip ci]"
+          git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push
+        fi
+      displayName: Write Inventory JSON and add this information to the Azure DevOps repository
+      condition: succeededOrFailed()
+      env:
+        SYSTEM_ACCESSTOKEN:      $(System.AccessToken)
+      failOnStderr: false
+
+- stage: Cleanup
+  condition: eq(${{ parameters.cleanup }}, true)
+  jobs:
+  - job: Remove_SAP_landing_zone
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Remove Resource Group'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(AZURE_CONNECTION_NAME)'
+        subscriptionId: '$(ARM_SUBSCRIPTION_ID)'
+        action: 'DeleteRG'
+        resourceGroupName: '${{ parameters.mgmtrg }}'
+
+
+- stage: Post_Installation_Steps
+  displayName: Post Installation Steps
+  condition: always()
+  jobs:
+    - job:                           Post_Installation_Steps
+      workspace:
+        clean: all
+      displayName:                   Post Installation Steps
+      steps:
+        - task:                      PostBuildCleanup@3
+        - checkout:                  none

@@ -1,0 +1,48 @@
+---
+- name: download msawb-plugin-config-com-sap-hana.sh
+  get_url:
+    url: "{{ url_msawb_plugin }}"
+    dest: /tmp/msawb-plugin-config-com-sap-hana.sh
+    mode: 0750
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+# The following must be set on the deployment agent server in /etc/ansible/ansible.cfg
+# allow_world_readable_tmpfiles = True
+# otherwise the underprivileged user sidadm won't be able to execute the command
+# alternatively set own remote_tmp folder with speciifc permission in the next release
+
+- name: Setup SYSTEM user for Backup integration
+  command: su - "{{ sap_sid|lower }}adm" -c '/usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"'
+  when:  ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  # become_user not yet working as expected on RHEL7
+
+- name: Setup SYSTEM user for Backup integration
+  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Set SYSTEM "{{ sap_hostname }}":3"{{ sap_instancenum }}"13@SYSTEMDB SYSTEM "{{ pw_db_system }}"
+  become: yes
+  become_user: "{{ sap_sid|lower }}adm"
+  when:  ansible_os_family == "Suse" or
+         ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
+
+- name: Backup integration script
+  block:
+    - name: Run integration script msawb-plugin-config
+      command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+  rescue:
+    - name: Run integration script msawb-plugin-config again
+      command: '/tmp/msawb-plugin-config-com-sap-hana.sh -sk SYSTEM'
+
+- name: Delete SYSTEM user after Backup integration
+  command: su - "{{ sap_sid|lower }}adm" -c '/usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM'
+  when:  ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  # become_user not yet working as expected on RHEL7
+
+- name: Delete SYSTEM user after Backup integration
+  become: yes
+  become_user: "{{ sap_sid|lower }}adm"
+  command: /usr/sap/"{{ sap_sid }}"/HDB"{{ sap_instancenum }}"/exe/hdbuserstore Delete SYSTEM
+  when:  ansible_os_family == "Suse" or
+         ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"

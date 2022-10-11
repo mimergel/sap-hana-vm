@@ -1,0 +1,50 @@
+---
+# https://blogs.sap.com/2019/12/04/sap-hana-hardware-and-cloud-measurement-tools-hcmt-replacement-of-hwcct-tool/
+
+
+- include_role:
+    name: sap-download
+
+- name: extract HCMT 
+  command: "./{{ sapcar }} -manifest SIGNATURE.SMF -xvf {{ hcmt }}"
+  args:
+    chdir: "{{ target_media_location }}"
+    creates: "{{ target_media_location }}/setup/hcmtsetup"
+
+- name: Setup HCMT
+  command: ./hcmtsetup
+  args:
+    chdir: "{{ target_media_location }}/setup"
+    creates: "{{ target_media_location }}/setup/hcmt"
+
+- name: Set Request to false to allow non-interactive run
+  ansible.builtin.replace:
+    path: "{{ target_media_location }}/setup/config/executionplan.json"
+    regexp: '"Request": "true"'
+    replace: '"Request": "false"'
+
+- name: Lower Repeat Value to 1 to reduce long runtime
+  ansible.builtin.replace:
+    path: "{{ target_media_location }}/setup/config/executionplan.json"
+    regexp: '"Value": "2"'
+    replace: '"Value": "1"'
+
+- name: run hcmt
+  shell: ./hcmt -v -p config/executionplan.json
+  args:
+    chdir: "{{ target_media_location }}/setup"
+    
+- name:                            Find HCMT test result file
+  ansible.builtin.find: 
+    paths:                         "{{ target_media_location }}/setup"
+    patterns:                      "hcmtresult-*.zip"
+    recurse:                       false
+  register:                        file_2_fetch
+
+- name:                            Fetch the HCMT result
+  ansible.builtin.fetch:
+    src:                           "{{ item.path }}"
+    dest:                          "../Inventory/{{ sap_sid }}/"
+    flat:                          true
+    fail_on_missing:               false
+  with_items: "{{ file_2_fetch.files }}"

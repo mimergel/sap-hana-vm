@@ -1,0 +1,373 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmNameInput": {
+        "type": "string",
+        "defaultValue": "SAPTEST",
+        "metadata": {
+          "description": "The VM Name in Azure that you want to deploy"
+        }
+      },
+      "HostNameInput": {
+        "type": "string",
+        "defaultValue": "saptest",
+        "metadata": {
+          "description": "The Host Name on OS level that you want to deploy"
+        }
+      },
+      "sapSystemId": {
+        "type": "string",
+        "maxLength": 3,
+        "minLength": 3,
+        "defaultValue": "TST",
+        "metadata": {
+          "description": "SAP System ID."
+        }
+      },
+      "osType": {
+        "type": "string",
+        "allowedValues": [
+          "CUSTOM",
+          "RHEL 7.7",
+          "RHEL 8.1",
+          "RHEL 8.2",
+          "SLES 12 SP5",
+          "SLES 15 SP2"
+        ],
+        "defaultValue": "SLES 12 SP5",
+        "metadata": {
+          "description": "The type of the operating system you want to deploy."
+        }
+      },
+      "osdisksize": {
+        "type": "string",
+        "allowedValues": [
+          "64",
+          "128",
+          "256",
+          "512",
+          "1024"
+        ],
+        "defaultValue": "128",
+        "metadata": {
+          "description": "The os disk size."
+        }
+      },
+      "sapdisksize": {
+        "type": "string",
+        "allowedValues": [
+          "64",
+          "128",
+          "256",
+          "512",
+          "1024"
+        ],
+        "defaultValue": "128",
+        "metadata": {
+          "description": "The SAP disk size."
+        }
+      },
+      "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password or ssh key for the Virtual Machine."
+        }
+      },
+      "sapSystemSize": {
+        "type": "string",
+        "defaultValue": "Standard_E4ds_v4",
+        "metadata": {
+          "description": "The size of the SAP System"
+        }
+      },
+      "encryption": {
+        "type": "string",
+        "defaultValue": "false",
+        "metadata": {
+          "description": "Enable double encryption with CMK"
+        }
+      },
+      "encryptionset": {
+        "type": "string",
+        "defaultValue": "SAPDiskEncryptionSetGEWC",
+        "metadata": {
+          "description": "Disk encryption set name"
+        }
+      },
+      "mgmtrg": {
+        "type": "string",
+        "defaultValue": "SAPonAzureGermany",
+        "metadata": {
+          "description": "Resource group of the disk encryption set"
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "azureadm",
+        "metadata": {
+          "description": "Username for the Virtual Machine."
+        }
+      },
+      "subnetId": {
+        "type": "string",
+        "defaultValue": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
+        "metadata": {
+          "description": "The id of the subnet you want to use."
+        }
+      },
+      "ipaddress": {
+        "type": "string",
+        "defaultValue": "dynamic",
+        "metadata": {
+          "description": "Static IP address if required"
+        }
+      },
+      "availabilityZone": {
+        "type": "int",
+        "defaultValue": 0,
+        "minValue": 0,
+        "maxValue": 3,
+        "metadata": {
+          "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      },
+      "diagnosticsStorageAccount": {
+        "type": "string",
+        "defaultValue": "stdiagnosticsgermanywes",
+        "metadata": {
+          "description": "Name of the storage account for boot diagnostics"
+        }
+      },
+      "Script_URL": {
+        "type": "string",
+        "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh",
+        "metadata": {
+          "description": "URL of the disk configuration script"
+        }
+      }
+    },
+    "variables": {
+      "sidlower": "[toLower(parameters('sapSystemId'))]",
+      "vmName": "[parameters('vmNameInput')]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
+      "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "nicName": "[concat(variables('vmName'), '-nic')]",
+      "subnetName": "Subnet",
+      "subnets": {
+        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
+        "false": "[parameters('subnetId')]"
+      },
+      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]",
+      "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
+      "diskEncryptionSet": {
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('mgmtrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
+      },
+      "ippropertiesstatic": {
+        "privateIPAddress": "[parameters('ipaddress')]",
+        "privateIPAllocationMethod": "Static",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
+      },
+      "ippropertiesdynamic": {
+        "privateIPAllocationMethod": "Dynamic",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
+      },
+      "images": {
+        "CUSTOM": {
+          "publisher": "CUSTOM",
+          "OSType": "Linux",
+          "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/SAPImages/images/12-sp4-gen2/versions/0.0.1"
+        },
+        "RHEL 7.7": {
+          "sku": "77sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "RHEL 8.1": {
+          "sku": "81sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "RHEL 8.2": {
+          "sku": "82sapha-gen2",
+          "offer": "RHEL-SAP-HA",
+          "publisher": "RedHat",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "SLES 12 SP5": {
+          "sku": "gen2",
+          "offer": "sles-sap-12-sp5",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        },
+        "SLES 15 SP2": {
+          "sku": "gen2",
+          "offer": "sles-sap-15-sp2",
+          "publisher": "SUSE",
+          "OSType": "Linux",
+          "version": "latest"
+        }
+      },
+      "internalOSType": "[variables('images')[parameters('osType')].OSType]",
+      "csExtension": {
+        "Linux": {
+          "Publisher": "Microsoft.Azure.Extensions",
+          "Name": "CustomScript",
+          "Version": "2.0",
+          "script": "[parameters('Script_URL')]",
+          "scriptCall": "sh diskConfig.sh"
+        }
+      },
+      "sizes": {
+        "vmSize": "[parameters('sapSystemSize')]",
+        "disks": [
+          {
+            "lun": 0,
+            "name": "[concat(variables('vmName'), '-sapexe-disk')]",
+            "caching": "ReadOnly",
+            "createOption": "Empty",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS",
+              "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+            },
+            "diskSizeGB": "[parameters('sapdisksize')]"
+          }
+        ],
+        "scriptArguments": {
+            "Linux": "[concat('-luns ''0'' -names ''sapexe'' -paths ''/home/',variables('sidlower'),'adm,/sapmnt/',parameters('sapSystemId'),',/usr/sap,/usr/sap/',parameters('sapSystemId'),',/usr/sap/trans,/usr/sap/',parameters('sapSystemId'),'/SUM'' -sizes ''1,2,1,5,20,30''')]"
+        },
+        "useFastNetwork": true
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[variables('nicName')]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": "[if(equals(parameters('ipaddress'), 'dynamic'), variables('ippropertiesdynamic'), variables('ippropertiesstatic'))]"
+            }
+          ],
+          "enableAcceleratedNetworking": "[variables('sizes').useFastNetwork]"
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[variables('vmName')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        ],
+        "zones": "[variables('selectedZones')]",
+        "apiVersion": "2021-07-01",
+        "location": "[parameters('location')]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[variables('sizes').vmSize]"
+          },
+          "osProfile": {
+            "computerName": "[variables('HostName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publicKeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
+                    "keyData": "[parameters('adminPasswordOrKey')]"
+                  }
+                ]
+              }
+            }
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "[variables('images')[parameters('osType')].publisher]",
+              "offer": "[variables('images')[parameters('osType')].offer]",
+              "sku": "[variables('images')[parameters('osType')].sku]",
+              "version": "[variables('images')[parameters('osType')].version]"
+            },
+            "osDisk": {
+              "name": "[concat(variables('vmName'), '-os-disk')]",
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "diskSizeGB": "[parameters('osdisksize')]",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS",
+                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+              }
+            },
+            "dataDisks": "[variables('sizes').disks]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+              "bootDiagnostics": {
+                  "enabled": true,
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccount'), '.blob.core.windows.net/')]"
+              }
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        ],
+        "properties": {
+          "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
+          "type": "[variables('csExtension')[variables('internalOSType')].Name]",
+          "typeHandlerVersion": "[variables('csExtension')[variables('internalOSType')].Version]",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "fileUris": [
+              "[variables('csExtension')[variables('internalOSType')].script]"
+            ],
+            "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes').scriptArguments[variables('internalOSType')])]"
+          }
+        }
+      }
+    ],
+    "outputs": {
+       "SAPVMNAME": {
+        "value": "[variables('vmName')]",
+        "type": "string"
+      },
+      "SAPSID": {
+        "value": "[parameters('sapSystemId')]",
+        "type": "string"
+      },
+      "SAPPRIVATEIP": {
+        "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]",
+        "type": "string"
+      }
+    }
+  }

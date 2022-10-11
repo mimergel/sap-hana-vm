@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/default.yml
+  roles:
+    - os-settings
+    

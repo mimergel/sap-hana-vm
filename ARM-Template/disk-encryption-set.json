@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "uid": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Unique resource numbering, some resources names must be unique, e.g. keyvaults"
+            }
+        },
+        "subscription": {
+            "defaultValue": "subscriptionid",
+            "type": "string",
+            "metadata": {
+                "description": "Subscription Id"
+            }
+        },
+        "KeyVaultName": {
+            "defaultValue": "kv-(location)-uid",
+            "type": "string",
+            "metadata": {
+                "description": "Keyvault name will be generated as shown in default value"
+            }
+        },
+        "deploykeyvault": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Deploy a keyvault, True or False"
+            }
+        },
+        "encryptionkeyname": {
+            "defaultValue": "sap-disk-encryption-key",
+            "type": "string",
+            "metadata": {
+                "description": "Encryption key name for the disk encryption"
+            }
+        }
+    },
+    "variables": {
+        "shortlocation10": "[take(resourceGroup().location,10)]",
+        "KeyVaultName": "[concat('kv-', variables('shortlocation10'), '-', parameters('uid'))]"
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('deploykeyvault'),'True')]",
+            "type": "Microsoft.Compute/diskEncryptionSets",
+            "apiVersion": "2021-08-01",
+            "name": "[concat('SAPDiskEncryptionSet', '-', parameters('location'), '-',  parameters('uid'))]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "activeKey": {
+                    "sourceVault": {
+                        "id": "[concat('/subscriptions/', parameters('subscription'), '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.KeyVault/vaults/', variables('KeyVaultName'))]"
+                    },
+                    "keyUrl": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('KeyVaultName'), parameters('encryptionkeyname')), '2019-09-01', 'Full').properties.keyUriWithVersion]"
+                },
+                "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys"
+            }
+        }
+    ]
+}

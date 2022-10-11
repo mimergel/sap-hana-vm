@@ -1,0 +1,2262 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmNameInput": {
+        "type": "string",
+        "defaultValue": "HANATEST",
+        "metadata": {
+          "description": "The VM Name in Azure that you want to deploy"
+        }
+      },
+      "HostNameInput": {
+        "type": "string",
+        "defaultValue": "hanatest",
+        "metadata": {
+          "description": "The Host Name on OS level that you want to deploy"
+        }
+      },
+      "hanaSystemId": {
+        "type": "string",
+        "maxLength": 3,
+        "minLength": 3,
+        "defaultValue": "HDB",
+        "metadata": {
+          "description": "HANA System ID."
+        }
+      },
+      "osType": {
+        "type": "string",
+        "allowedValues": [
+          "CUSTOM",
+          "RHEL 7.7",
+          "RHEL 8.1",
+          "RHEL 8.2",
+          "SLES 12 SP5",
+          "SLES 15 SP2"
+        ],
+        "defaultValue": "SLES 12 SP5",
+        "metadata": {
+          "description": "The type of the operating system you want to deploy."
+        }
+      },
+      "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password or ssh key for the Virtual Machine."
+        }
+      },
+      "dbType": {
+        "type": "string",
+        "allowedValues": [
+          "HANA"
+        ],
+        "defaultValue": "HANA",
+        "metadata": {
+          "description": "The type of the database"
+        }
+      },
+      "hanaSystemSize": {
+        "type": "string",
+        "allowedValues": [
+          "E8s_v3",
+          "E16ds_v4_128_GB-Non-PRD",
+          "E20ds_v4_160",
+          "M32ts_192_GB",
+          "M32ts_192_GB_ZRS",
+          "M32ls_256_GB",
+          "E48ds_v4_384",
+          "M64ls_512_GB",
+          "M32dms_v2_875_GB",
+          "M64ds_v2_1.000_GB",
+          "M64ds_v2_1.000_GB_ZRS",
+          "M64dms_v2_1.792_GB",
+          "M128ds_v2_2.000_GB",
+          "M208s_v2_2.850_GB",
+          "M128dms_v2_3.892_GB",
+          "M208ms_v2_5.700_GB",
+          "M416ms_v2_11.400_GB"
+        ],
+        "defaultValue": "E16ds_v4_128_GB-Non-PRD",
+        "metadata": {
+          "description": "The size of the HANA System you want to deploy."
+        }
+      },
+      "encryption": {
+        "type": "string",
+        "defaultValue": "false",
+        "metadata": {
+          "description": "Enable double encryption with CMK"
+        }
+      },
+      "encryptionset": {
+        "type": "string",
+        "defaultValue": "SAPDiskEncryptionSetGEWC",
+        "metadata": {
+          "description": "Disk encryption set name"
+        }
+      },
+      "encryptionsetrg": {
+        "type": "string",
+        "defaultValue": "SAPonAzureGermany",
+        "metadata": {
+          "description": "Resource group of the disk encryption set"
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "azureadm",
+        "metadata": {
+          "description": "Username for the Virtual Machine."
+        }
+      },
+      "subnetId": {
+        "type": "string",
+        "defaultValue": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/SAPonAzureGermany/providers/Microsoft.Network/virtualNetworks/vnet-sap-prod-germanywestcentral-001/subnets/snet-sap-prod-germanywestcentral-001",
+        "metadata": {
+          "description": "The id of the subnet you want to use."
+        }
+      },
+      "ipaddress": {
+        "type": "string",
+        "defaultValue": "dynamic",
+        "metadata": {
+          "description": "Static IP address if required"
+        }
+      },
+      "availabilityZone": {
+        "type": "int",
+        "defaultValue": 0,
+        "minValue": 0,
+        "maxValue": 3,
+        "metadata": {
+          "description": "Zone number. Set to 0 if you do not want to use Availability Zones"
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      },
+      "diagnosticsStorageAccount": {
+        "type": "string",
+        "defaultValue": "stdiagnosticsgermanywes",
+        "metadata": {
+          "description": "Name of the storage account for boot diagnostics"
+        }
+      },
+      "Script_URL": {
+        "type": "string",
+        "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/main/Scripts/diskConfig.sh",
+        "metadata": {
+          "description": "URL of the disk configuration script"
+        }
+      }
+    },
+    "variables": {
+      "vmName": "[parameters('vmNameInput')]",
+      "HostName": "[toLower(parameters('HostNameInput'))]",
+      "vnetName": "[concat(variables('vmName'), '-vnet')]",
+      "nicName": "[concat(variables('vmName'), '-nic')]",
+      "subnetName": "Subnet",
+      "subnets": {
+        "true": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]",
+        "false": "[parameters('subnetId')]"
+      },
+      "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]",
+      "selectedZones": "[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
+      "diskEncryptionSet": {
+        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('encryptionsetrg'), '/providers/', 'Microsoft.Compute/diskEncryptionSets/', parameters('encryptionset'))]"
+      },
+      "ippropertiesstatic": {
+        "privateIPAddress": "[parameters('ipaddress')]",
+        "privateIPAllocationMethod": "Static",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
+      },
+      "ippropertiesdynamic": {
+        "privateIPAllocationMethod": "Dynamic",
+        "subnet": {
+          "id": "[variables('selectedSubnetId')]"
+        }
+      },
+      "images": {
+        "CUSTOM": {
+          "publisher": "CUSTOM",
+          "OSType": "Linux",
+          "id": "/subscriptions/35b67b4c-4fd4-4f0b-997c-bbb82032d45d/resourceGroups/SAPonAzureGermany/providers/Microsoft.Compute/galleries/myrhelimages/images/CUSTOMRHEL/versions/0.0.1"
+        }
+      },
+      "internalOSType": "[variables('images')[parameters('osType')].OSType]",
+      "csExtension": {
+        "Linux": {
+          "Publisher": "Microsoft.Azure.Extensions",
+          "Name": "CustomScript",
+          "Version": "2.0",
+          "script": "[parameters('Script_URL')]",
+          "scriptCall": "sh diskConfig.sh"
+        }
+      },
+      "sizes": {
+        "E16ds_v4_128_GB-Non-PRD": {
+          "HANA": {
+            "vmSize": "Standard_E16ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data01')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data02')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data03')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-log01')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log02')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log03')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "E20ds_v4_160": {
+          "HANA": {
+            "vmSize": "Standard_E20ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32ts_192_GB_ZRS": {
+          "HANA": {
+            "vmSize": "Standard_M32ts",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32ts_192_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32ts",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32ls_256_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32ls",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "E48ds_v4_384": {
+          "HANA": {
+            "vmSize": "Standard_E48ds_v4",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3#4,5,6#7#8'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64ls_512_GB": {
+          "HANA": {
+            "vmSize": "Standard_M64ls",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M32dms_v2_875_GB": {
+          "HANA": {
+            "vmSize": "Standard_M32dms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64ds_v2_1.000_GB": {
+          "HANA": {
+            "vmSize": "Standard_M64ds_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64ds_v2_1.000_GB_ZRS": {
+          "HANA": {
+            "vmSize": "Standard_M64ds_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_ZRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M64dms_v2_1.792_GB": {
+          "HANA": {
+            "vmSize": "Standard_M64dms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 64
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M128ds_v2_2.000_GB": {
+          "HANA": {
+            "vmSize": "Standard_M128ds_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 512
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M208s_v2_2.850_GB": {
+          "HANA": {
+            "vmSize": "Standard_M208s_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M128dms_v2_3.892_GB": {
+          "HANA": {
+            "vmSize": "Standard_M128dms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-data5-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 10,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4,5#6,7,8#9#10'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M208ms_v2_5.700_GB": {
+          "HANA": {
+            "vmSize": "Standard_M208ms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 2048
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        },
+        "M416ms_v2_11.400_GB": {
+          "HANA": {
+            "vmSize": "Standard_M416ms_v2",
+            "disks": [
+              {
+                "lun": 0,
+                "name": "[concat(variables('vmName'), '-usrsap-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 128
+              },
+              {
+                "lun": 1,
+                "name": "[concat(variables('vmName'), '-data1-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 2,
+                "name": "[concat(variables('vmName'), '-data2-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 3,
+                "name": "[concat(variables('vmName'), '-data3-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 4,
+                "name": "[concat(variables('vmName'), '-data4-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 4095
+              },
+              {
+                "lun": 5,
+                "name": "[concat(variables('vmName'), '-log1-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 6,
+                "name": "[concat(variables('vmName'), '-log2-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 7,
+                "name": "[concat(variables('vmName'), '-log3-disk')]",
+                "caching": "None",
+                "writeAcceleratorEnabled": "true",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 256
+              },
+              {
+                "lun": 8,
+                "name": "[concat(variables('vmName'), '-shared-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              },
+              {
+                "lun": 9,
+                "name": "[concat(variables('vmName'), '-backup-disk')]",
+                "caching": "ReadOnly",
+                "createOption": "Empty",
+                "managedDisk": {
+                  "storageAccountType": "Premium_LRS",
+                  "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+                },
+                "diskSizeGB": 1024
+              }
+            ],
+            "scriptArguments": {
+                "Linux": "[concat('-luns ''0#1,2,3,4#5,6,7#8#9'' -names ''usrsap#data#log#shared#backup'' -paths ''/usr/sap#/hana/data#/hana/log#/hana/shared#/hana/backup'' -sizes ''100#100#100#100#100''')]"
+            },
+            "useFastNetwork": true
+          }
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[variables('nicName')]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": "[if(equals(parameters('ipaddress'), 'dynamic'), variables('ippropertiesdynamic'), variables('ippropertiesstatic'))]"
+            }
+          ],
+          "enableAcceleratedNetworking": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].useFastNetwork]"
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[variables('vmName')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        ],
+        "zones": "[variables('selectedZones')]",
+        "apiVersion": "2021-07-01",
+        "location": "[parameters('location')]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].vmSize]"
+          },
+          "osProfile": {
+            "computerName": "[variables('HostName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publicKeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
+                    "keyData": "[parameters('adminPasswordOrKey')]"
+                  }
+                ]
+              }
+            }
+          },
+          "storageProfile": {
+            "imageReference": {
+              "id": "[variables('images')[parameters('osType')].id]"
+            },
+            "osDisk": {
+              "name": "[concat(variables('vmName'), '-os-disk')]",
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS",
+                "diskEncryptionSet": "[if(equals(parameters('encryption'), 'True'), variables('diskEncryptionSet'), json('null'))]"
+              }
+            },
+            "dataDisks": "[variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].disks]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+              "bootDiagnostics": {
+                  "enabled": true,
+                  "storageUri": "[concat('https://', parameters('diagnosticsStorageAccount'), '.blob.core.windows.net/')]"
+              }
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "[concat(variables('vmName'), '/', variables('csExtension')[variables('internalOSType')].Name)]",
+        "apiVersion": "2018-10-01",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        ],
+        "properties": {
+          "publisher": "[variables('csExtension')[variables('internalOSType')].Publisher]",
+          "type": "[variables('csExtension')[variables('internalOSType')].Name]",
+          "typeHandlerVersion": "[variables('csExtension')[variables('internalOSType')].Version]",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "fileUris": [
+              "[variables('csExtension')[variables('internalOSType')].script]"
+            ],
+            "commandToExecute": "[concat(variables('csExtension')[variables('internalOSType')].scriptCall, ' ', variables('sizes')[parameters('hanaSystemSize')][parameters('dbType')].scriptArguments[variables('internalOSType')])]"
+          }
+        }
+      }
+    ],
+    "outputs": {
+      "HANAVMNAME": {
+        "value": "[variables('vmName')]",
+        "type": "string"
+      },
+      "HANADBID": {
+        "value": "[parameters('hanaSystemId')]",
+        "type": "string"
+      },
+      "HANAPRIVATEIP": {
+        "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]",
+        "type": "string"
+      }
+    }
+  }

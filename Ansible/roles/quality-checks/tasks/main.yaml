@@ -1,0 +1,57 @@
+---
+
+- name: Install Module Module Az
+  ansible.builtin.shell: |
+    if (Get-Module -ListAvailable -Name Az) {
+        Write-Host "Module Az exists"
+    }
+    else {
+        Write-Host "Module does not exist"
+        Install-Module Az -Force
+    }
+  args:
+    executable: pwsh
+
+- name: Install Module Az.NetAppFiles
+  ansible.builtin.shell: |
+    if (Get-Module -ListAvailable -Name Az.NetAppFiles) {
+        Write-Host "Module Az.NetAppFiles exists"
+    }
+    else {
+        Write-Host "Module Az.NetAppFiles does not exist"
+        Install-Module Az.NetAppFiles -Force
+    }
+  args:
+    executable: pwsh
+
+- name: Install Module Posh-SSH
+  ansible.builtin.shell: |
+    if (Get-Module -ListAvailable -Name Posh-SSH) {
+        Write-Host "Module Posh-SSH exists"
+    }
+    else {
+        Write-Host "Module Posh-SSH does not exist"
+        Install-Module Posh-SSH -Force
+    }
+  args:
+    executable: pwsh
+
+- name: Run the quality check
+  command: pwsh -Command ".\QualityCheck.ps1 -VMOperatingSystem {{ distro }} -VMDatabase HANA -VMRole DB -AzVMResourceGroup {{ rg }} -AzVMName {{ vmname }} -VMHostname {{ ip }} -VMUsername {{ adminuser }} -SSHKey ~/.ssh/id_rsa -ARM_CLIENT_ID {{ ARM_CLIENT_ID }} -ARM_TENANT_ID {{ ARM_TENANT_ID }} -ARM_CLIENT_SECRET {{ ARM_CLIENT_SECRET }} -ARM_SUBSCRIPTION_ID {{ ARM_SUBSCRIPTION_ID }} "
+  args:
+    chdir: "{{ workdir }}/Scripts/"
+
+- name:                            Find quality check result files
+  ansible.builtin.find:
+    paths:                         "{{ workdir }}/Scripts/"
+    patterns:                      "{{ vmname }}*.html"
+    recurse:                       false
+  register:                        file_2_copy
+
+- name:                            Copy quality check result HTML file to Inventory
+  ansible.builtin.fetch:
+    src:                           "{{ item.path }}"
+    dest:                          "{{ workdir }}/Inventory/{{ rg }}/"
+    flat:                          true
+    fail_on_missing:               false
+  with_items:                      "{{ file_2_copy.files }}"

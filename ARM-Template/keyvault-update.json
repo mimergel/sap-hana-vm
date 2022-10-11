@@ -1,0 +1,120 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "tenantid": {
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "uid": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Unique resource numbering, some resources names must be unique, e.g. keyvaults"
+            }
+        },
+        "spnobjectid": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "SPN object Id, required to link keyvault and disk encryption set"
+            }
+        },
+        "diskencryptionsetobjectid": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "DiskEncryptinSet object Id"
+            }
+        },
+        "KeyVaultName": {
+            "defaultValue": "kv-(location)-uid",
+            "type": "string",
+            "metadata": {
+                "description": "Keyvault name will be generated as shown in default value"
+            }
+        },
+        "deploykeyvault": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Deploy a keyvault, True or False"
+            }
+        }
+    },
+    "variables": {
+        "shortlocation10": "[take(resourceGroup().location,10)]",
+        "KeyVaultName": "[concat('kv-', variables('shortlocation10'), '-', parameters('uid'))]"
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('deploykeyvault'),'True')]",
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('KeyVaultName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "[parameters('tenantid')]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('tenantid')]",
+                        "objectId": "[parameters('spnobjectid')]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Delete"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete"
+                            ],
+                            "certificates": []
+                        }
+                    },
+                    {
+                        "tenantId": "[parameters('tenantid')]",
+                        "objectId": "[parameters('diskencryptionsetobjectid')]",
+                        "permissions": {
+                            "keys": [
+                                "get",
+                                "wrapkey",
+                                "unwrapkey"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "enableRbacAuthorization": false,
+                "networkAcls": {
+                    "defaultAction": "allow",
+                    "bypass": "AzureServices",
+                    "ipRules": [],
+                    "virtualNetworkRules": []
+                },
+                "vaultUri": "[concat('https://', variables('KeyVaultName'), '.vault.azure.net/')]",
+                "provisioningState": "Succeeded",
+                "publicNetworkAccess": "Enabled"
+            }
+        }
+    ]
+}

@@ -1,0 +1,51 @@
+---
+
+# SAP Note 2205917 - SAP HANA DB Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+# SAP Note 2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+# SAP Note 2578899 - SUSE Linux Enterprise Server 15: Installation Note 
+# SAP Note 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7 
+# SAP Note 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+# 2593824 - Linux: Running SAP applications compiled with GCC 7.x
+# 2886607 - Linux: Running SAP applications compiled with GCC 9.x
+
+# Common Linux configurations
+
+# Swap Space
+- name: Ensure variables are available
+  include_vars:
+    file: "../vars/os-vars.yml"
+
+- include_tasks: swap.yml
+  loop: "{{ sap_swap }}"
+  when: item.tier == "HANA" or item.tier == "all"
+
+# Package Installation
+- name:             Import package list
+  include_vars:     os-vars.yml
+
+- name:             "Install OS packages: {{ ansible_os_family|upper }}-{{ ansible_distribution_major_version }}"
+  package:
+    name:           "{{ item }}" 
+    state:          present
+  environment:
+    ZYPP_LOCK_TIMEOUT: 300
+  loop:             "{{ packages[ansible_os_family|lower + ansible_distribution_major_version] }}"
+
+# Disable Transparent Hugepages & Configure Processor C-States
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 1
+  command:    "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 2
+  lineinfile: 
+     dest:    /etc/default/grub 
+     regexp:  "GRUB_CMDLINE_LINUX=" 
+     line:    "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
+
+- name:     Task Disable Transparent Hugepages & Configure Processor C-States 3
+  command:    grub2-mkconfig -o /boot/grub2/grub.cfg
+
+# Enter OS and Release specific tasks
+- name:     "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
+  include_tasks:    "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
+  when:     ansible_os_family|upper == "REDHAT" or
+            ansible_os_family|upper == "SUSE"

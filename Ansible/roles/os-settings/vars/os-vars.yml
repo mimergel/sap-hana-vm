@@ -1,0 +1,120 @@
+---
+sap_swap:
+  - { tier: 'all',  swap_size_mb: '20480' }
+  - { tier: 'HANA', swap_size_mb: '2048' }
+
+packages:
+    redhat7:
+      - "@base"
+      - gtk2
+      - libicu
+      - xulrunner
+      - sudo
+      - tcsh
+      - libssh2
+      - expect
+      - cairo
+      - graphviz
+      - iptraf-ng
+      - krb5-workstation
+      - krb5-libs
+      - libpng12
+      - nfs-utils
+      - lm_sensors
+      - rsyslog
+      - openssl
+      - PackageKit-gtk3-module
+      - libcanberra-gtk2
+      - libtool-ltdl
+      - xorg-x11-xauth
+      - numactl
+      - xfsprogs
+      - net-tools
+      - bind-utils
+      - chrony
+      - gdisk
+      - sg3_utils
+      - lvm2
+      - numad
+      - cifs-utils
+      - tuned-profiles-sap-hana
+      - compat-sap-c++-6
+      - compat-sap-c++-9
+      - libatomic
+      - uuidd
+      - csh
+    
+    redhat8:
+      - "@base"
+      - gtk2
+      - libicu
+      - sudo
+      - tcsh
+      - libssh2
+      - expect
+      - cairo
+      - graphviz
+      - iptraf-ng
+      - krb5-workstation
+      - krb5-libs
+      - libpng12
+      - nfs-utils
+      - lm_sensors
+      - rsyslog
+      - openssl
+      - PackageKit-gtk3-module
+      - libcanberra-gtk2
+      - libtool-ltdl
+      - xorg-x11-xauth 
+      - numactl
+      - xfsprogs
+      - net-tools
+      - bind-utils
+      - chrony
+      - gdisk
+      - sg3_utils
+      - lvm2
+      - numad
+      - cifs-utils      
+      - tuned-profiles-sap-hana
+      - compat-sap-c++-9
+      - libatomic
+      - uuidd
+      - csh
+
+    suse12: 
+      - chrony
+      - libyui-qt-pkg7
+      - glibc
+      - systemd
+      - tuned
+      - numad
+      - ntp
+      - sapconf
+      - saptune
+      - uuidd
+      - libgcc_s1
+      - libstdc++6
+      - libatomic1
+      - sysstat
+
+    suse15: 
+      - python
+      - chrony
+      - libyui-qt-pkg11
+      - glibc
+      - systemd
+      - tuned
+      - numad
+      - ntp
+      - sapconf
+      - saptune
+      - uuidd
+      - libopenssl1_0_0
+      - libssh2-1 
+      - sysstat
+      - libgcc_s1
+      - libstdc++6
+      - libatomic1
+      - sysstat
+

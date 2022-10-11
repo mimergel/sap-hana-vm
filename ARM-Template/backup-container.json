@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "vaultName": {
+          "type": "String"
+      },
+      "vaultRG": {
+          "type": "String"
+      },
+      "vaultSubID": {
+          "type": "String"
+      },
+      "backupManagementType": {
+          "type": "String",
+          "defaultValue": "AzureWorkload"
+        },
+        "workloadType": {
+            "type": "String",
+            "defaultValue": "SAPHanaDatabase"
+        },
+        "fabricName": {
+            "type": "String",
+            "defaultValue": "Azure"
+        },
+        "protectionContainers": {
+            "type": "Array",
+            "defaultValue": [
+                "VMAppContainer;Compute;rg-of-vm;vmname"
+            ]
+        },
+        "protectionContainerTypes": {
+            "type": "Array",
+            "defaultValue": [
+                "VMAppContainer"
+            ]
+        },
+        "sourceResourceIds": {
+            "type": "Array"
+        },
+        "operationType": {
+            "type": "String",
+            "defaultValue": "Register"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers",
+            "apiVersion": "2020-02-02",
+            "name": "[concat(parameters('vaultName'), '/', parameters('fabricName'), '/',parameters('protectionContainers')[copyIndex()])]",
+            "properties": {
+                "backupManagementType": "[parameters('backupManagementType')]",
+                "workloadType": "[parameters('workloadType')]",
+                "containerType": "[parameters('protectionContainerTypes')[copyIndex()]]",
+                "sourceResourceId": "[parameters('sourceResourceIds')[copyIndex()]]",
+                "operationType": "[parameters('operationType')]"
+            },
+            "copy": {
+                "name": "protectionContainersCopy",
+                "count": "[length(parameters('protectionContainers'))]"
+            }
+        }
+    ]
+}

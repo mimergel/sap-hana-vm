@@ -1,0 +1,54 @@
+---
+# RHEL 8 specifics
+
+# Update all packages RHEL
+- name: Update all installed packages using YUM module
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_os_family|upper == "REDHAT"
+
+- name: Disable SELinux 
+  selinux:
+    state: disabled
+  register: se_state
+
+- name: Disable Automatic NUMA Balancing Step 1
+  copy:
+    dest: /etc/sysctl.d/sap_hana.conf
+    content: |
+       kernel.numa_balancing=0
+
+- name: Disable Automatic NUMA Balancing Step 2
+  command: sysctl -p /etc/sysctl.d/sap_hana.conf 
+
+- name: Disable Automatic NUMA Balancing Step 3
+  service:
+     name: numad
+     state: stopped
+     enabled: no
+
+- name: Maximum Number of Proccesses a User
+  copy:
+    dest: /etc/security/limits.d/99-sapsys.conf
+    content: |
+       '@sapsys soft nproc unlimited'
+       '@sapsys hard nproc unlimited'
+
+# ABRT related actions removed here as the corresponding packages abrt and abrt-addon-ccpp are not part of the RHEL 8 image
+
+- name: Firewall Configuration
+  systemd:
+     name: firewalld
+     state: stopped
+     enabled: no
+
+- name: SAP Note 2292690 - SAP HANA DB Recommended OS settings for RHEL 7 - Tuned profile 1
+  systemd:
+     name: tuned
+     state: started
+     enabled: yes
+
+- name: SAP Note 2292690 - SAP HANA DB Recommended OS settings for RHEL 7 - Tuned profile 2
+  command: "tuned-adm profile sap-hana"
+  

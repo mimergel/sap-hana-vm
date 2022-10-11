@@ -1,0 +1,7 @@
+---
+- hosts: sap
+  become: true
+  vars_files:
+    - vars/default.yml
+  roles:
+    - sap-install

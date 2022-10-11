@@ -1,0 +1,1447 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "tenantid": {
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "Will be set automatically base on the RG location"
+            },
+            "type": "String"
+        },
+        "uid": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Unique resource numbering (some resources names must be unique, e.g. keyvaults)"
+            }
+        },
+        "spnobjectid": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "SPN object Id, required to link keyvault and disk encryption set"
+            }
+        },
+        "adminUsername": {
+            "defaultValue": "azureadm",
+            "type": "String",
+            "metadata": {
+                "description": "Enter the admin user name for the Linux & Windows VM"
+            }
+        },
+        "adminPublicKey": {
+            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr2zzJGCzNlgBPFPqYV0Ko2blSxk7ilbwzsN1UxH5EKLcHgIwQDljTMvZvvLhfBgEllkRvyotlZ+b+5rHP/rZ18mY/LLUc4pHQnXOFhs+SbzxAURwsStN+qKFx6+ZyJh0Kul4ZiIMm5S9LaX5jLrcvP2uRxi35/sYkrb53AK+b2HM7wxMpeOXJ9PHWOqRvMXZ/Dqlfn4oliDLh6UKwvABx7azWjRABs+X0nPwChPCRTXMJ5PC4iD+1CAcJpFhxHPzL13NWVoZqK1JgN4G0/4pcwI0XCFXHiAKs7sfbAMdMXesyrSQqLZ9grDDWbj5k8gbd4zW0Ig/tOFR32+WsDsxIQ==",
+            "type": "securestring",
+            "metadata": {
+                "description": "Enter SSH key for the Linux VM"
+            }
+        },
+        "WindowsPassword": {
+            "defaultValue": "xyz-WIN-vm-123",
+            "type": "SecureString",
+            "metadata": {
+                "description": "Enter password for the Windows SAP Admin VM"
+            }
+        },
+        "PrivateDNSZoneName": {
+            "type": "string",
+            "defaultValue": "sap.contoso.net",
+            "metadata": {
+                "description": "Enter your private DNS zone"
+            }
+        },
+        "SetupDeploymentAgentScriptURL": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/mimergel/sap-hana-vm/beta/Scripts/configure_deployer.sh",
+            "metadata": {
+                "description": "Enter your own script location if required"
+            }
+        },
+        "SAPVNETName": {
+            "defaultValue": "[concat('vnet-sap-', resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },
+        "SAPVNETNameAddressSpace": {
+            "defaultValue": [
+                "10.10.0.0/16"
+            ],
+            "type": "Array"
+        },
+        "SAPSubnetName": {
+            "defaultValue": "[concat('snet-sap-', resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },
+        "SAPSubnetAddressRange": {
+            "defaultValue": "10.10.10.0/24",
+            "type": "String"
+        },
+        "SAPAdminSubnetName": {
+            "defaultValue": "[concat('snet-admin-', resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },
+        "SAPAdminSubnetAddressRange": {
+            "defaultValue": "10.10.3.0/24",
+            "type": "String"
+        },
+        "BastionSubnetName": {
+            "defaultValue": "AzureBastionSubnet",
+            "type": "String"
+        },
+        "BastianSubnetAddressRange": {
+            "defaultValue": "10.10.2.0/24",
+            "type": "String"
+        },
+        "bastionHostName": {
+            "defaultValue": "[concat('bastion-host-',resourceGroup().location)]",
+            "type": "string"
+        },
+        "SAPNSGName": {
+            "defaultValue": "[concat('nsg-sap-',resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },
+        "SAPAdminNSGName": {
+            "defaultValue": "[concat('nsg-admin-',resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },
+        "BastionNSGName": {
+            "defaultValue": "[concat('nsg-bastion-',resourceGroup().location, '-', parameters('uid'))]",
+            "type": "String"
+        },        "AllowedIP": {
+            "defaultValue": "*",
+            "type": "String",
+            "metadata": {
+                "description": "default is * allowing all internet. set to a specific IP to limit access, e.g. 88.152.184.232/32"
+            }
+        },
+        "RecoveryServiceVaultName": {
+            "defaultValue": "[concat('rsv-sap-',resourceGroup().location, '-', parameters('uid'))]",
+            "type": "string"
+        },
+        "KeyVaultName": {
+            "defaultValue": "kv-(location)-uid",
+            "type": "string",
+            "metadata": {
+                "description": "Keyvault name will be generated as shown in default value"
+            }
+        },
+        "deploykeyvault": {
+            "defaultValue": "False",
+            "type": "string",
+            "metadata": {
+                "description": "Deploy a keyvault, True or False"
+            }
+        },
+        "encryptionkeyname": {
+            "defaultValue": "sap-disk-encryption-key",
+            "type": "string",
+            "metadata": {
+                "description": "Encryption key name for the disk encryption"
+            }
+        },
+        "VaultStorageType": {
+            "type": "string",
+            "defaultValue": "LocallyRedundant",
+            "allowedValues": [
+                "LocallyRedundant",
+                "ZoneRedundant",
+                "GeoRedundant"
+            ]
+        },
+        "VaultEnableCRR": {
+            "type": "string",
+            "defaultValue": "False"
+        },
+        "deployerpip": {
+            "type": "string",
+            "defaultValue": "False"
+        },
+        "OSPolicyNamePRD": {
+            "defaultValue": "pol-sapos-prod",
+            "type": "string"
+        },
+        "OSPolicyNameNonPRD": {
+            "defaultValue": "pol-sapos-non-prod",
+            "type": "string"
+        },
+        "HANAPolicyNamePRD": {
+            "defaultValue": "pol-saphana-prod",
+            "type": "string"
+        },
+        "HANAPolicyNameNonPRD": {
+            "defaultValue": "pol-saphana-non-prod",
+            "type": "string"
+        },
+        "DevOpsDeployerVMName": {
+            "type": "String",
+            "defaultValue": "[concat('deployer',resourceGroup().location)]"
+        },
+        "DevOpsDeployerComputerName": {
+            "type": "String",
+            "defaultValue": "[concat('deployer',resourceGroup().location)]"
+        },
+        "DiskType": {
+            "type": "String",
+            "defaultValue": "Premium_LRS"
+        },
+        "DevOpsDeployerVirtualMachineSize": {
+            "type": "String",
+            "defaultValue": "Standard_B2s"
+        },
+        "SAPWinAdminVirtualMachineSize": {
+            "type": "String",
+            "defaultValue": "Standard_B2s"
+        },
+        "storageAccountNameSAPBits": {
+            "defaultValue": "stsapbits",
+            "type": "String"
+        },
+        "storageContainerNameSAPBits": {
+            "type": "string",
+            "defaultValue": "sapbits",
+            "metadata": {
+                "description": "Specifies the name of the blob container."
+            }
+        },
+        "storageAccountNameDiagnostics": {
+            "defaultValue": "stdiagnostics",
+            "type": "String"
+        },
+        "accountType": {
+            "defaultValue": "Standard_LRS",
+            "type": "String"
+        },
+        "kind": {
+            "defaultValue": "StorageV2",
+            "type": "String"
+        },
+        "accessTier": {
+            "defaultValue": "Cool",
+            "type": "String"
+        },
+        "minimumTlsVersion": {
+            "defaultValue": "TLS1_2",
+            "type": "String"
+        },
+        "supportsHttpsTrafficOnly": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "allowBlobPublicAccess": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "allowSharedKeyAccess": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "networkAclsBypass": {
+            "defaultValue": "AzureServices",
+            "type": "String"
+        },
+        "networkAclsDefaultAction": {
+            "defaultValue": "Deny",
+            "type": "String"
+        },
+        "isContainerRestoreEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isBlobSoftDeleteEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isContainerSoftDeleteEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "changeFeed": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isVersioningEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "isShareSoftDeleteEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "ddosProtectionPlanEnabled": {
+            "defaultValue": false,
+            "type": "Bool"
+        },
+        "instantRPDetails": {
+            "defaultValue": {},
+            "type": "Object"
+        },
+        "OSbackupManagementType": {
+            "defaultValue": "AzureIaasVM",
+            "type": "String"
+        },
+        "OSBackupSchedule": {
+            "defaultValue": {
+                "schedulePolicyType": "SimpleSchedulePolicy",
+                "scheduleRunFrequency": "Daily",
+                "scheduleRunDays": null,
+                "scheduleRunTimes": [
+                    "2021-06-20T18:00:00.000Z"
+                ]
+            },
+            "type": "Object"
+        },
+        "timeZone": {
+            "defaultValue": "W. Europe Standard Time",
+            "type": "String"
+        },
+        "OSretentionPolicyPRD": {
+            "defaultValue": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": {
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                },
+                "weeklySchedule": {
+                    "daysOfTheWeek": [
+                        "Sunday"
+                    ],
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 4,
+                        "durationType": "Weeks"
+                    }
+                },
+                "monthlySchedule": {
+                    "retentionScheduleFormatType": "Weekly",
+                    "retentionScheduleDaily": null,
+                    "retentionScheduleWeekly": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "weeksOfTheMonth": [
+                            "First"
+                        ]
+                    },
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 3,
+                        "durationType": "Months"
+                    }
+                },
+                "yearlySchedule": {
+                    "retentionScheduleFormatType": "Weekly",
+                    "monthsOfYear": [
+                        "January"
+                    ],
+                    "retentionScheduleDaily": null,
+                    "retentionScheduleWeekly": {
+                        "daysOfTheWeek": [
+                            "Sunday"
+                        ],
+                        "weeksOfTheMonth": [
+                            "First"
+                        ]
+                    },
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 1,
+                        "durationType": "Years"
+                    }
+                }
+            },
+            "type": "Object"
+        },
+        "OSretentionPolicyNonPRD": {
+            "defaultValue": {
+                "retentionPolicyType": "LongTermRetentionPolicy",
+                "dailySchedule": {
+                    "retentionTimes": [
+                        "2021-06-20T18:00:00.000Z"
+                    ],
+                    "retentionDuration": {
+                        "count": 14,
+                        "durationType": "Days"
+                    }
+                },
+                "weeklySchedule": null,
+                "monthlySchedule": null,
+                "yearlySchedule": null
+            },
+            "type": "Object"
+        },
+        "instantRpRetentionRangeInDays": {
+            "defaultValue": 3,
+            "type": "Int"
+        },
+        "hanabackupsettings": {
+            "defaultValue": {
+                "timeZone": "W. Europe Standard Time",
+                "issqlcompression": false,
+                "isCompression": false
+            },
+            "type": "Object"
+        },
+        "HANAsubProtectionPolicyListPRD": {
+            "defaultValue": [
+                {
+                    "policyType": "Full",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "SimpleSchedulePolicy",
+                        "scheduleRunFrequency": "Daily",
+                        "scheduleRunDays": null,
+                        "scheduleRunTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ]
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "LongTermRetentionPolicy",
+                        "dailySchedule": {
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 14,
+                                "durationType": "Days"
+                            }
+                        },
+                        "weeklySchedule": {
+                            "daysOfTheWeek": [
+                                "Sunday"
+                            ],
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 4,
+                                "durationType": "Weeks"
+                            }
+                        },
+                        "monthlySchedule": {
+                            "retentionScheduleFormatType": "Weekly",
+                            "retentionScheduleDaily": null,
+                            "retentionScheduleWeekly": {
+                                "daysOfTheWeek": [
+                                    "Sunday"
+                                ],
+                                "weeksOfTheMonth": [
+                                    "First"
+                                ]
+                            },
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 3,
+                                "durationType": "Months"
+                            }
+                        },
+                        "yearlySchedule": {
+                            "retentionScheduleFormatType": "Weekly",
+                            "monthsOfYear": [
+                                "January"
+                            ],
+                            "retentionScheduleDaily": null,
+                            "retentionScheduleWeekly": {
+                                "daysOfTheWeek": [
+                                    "Sunday"
+                                ],
+                                "weeksOfTheMonth": [
+                                    "First"
+                                ]
+                            },
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 1,
+                                "durationType": "Years"
+                            }
+                        }
+                    }
+                },
+                {
+                    "policyType": "Log",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "LogSchedulePolicy",
+                        "scheduleFrequencyInMins": 15
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "SimpleRetentionPolicy",
+                        "retentionDuration": {
+                            "count": 14,
+                            "durationType": "Days"
+                        }
+                    }
+                }
+            ],
+            "type": "Array"
+        },
+        "HANAsubProtectionPolicyListNonPRD": {
+            "defaultValue": [
+                {
+                    "policyType": "Full",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "SimpleSchedulePolicy",
+                        "scheduleRunFrequency": "Daily",
+                        "scheduleRunDays": null,
+                        "scheduleRunTimes": [
+                            "2021-06-19T21:00:00.000Z"
+                        ]
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "LongTermRetentionPolicy",
+                        "dailySchedule": {
+                            "retentionTimes": [
+                                "2021-06-19T21:00:00.000Z"
+                            ],
+                            "retentionDuration": {
+                                "count": 7,
+                                "durationType": "Days"
+                            }
+                        },
+                        "weeklySchedule": null,
+                        "monthlySchedule": null,
+                        "yearlySchedule": null
+                    }
+                },
+                {
+                    "policyType": "Log",
+                    "schedulePolicy": {
+                        "schedulePolicyType": "LogSchedulePolicy",
+                        "scheduleFrequencyInMins": 120
+                    },
+                    "retentionPolicy": {
+                        "retentionPolicyType": "SimpleRetentionPolicy",
+                        "retentionDuration": {
+                            "count": 7,
+                            "durationType": "Days"
+                        }
+                    }
+                }
+            ],
+            "type": "Array"
+        },
+        "automationaccountName": {
+            "type": "String",
+            "defaultValue": "[concat('automation-sap-',resourceGroup().location, '-', parameters('uid'))]",
+            "metadata": {
+                "description": "Name of the automation account"
+            }
+        },
+        "sampleGraphicalRunbookName": {
+            "type": "String",
+            "defaultValue": "AzureAutomationTutorialWithIdentityGraphical"
+        },
+        "sampleGraphicalRunbookDescription": {
+            "type": "String",
+            "defaultValue": "An example runbook which gets all the ARM resources using the Managed Identity."
+        },
+        "sampleGraphicalRunbookContentUri": {
+            "type": "String",
+            "defaultValue": "https://eus2oaasibizamarketprod1.blob.core.windows.net/marketplace-runbooks/AzureAutomationTutorialNewGraphical.graphrunbook"
+        },
+        "samplePowerShellRunbookName": {
+            "type": "String",
+            "defaultValue": "AzureAutomationTutorialWithIdentity"
+        },
+        "samplePowerShellRunbookDescription": {
+            "type": "String",
+            "defaultValue": "An example runbook which gets all the ARM resources using the Managed Identity."
+        },
+        "samplePowerShellRunbookContentUri": {
+            "type": "String",
+            "defaultValue": "https://eus2oaasibizamarketprod1.blob.core.windows.net/marketplace-runbooks/AzureAutomationTutorialNew.ps1"
+        }
+    },
+    "variables": {
+        "resourcegroupId": "[resourceGroup().id]",
+        "bastionPublicIPName": "[concat(parameters('bastionHostName'), '-pip')]",
+        "deployerpublicIPName": "[concat(parameters('DevOpsDeployerVMName'), '-pip')]",
+        "shortlocation9": "[take(resourceGroup().location,9)]",
+        "shortlocation10": "[take(resourceGroup().location,10)]",
+        "SAPWinAdminVMName15": "[concat('winadm',variables('shortlocation9'))]",
+        "SAPWinAdminComputerName15": "[concat('winadm',variables('shortlocation9'))]",
+        "storageAccountNameSAPBits": "[concat(parameters('storageAccountNameSAPBits'),variables('shortlocation10'))]",
+        "storageAccountNameDiagnostics": "[concat(parameters('storageAccountNameDiagnostics'),variables('shortlocation10'))]",
+        "KeyVaultName": "[concat('kv-', variables('shortlocation10'), '-', parameters('uid'))]",
+        "vmRegistration": true,
+        "VARnetworkAclsVirtualNetworkRules": [
+            {
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPSubnetName'))]"
+            },
+            {
+                "id": "[concat(variables('resourcegroupId'), '/providers/Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'), '/subnets/', parameters('SAPAdminSubnetName'))]"
+            }
+
+        ],
+        "DevOpsDeployerNWInterfaceName": "[concat(parameters('DevOpsDeployerVMName'), '-nic')]",
+        "SAPWinAdminNWInterfaceName": "[concat(variables('SAPWinAdminVMName15'), '-nic')]",
+        "DevOpsDeployerOS": "Linux",
+        "DevOpsDeployerCSExtension": {
+            "Linux": {
+            "Publisher": "Microsoft.Azure.Extensions",
+            "Name": "CustomScript",
+            "Version": "2.0",
+            "script": "[parameters('SetupDeploymentAgentScriptURL')]",
+            "scriptCall": "[concat('./configure_deployer.sh ', parameters('adminUsername'))]"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('SAPNSGName')]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH",
+                        "properties": {
+                        "description": "Allow SSH",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "22",
+                        "sourceAddressPrefix": "VirtualNetwork",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 200,
+                        "direction": "Inbound"
+                       }
+                    },
+                    {
+                        "name": "Allow-Inbound-HTTPS",
+                        "properties": {
+                            "description": "Allows inbound traffic for HTTPS",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "Allow-SAP",
+                        "properties": {
+                            "description": "Allows inbound traffic for SAP",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3200",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 400,
+                            "direction": "Inbound"
+                        }
+                    }
+
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('SAPAdminNSGName')]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "RDP",
+                        "properties": {
+                        "description": "Allow RDP",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "3389",
+                        "sourceAddressPrefix": "[if(equals(parameters('AllowedIP'),'*'), 'Internet', parameters('AllowedIP'))]",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 100,
+                        "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "SSH",
+                        "properties": {
+                        "description": "Allow SSH",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "22",
+                        "sourceAddressPrefix": "[if(equals(parameters('AllowedIP'),'*'), 'Internet', parameters('AllowedIP'))]",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 200,
+                        "direction": "Inbound"
+                       }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('BastionNSGName')]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowGatewayManager",
+                        "properties": {
+                            "description": "Allow GatewayManager",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "GatewayManager",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 2702,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowHttpsInBound",
+                        "properties": {
+                            "description": "Allow HTTPs",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 2703,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowSshRdpOutbound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "22",
+                                "3389"
+                            ],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureCloudOutbound",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "AzureCloud",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('bastionPublicIPName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            },
+            "sku": {
+                "name": "Standard"
+            }
+        },
+        {
+            "condition": "[equals(parameters('deployerpip'),'True')]",
+            "name": "[variables('deployerpublicIPName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "name": "[parameters('bastionHostName')]",
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionPublicIPName'))]" ,
+                 "[resourceId('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "bastionipconfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('BastionSubnetName'))]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionPublicIPName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults",
+            "apiVersion": "2020-02-02",
+            "name": "[parameters('RecoveryServiceVaultName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "RS0",
+                "tier": "Standard"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNamePRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "[parameters('OSbackupManagementType')]",
+                "instantRpRetentionRangeInDays": "[parameters('instantRpRetentionRangeInDays')]",
+                "schedulePolicy": "[parameters('OSBackupSchedule')]",
+                "timeZone": "[parameters('timeZone')]",
+                "retentionPolicy": "[parameters('OSretentionPolicyPRD')]",
+                "instantRPDetails": "[parameters('instantRPDetails')]"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('OSPolicyNameNonPRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "[parameters('OSbackupManagementType')]",
+                "instantRpRetentionRangeInDays": 3,
+                "schedulePolicy": "[parameters('OSBackupSchedule')]",
+                "timeZone": "[parameters('timeZone')]",
+                "retentionPolicy": "[parameters('OSretentionPolicyNonPRD')]",
+                "instantRPDetails": "[parameters('instantRPDetails')]"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('HANAPolicyNamePRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureWorkload",
+                "workloadType": "SAPHanaDatabase",
+                "settings": "[parameters('hanabackupsettings')]",
+                "subProtectionPolicy": "[parameters('HANAsubProtectionPolicyListPRD')]"
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupPolicies",
+            "apiVersion": "2016-06-01",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/', parameters('HANAPolicyNameNonPRD'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "backupManagementType": "AzureWorkload",
+                "workloadType": "SAPHanaDatabase",
+                "settings": "[parameters('hanabackupsettings')]",
+                "subProtectionPolicy": "[parameters('HANAsubProtectionPolicyListNonPRD')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[parameters('PrivateDNSZoneName')]",
+            "location": "global",
+            "dependsOn": [],
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-01-01",
+            "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
+            ],
+            "properties": {
+                "registrationEnabled": "[variables('vmRegistration')]",
+                "virtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('SAPVNETName'))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.RecoveryServices/vaults/backupstorageconfig",
+            "apiVersion": "2020-02-02",
+            "name": "[concat(parameters('RecoveryServiceVaultName'), '/vaultstorageconfig')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('RecoveryServiceVaultName'))]"
+            ],
+            "properties": {
+                "StorageModelType": "[parameters('VaultStorageType')]",
+                "CrossRegionRestoreFlag": "[if(equals(parameters('VaultEnableCRR'),'False'), bool('false'), bool('true'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('SAPVNETName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('SAPNSGName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('SAPVNETNameAddressSpace')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('SAPSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('SAPSubnetAddressRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ],
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('SAPNSGName'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    },
+                    {
+                        "name": "[parameters('SAPAdminSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('SAPAdminSubnetAddressRange')]",
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ],
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('SAPAdminNSGName'))]"
+                            }
+                        },
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    },
+                    {
+                        "type": "Microsoft.Network/virtualNetworks/subnets",
+                        "name": "[parameters('BastionSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('BastianSubnetAddressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('BastionNSGName'))]"
+                            }
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
+                },
+            "tags": {}
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('storageAccountNameSAPBits')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
+            "tags": {},
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "accessTier": "[parameters('accessTier')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                    "bypass": "[parameters('networkAclsBypass')]",
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]",
+                    "ipRules": [],
+                    "virtualNetworkRules": "[variables('VARnetworkAclsVirtualNetworkRules')]"
+                },   
+            "resources": [
+                {
+                "type": "blobServices/containers",
+                "apiVersion": "2019-06-01",
+                "name": "[concat('default/', parameters('storageContainerNameSAPBits'))]",
+                "dependsOn": [
+                    "[variables('storageAccountNameSAPBits')]"
+                ]
+                }
+            ]
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('storageAccountNameDiagnostics')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "accessTier": "[parameters('accessTier')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                    "bypass": "[parameters('networkAclsBypass')]",
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(variables('storageAccountNameSAPBits'), '/default')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits'))]"
+            ],
+            "properties": {
+                "restorePolicy": {
+                    "enabled": "[parameters('isContainerRestoreEnabled')]"
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": "[parameters('isBlobSoftDeleteEnabled')]"
+                },
+                "containerDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isContainerSoftDeleteEnabled')]"
+                },
+                "changeFeed": {
+                    "enabled": "[parameters('changeFeed')]"
+                },
+                "isVersioningEnabled": "[parameters('isVersioningEnabled')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileservices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(variables('storageAccountNameSAPBits'), '/default')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits'))]",
+                "[concat(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameSAPBits')), '/blobServices/default')]"
+            ],
+            "properties": {
+                "shareDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isShareSoftDeleteEnabled')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "name": "[variables('DevOpsDeployerNWInterfaceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "devopsdeployeripconfig",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[if(equals(parameters('deployerpip'),'True'), resourceId('Microsoft.Network/publicIPAddresses', variables('deployerpublicIPName')), json('null'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('SAPAdminSubnetName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-10-01",
+            "name": "[parameters('DevOpsDeployerVMName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('DevOpsDeployerNWInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('DevOpsDeployerVirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('DiskType')]"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "0001-com-ubuntu-server-focal",
+                        "sku": "20_04-lts",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('DevOpsDeployerNWInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('DevOpsDeployerComputerName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('adminPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": false
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('DevOpsDeployerVMName'), '/', variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name)]",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('DevOpsDeployerVMName'))]"
+            ],
+            "properties": {
+                "publisher": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Publisher]",
+                "type": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Name]",
+                "typeHandlerVersion": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].Version]",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                "fileUris": [
+                    "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].script]"
+                ],
+                    "commandToExecute": "[variables('DevOpsDeployerCSExtension')[variables('DevOpsDeployerOS')].scriptCall]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "name": "[variables('SAPWinAdminNWInterfaceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/', parameters('SAPVNETName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "sapwinadminipconfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('SAPVNETName'),parameters('SAPAdminSubnetName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }            
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2021-03-01",
+            "name": "[variables('SAPWinAdminVMName15')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('SAPWinAdminNWInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('SAPWinAdminVirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('DiskType')]"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsDesktop",
+                        "offer": "Windows-10",
+                        "sku": "21h1-pro",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('SAPWinAdminNWInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[variables('SAPWinAdminComputerName15')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('WindowsPassword')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": true,
+                        "provisionVmAgent": true,
+                        "patchSettings": {
+                            "enableHotpatching": false,
+                            "patchMode": "AutomaticByOS"
+                        }
+                    }
+                },
+                "licenseType": "Windows_Client"
+            }
+        },
+        {
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2021-06-22",
+            "name": "[parameters('automationaccountName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                },
+                "publicNetworkAccess": true
+            },
+            "resources": [
+                {
+                    "type": "runbooks",
+                    "apiVersion": "2019-06-01",
+                    "name": "[parameters('sampleGraphicalRunbookName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationaccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "GraphPowerShell",
+                        "logProgress": false,
+                        "logVerbose": false,
+                        "description": "[parameters('sampleGraphicalRunbookDescription')]",
+                        "publishContentLink": {
+                            "uri": "[parameters('sampleGraphicalRunbookContentUri')]",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                },
+                {
+                    "type": "runbooks",
+                    "apiVersion": "2019-06-01",
+                    "name": "[parameters('samplePowerShellRunbookName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationaccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "PowerShell",
+                        "logProgress": false,
+                        "logVerbose": false,
+                        "description": "[parameters('samplePowerShellRunbookDescription')]",
+                        "publishContentLink": {
+                            "uri": "[parameters('samplePowerShellRunbookContentUri')]",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "condition": "[equals(parameters('deploykeyvault'),'True')]",
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('KeyVaultName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "[parameters('tenantid')]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('tenantid')]",
+                        "objectId": "[parameters('spnobjectid')]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Delete"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete"
+                            ],
+                            "certificates": []
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "enableRbacAuthorization": false,
+                "networkAcls": {
+                    "defaultAction": "allow",
+                    "bypass": "AzureServices",
+                    "ipRules": [],
+                    "virtualNetworkRules": []
+                },
+                "vaultUri": "[concat('https://', variables('KeyVaultName'), '.vault.azure.net/')]",
+                "provisioningState": "Succeeded",
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "condition": "[equals(parameters('deploykeyvault'),'True')]",
+            "type": "Microsoft.KeyVault/vaults/keys",
+            "apiVersion": "2019-09-01",
+            "name": "[concat(variables('KeyVaultName'), '/', parameters('encryptionkeyname'))]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('KeyVaultName'))]"
+            ],
+            "properties": {
+                "kty": "RSA",
+                "keySize": 2048,
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[concat('loganalytics-workspace', resourceGroup().location, '-', parameters('uid'))]",
+            "apiVersion": "2020-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "pergb2018"
+                },
+                "retentionInDays": 30,
+                "features": {
+                    "enableLogAccessUsingOnlyResourcePermissions": true
+                }
+            },
+            "resources": [
+                {
+                "type": "Microsoft.OperationalInsights/workspaces/tables",
+                "apiVersion": "2020-08-01",
+                "name": "[concat('loganalytics-workspace', resourceGroup().location, '-', parameters('uid'),'/','Heartbeat')]",
+                "dependsOn": [
+                    "[concat('loganalytics-workspace', resourceGroup().location, '-', parameters('uid'))]"
+                ],
+                "properties": {
+                    "RetentionInDays": "30"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+      "diagnosticsstorageaccount": {
+        "value": "[variables('storageAccountNameDiagnostics')]",
+        "type": "string"
+      },
+      "keyvault": {
+        "value": "[variables('KeyVaultName')]",
+        "type": "string"
+      },
+      "mgmtrg": {
+        "value": "[resourceGroup().name]",
+        "type": "string"
+      },
+      "deployerpip": {
+        "value": "[if(equals(parameters('deployerpip'),'True'), resourceId('Microsoft.Network/publicIPAddresses', variables('deployerpublicIPName')), json('null'))]",
+        "type": "string"
+      }
+    }
+}

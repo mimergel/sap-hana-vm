@@ -1,0 +1,60 @@
+---
+# ------------------------------------------------------------------------------------------------------------------------
+sap_sid: 
+sap_instancenum: 
+sap_hostname: 
+
+target_media_location:        "/usr/sap/install"
+download_directory:           "/mnt/downloads"
+
+# ------------------------------------------------------------------------------------------------------------------------
+# -----------------------------URLs for HANA DB Installation--------------------------------------------------------------
+# Default URLs
+
+sapcar: SAPCAR_1115-70006178.EXE
+url_sapcar: https://softwaredownloads.sap.com/file/0020000000098642022
+
+hdbserver: IMDB_SERVER20_059_1-80002031.SAR
+url_hdbserver: https://softwaredownloads.sap.com/file/0020000000064362022
+
+hcmt: HCMT_060_0-80003261.SAR
+url_hcmt: https://softwaredownloads.sap.com/file/0020000001739812021
+
+
+# using own accessible storage account:
+# url_sapcar: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/SAPCAR_1010-70006178.EXE
+# url_hdbserver: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/IMDB_SERVER20_060_0-80002031.SAR
+# url_hcmt: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/HCMT_060_0-80003261.SAR
+
+
+url_xsa_media: https://stsapbitsgermanywes.blob.core.windows.net/sapbits/51054859.ZIP
+
+url_cockpit: 
+url_di_core: 
+url_portal_services: https://sapbitsweu.blob.core.windows.net/files/XSACPORTALSERV05_4-80002098.ZIP
+url_shine_xsa: https://sapbitsweu.blob.core.windows.net/files/XSACSHINE08_8-70002323.ZIP
+url_xs_services: https://sapbitsweu.blob.core.windows.net/files/XSACSERVICES07_12-70002361.ZIP
+url_xsa_runtime: https://sapbitsweu.blob.core.windows.net/files/XSACXSACOCKPIT01_18-80002644.ZIP
+url_xsa_hrtt: https://sapbitsweu.blob.core.windows.net/files/XSACHRTT12_21051-70002322.ZIP
+url_xsa_webide: https://sapbitsweu.blob.core.windows.net/files/XSACSAPWEBIDE05_6-80002257.ZIP
+url_xsa_mta:
+
+url_retries_delay: 10
+url_timeout: 30
+url_retries_cnt: 5
+
+install_cockpit: false
+install_shine: false
+install_xsa: false
+
+reinstall: false
+
+email_shine: "shinedemo@microsoft.com"
+
+# ------------------------------------------------------------------------------------------------------------------------
+# -----------------------------URL for the Azure HANA Backint Integration Script------------------------------------------
+# Default:
+url_msawb_plugin: https://aka.ms/ScriptForPermsOnHANA?clcid=0x0409
+# using own accessible storage account is required when internet access is blocked, example:
+# url_msawb_plugin: https://<your-own-storage-name>.blob.core.windows.net/sapdeployments/msawb-plugin-config-com-sap-hana.sh
+# ------------------------------------------------------------------------------------------------------------------------
