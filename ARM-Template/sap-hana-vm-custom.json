@@ -33,9 +33,9 @@
           "RHEL 8.1",
           "RHEL 8.2",
           "SLES 12 SP5",
-          "SLES 15 SP2"
+          "SLES 15 SP3"
         ],
-        "defaultValue": "SLES 12 SP5",
+        "defaultValue": "SLES 15 SP3",
         "metadata": {
           "description": "The type of the operating system you want to deploy."
         }
