@@ -31,17 +31,15 @@ param(
     [Parameter(Mandatory = $true)][string[]]$DiskNamePatterns
 )
 
-$CONTAINER1="IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
+$CONTAINER1 = "IaasVMContainer;iaasvmcontainerv2;$VMRG;$VM"
 Write-Host "Expected Backup Container Name is: $CONTAINER1"
-
 Write-Host "-----------Get VM ID-----------"
 $VMID = az vm show -g $VMRG -n $VM --query id --output tsv
-Write-Host "$VMID"
+Write-Host $VMID
 Write-Host ""
 
 Write-Host "-----------Check if VM is protected-----------"
 $PROTECT = az backup protection check-vm --vm $VMID
-
 if (-not $PROTECT) {
     Write-Host "VM is not protected, no selective disk backup can be enabled."
     return
@@ -49,13 +47,17 @@ if (-not $PROTECT) {
 
 Write-Host "-----------Select Luns for Exclusion-----------"
 $AllLuns = New-Object System.Collections.Generic.List[int]
-foreach ($pattern in $DiskNamePatterns) {
-    $diskJson = az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks[?contains(name, '$pattern')].[name,lun]" --output json
-    if ($diskJson) {
-        $diskObjects = $diskJson | ConvertFrom-Json
-        foreach ($diskObj in $diskObjects) {
-            $diskName = $diskObj[0]
-            $diskLun  = $diskObj[1]
+
+# Query once for all dataDisks
+$diskJson = az vm show -g $VMRG -n $VM --query "storageProfile.dataDisks" --output json
+if ($diskJson) {
+    $diskObjects = $diskJson | ConvertFrom-Json
+    foreach ($diskObj in $diskObjects) {
+        $diskName = $diskObj.name
+        $diskLun  = $diskObj.lun
+        
+        # Check if disk name matches any of the provided patterns
+        if ($DiskNamePatterns | Where-Object { $diskName -like "*$_*" }) {
             Write-Host "Match found: LUN $diskLun -> $diskName"
             if ($diskLun -match '^\d+$') {
                 $AllLuns.Add([int]$diskLun)
@@ -66,7 +68,9 @@ foreach ($pattern in $DiskNamePatterns) {
 
 if ($AllLuns.Count -gt 0) {
     Write-Host "Excluding LUNs: $($AllLuns -join ' ')"
-    az backup protection update-for-vm -g $RGV -v $RSV -c "$CONTAINER1" -i $VM --disk-list-setting exclude --diskslist $AllLuns
+    az backup protection update-for-vm -g $RGV -v $RSV -c "$CONTAINER1" -i $VM `
+        --disk-list-setting exclude `
+        --diskslist $AllLuns
 } else {
     Write-Host "No LUNs found for exclusion."
 }
